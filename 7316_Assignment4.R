@@ -12,6 +12,7 @@ rm(list = ls())
 library(tidyverse)
 library(rio)
 library(haven)
+library(gt)
 
 # Import datasets
 df <- read_dta("basic.dta")
@@ -48,31 +49,31 @@ str(genold)
 
 # Replicating Table 1
 
-betas <- matrix(nrow = 2, ncol = 6)
+## Filter republicans and democrats
+dem_genold <- subset(genold, party == "D")
+rep_genold <- subset(genold, party == "R")
+
+
 
 ## Run LS regression for all representatives: total children
 reg <- lm(totchi ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           genold)
-
 ## Save beta1 and standard error
-beta_all <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+betas <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 
 
 ## Democrats regression: total children
-dem_genold <- subset(genold, party == "D")
 reg <- lm(totchi ~ genold + female + white + age + agesq +
                 srvlng + srvlngsq + rgroup + region,
               dem_genold)
-beta_dem <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
-
+betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
 ## Republicans regression: total children
-rep_genold <- subset(genold, party == "R")
 reg <- lm(totchi ~ genold + female + white + age + agesq +
                 srvlng + srvlngsq + rgroup + region,
               rep_genold)
-beta_rep <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
 
 
@@ -81,20 +82,41 @@ beta_rep <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           genold)
-beta_all_d <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
 ## Democrats regression: daughters
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           dem_genold)
-beta_dem_d <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
 ## Republicans regression: daughters
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           rep_genold)
-beta_rep_d <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
 
-cbind(beta)
 
+# Calculate total observations
+obs <- genold %>% group_by(party) %>% summarise(n())
+obs <- append(as.numeric(count(genold)), t(obs)[2,])
+obs <- append(obs[-4], obs[-4])
+
+
+# Change table column names and row names
+colnames(betas) <- c("Full Congress: Number of Daughters",
+                     "Democrats: Number of Daughters",
+                     "Republicans: Number of Daughters",
+                     "Full Congress: Number of Children",
+                     "Democrats: Number of Children",
+                     "Republicans: Number of Children")
+betas <- round(betas, 3)
+betas <- rbind(betas, obs)
+betas <- as.data.frame(betas) %>% mutate(Metric = c("First child female", "Standard error", "N"))
+
+# Rearrange columns
+betas <- betas[,c(7,1,4,2,5,3,6)]
+
+# Create spanning headers
+betas %>% gt() %>% tab_spanner_delim(delim = ":")
