@@ -48,13 +48,15 @@ str(genold)
 
 # Replicating Table 1
 
+betas <- matrix(nrow = 2, ncol = 6)
+
 ## Run LS regression for all representatives: total children
 reg <- lm(totchi ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           genold)
 
-## Save beta1
-beta_all <- coefficients(reg)[2]
+## Save beta1 and standard error
+beta_all <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 
 
 ## Democrats regression: total children
@@ -62,14 +64,15 @@ dem_genold <- subset(genold, party == "D")
 reg <- lm(totchi ~ genold + female + white + age + agesq +
                 srvlng + srvlngsq + rgroup + region,
               dem_genold)
-beta_dem <- coefficients(reg)[2]
+beta_dem <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+
 
 ## Republicans regression: total children
 rep_genold <- subset(genold, party == "R")
 reg <- lm(totchi ~ genold + female + white + age + agesq +
                 srvlng + srvlngsq + rgroup + region,
               rep_genold)
-beta_rep <- coefficients(reg)[2]
+beta_rep <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 
 
 
@@ -78,16 +81,20 @@ beta_rep <- coefficients(reg)[2]
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           genold)
-beta_all_d <- coefficients(reg)[2]
+beta_all_d <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 
 ## Democrats regression: daughters
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           dem_genold)
-beta_dem_d <- coefficients(reg)[2]
+beta_dem_d <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 
 ## Republicans regression: daughters
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           rep_genold)
-beta_rep_d <- coefficients(reg)[2]
+beta_rep_d <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
+
+
+cbind(beta)
+
