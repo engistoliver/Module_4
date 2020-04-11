@@ -29,10 +29,17 @@ vars <- c("party", "genold", "ngirls", "totchi", "female", "white", "age",
           "srvlng","rgroup", "region")
 genold <- genold[vars]
 
-## Change variables classes
+## Change variable classes
+## + generate variables for agesq and srvlnsq
+## + generate factor variable for number of children
 genold <- mutate(genold,
-                 genold = as_factor(genold),
-                 party = as_factor(party),
+                 genold = as_factor(na_if(genold, "")),
+                 party = factor(party, labels = c("D", "R", "I")),
                  rgroup = as_factor(rgroup),
-                 region = as_factor(region))
+                 region = as_factor(region),
+                 agesq = age^2,
+                 srvlngsq = srvlng ^2,
+                 totchi_f = as_factor(totchi))
 str(genold)
+
+
