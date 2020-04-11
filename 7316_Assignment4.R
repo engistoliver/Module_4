@@ -22,6 +22,7 @@ genold <- left_join(genold, subset(df, congress == 108))
 
 
 
+
 # Data preparation
 
 ## Drop unnecessary variables
@@ -43,3 +44,15 @@ genold <- mutate(genold,
 str(genold)
 
 
+
+
+# Replicating Table 1
+
+## Run LS regression
+reg <- lm(totchi ~ genold + female + white + age + agesq +
+            srvlng + srvlngsq + rgroup + region,
+          genold)
+
+## Save beta1
+beta1 <- coefficients(reg)[2]
+beta1
