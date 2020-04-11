@@ -56,3 +56,15 @@ reg <- lm(totchi ~ genold + female + white + age + agesq +
 ## Save beta1
 beta1 <- coefficients(reg)[2]
 beta1
+
+## Democrats regression
+dem_genold <- subset(genold, party == "D")
+dem_reg <- lm(totchi ~ genold + female + white + age + agesq +
+                srvlng + srvlngsq + rgroup + region,
+              dem_genold)
+
+## Republicans regression
+rep_genold <- subset(genold, party == "R")
+rep_reg <- lm(totchi ~ genold + female + white + age + agesq +
+                srvlng + srvlngsq + rgroup + region,
+              rep_genold)
