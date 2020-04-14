@@ -44,6 +44,25 @@ total <- merge(genold108, congress108, by=c("district","statenam","name"))
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
+```{r, message=FALSE}
+
+total <- total %>% select(party, ngirls, totchi, genold, region, repub, rgroup, srvlng, 
+                          female, white, age)
+total$genold <- recode_factor(total$genold, `G` = "girl", `B` = "boy", .default = "NA")
+total$party <- recode_factor(total$party, `1` = "Dem", `2` = "Rep", `3` = "Ind")
+total$rgroup <- recode_factor(total$rgroup, `0` = "none", `1` = "prot", `2` = "cath/othchr",
+                              `3` = "jewish")
+total$region<- recode_factor(total$region, `1` = "1", `2` = "2", `3` = "3",
+                              `4` = "4", `5` = "5", `6` = "6", `7` = "7",
+                              `8` = "8", `9` = "9")
+total$agesqrd <- total$age^2
+total$srvlingsqrd <- total$srvlng^2
+total$factorchilren <- recode_factor(total$totchi,`1` = "1", `2` = "2", `3` = "3",
+                              `4` = "4", `5` = "5", `6` = "6", `7` = "7",
+                              `8` = "8", `9` = "9", `10` = "10", `12` = "12")
+```
+
+
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \ \tilde \quad x$, where $x$ stands for any linear combination of regressors. Use the help file to understand the function.
