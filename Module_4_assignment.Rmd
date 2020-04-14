@@ -18,6 +18,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+library(haven)
 setwd("~/Desktop/Classes/S19 R/Module 4/Module_4")
 ```
 
@@ -25,8 +26,12 @@ setwd("~/Desktop/Classes/S19 R/Module 4/Module_4")
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
-```{r}
+```{r, message=FALSE}
 
+basic <- read_dta("basic.dta")
+genold108 <- read_dta("genold108.dta")
+congress108 <- subset(basic, congress==108,)
+total <- merge(genold108, congress108, by=c("district","statenam","name"))
 ```
 
 # Data preparation
