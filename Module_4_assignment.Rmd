@@ -18,11 +18,16 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+setwd("~/Desktop/Classes/S19 R/Module 4/Module_4")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r}
+
+```
 
 # Data preparation
 
