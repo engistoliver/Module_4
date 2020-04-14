@@ -14,15 +14,26 @@ I encourage you to take a look at the paper, as we will come back to it later in
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 
 library(rio)
 library(tidyverse)
+library(foreign)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r, message=FALSE, warning=FALSE}
+
+basic <- read.dta("basic.dta")
+genold <- read.dta("genold108.dta")
+
+basic108 <- basic %>% filter(basic$congress == 108)
+
+basic108 <- merge(genold, basic108, by=c("district", "statenam", "name"))
+```
 
 # Data preparation
 
@@ -34,6 +45,25 @@ library(tidyverse)
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
+```{r, message=FALSE, warning=FALSE}
+
+basic108 <- basic108 %>% select(name, totchi, ngirls, genold, white, female, party, age, srvlng, rgroup, region)
+
+basic108$genold <- as.factor(basic108$genold)
+basic108$genold[basic108$genold == ""] <- NA
+
+basic108$party <- factor(basic108$party, levels <- c(1,2,3), labels <- c("D", "R", "I"))
+
+basic108$rgroup <- as.factor(basic108$rgroup)
+basic108$region <- as.factor(basic108$region)
+
+basic108$agesq <- basic108$age^2
+basic108$srvlngsq <- basic108$srvlng^2
+
+basic108$totchifac <- as.factor(basic108$totchi)
+```
+
+
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \ \tilde \quad x$, where $x$ stands for any linear combination of regressors. Use the help file to understand the function.
@@ -43,3 +73,49 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+
+```{r, message=FALSE, warning=FALSE}
+
+reg1 <- lm(totchi ~ genold + white + female + party + age + srvlng + rgroup + region + agesq + srvlngsq, data = basic108)
+
+reg2 <- lm(ngirls ~ genold + white + female + party + age + srvlng + rgroup + region + agesq + srvlngsq + totchifac, data = basic108)
+
+reg3 <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq, data=subset(basic108, party == "D" | name == "SANDERS, BERNARD"))
+
+reg4 <- lm(ngirls ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq + totchifac, data=subset(basic108, party == "D" | name == "SANDERS, BERNARD"))
+
+reg5 <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq, data=subset(basic108, party == "R"))
+
+reg6 <- lm(ngirls ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq + totchifac, data=subset(basic108, party == "R"))
+
+Betas <- c(reg1$coefficients[2],reg2$coefficients[2],reg3$coefficients[2],reg4$coefficients[2],reg5$coefficients[2],reg6$coefficients[2])
+
+output1 <- summary(reg1)
+output2 <- summary(reg2)
+output3 <- summary(reg3)
+output4 <- summary(reg4)
+output5 <- summary(reg5)
+output6 <- summary(reg6)
+
+stderrors <- c(output1$coefficients[2,2],output2$coefficients[2,2],output3$coefficients[2,2],output4$coefficients[2,2],output5$coefficients[2,2],output6$coefficients[2,2])
+
+N <- c(227,227,104,104,122,122)
+N <- as.integer(N)
+
+table1 <- matrix(c(Betas,stderrors,N), ncol=6,nrow=3, byrow=TRUE)
+
+colnames(table1) <- c("FC, # of Children", "FC, # of Daughters", "Dem, # of Children", "Dem, # of Daughters", "Rep, # of Children", "Rep, # of Daughters")
+rownames(table1) <- c("First Child Female", "Standard Error", "N")
+
+table1 <- as.table(table1)
+
+table1
+
+summary(reg1)
+
+table <- matrix(ncol=6, nrow=3)
+
+
+
+```
+
