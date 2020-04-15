@@ -59,7 +59,7 @@ total$region<- recode_factor(total$region, `1` = "New England", `2` = "Middle At
                              `7` = "West South Central", `8` = "Mountain", `9` = "Pacific")
 total$agesqrd <- total$age^2
 total$srvlingsqrd <- total$srvlng^2
-total$factorchilren <- recode_factor(total$totchi,`1` = "1", `2` = "2", `3` = "3",
+total$factorchildren <- recode_factor(total$totchi,`1` = "1", `2` = "2", `3` = "3",
                               `4` = "4", `5` = "5", `6` = "6", `7` = "7",
                               `8` = "8", `9` = "9", `10` = "10", `12` = "12")
 ```
@@ -84,12 +84,50 @@ coef1 <- summary(linearmodel)$coefficients[2,1]
 error1 <- summary(linearmodel)$coefficients[2,2]
 
 linearmodel2 <- lm(ngirls ~ genold + region + repub + rgroup + srvlng + female + white + age 
-                  + agesqrd + srvlingsqrd,data = total)
+                  + agesqrd + srvlingsqrd + factorchildren, data = total)
 summary(linearmodel2)
 coef2 <- summary(linearmodel2)$coefficients[2,1]
 error2 <- summary(linearmodel2)$coefficients[2,2]
 
+democrats <- total[ which(total$party=='Dem'),]
+independents <- total[ which(total$party=='Ind'),]
+independents <- independents[1,]
+democrats <- rbind(democrats,independents)
+republicans <- total[ which(total$party=='Rep'),]
 
+linearmodel3 <- lm(totchi ~ genold + region + repub + rgroup + srvlng + female + white + age 
+                  + agesqrd + srvlingsqrd,data = democrats)
+summary(linearmodel3)
+coef3 <- summary(linearmodel3)$coefficients[2,1]
+error3 <- summary(linearmodel3)$coefficients[2,2]
+
+linearmodel4 <- lm(ngirls ~ genold + region + repub + rgroup + srvlng + female + white + age 
+                  + agesqrd + srvlingsqrd + factorchildren, data = democrats)
+summary(linearmodel4)
+coef4 <- summary(linearmodel4)$coefficients[2,1]
+error4 <- summary(linearmodel4)$coefficients[2,2]
+
+linearmodel5 <- lm(totchi ~ genold + region + repub + rgroup + srvlng + female + white + age 
+                  + agesqrd + srvlingsqrd,data = republicans)
+summary(linearmodel5)
+coef5 <- summary(linearmodel5)$coefficients[2,1]
+error5 <- summary(linearmodel5)$coefficients[2,2]
+
+linearmodel6 <- lm(ngirls ~ genold + region + repub + rgroup + srvlng + female + white + age 
+                  + agesqrd + srvlingsqrd + factorchildren, data = republicans)
+summary(linearmodel6)
+coef6 <- summary(linearmodel6)$coefficients[2,1]
+error6 <- summary(linearmodel6)$coefficients[2,2]
+
+coeffs <- c(coef2, coef1, coef4, coef3, coef6, coef5, error2, error1, error4, error3, error6, 
+            error5)
+table <- matrix(coeffs, nrow = 2, ncol = 6, byrow = TRUE)
+
+rownames(table) <- c("First child female", "Standard error")
+colnames(table) <- c("Congress number of daughters", "Congress number of children",
+                     "Dems number of daughters", "Dems number of children",
+                     "GOP number of daughters", "GOP number of children")
+print(table)
 
 ```
 
