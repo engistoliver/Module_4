@@ -2,7 +2,7 @@
 title: "Module 4 - Answers"
 author: "Nastassia Rudak"
 date: "4/15/2020"
-output: pdf_document
+output: html_document
   df_print: kable
 ---
 
