@@ -16,13 +16,27 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 ```{r, message=FALSE}
 
-library(rio)
-library(tidyverse)
+library(rio)    # loading libraries
+library(tidyverse)      
+
+setwd("C:/Users/evans/OneDrive/Documents/Module_4")    # setting WD
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r, message=FALSE}
+
+basic <- import("basic.dta")            # importing basic
+genold108 <- import("genold108.dta")    # importing genold
+
+cong108 <- filter(basic,congress==108)  # creating a variable just for 108th congress
+
+con_gen_108 <- left_join(cong108,genold108,by=c("district","statenam"))  # joining sets
+
+```
+
 
 # Data preparation
 
@@ -33,6 +47,15 @@ library(tidyverse)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r}
+# From inspection of the footnote, we will keep the basic characteristic variables (i.e. name, state, district), the # of daughters/children variables and the joined gender of oldest child variable, and then the control variables listed (race, gender, party, age, age squared, service length, service length squared, religion, region)
+
+con_gen_108 <- con_gen_108[,c(3:7,9,15,17:19,21,63)]  # dropping useless variables
+
+
+```
+
 
 # Replicationg Table 1 from the Appendix
 
