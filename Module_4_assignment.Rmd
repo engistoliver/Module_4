@@ -48,13 +48,31 @@ con_gen_108 <- left_join(cong108,genold108,by=c("district","statenam"))  # joini
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
-```{r}
+```{r, message=FALSE}
 # From inspection of the footnote, we will keep the basic characteristic variables (i.e. name, state, district), the # of daughters/children variables and the joined gender of oldest child variable, and then the control variables listed (race, gender, party, age, age squared, service length, service length squared, religion, region)
 
 con_gen_108 <- con_gen_108[,c(3:7,9,12,15,17:19,21,63)]  # dropping useless variables
-con_gen_108$genold[con_gen_108$genold==""] <- NA    # replacing blanks as NAs
-con_gen_108$genold <- as.factor(con_gen_108$genold)
 
+con_gen_108$genold[con_gen_108$genold==""] <- NA    # replacing blanks as NAs for genold
+con_gen_108$genold <- as.factor(con_gen_108$genold)  # recoding genold as factor
+
+con_gen_108$party[con_gen_108$party==1] <- "D"   # replacing 1,2,3 with D,R,I for party
+con_gen_108$party[con_gen_108$party==2] <- "R"
+con_gen_108$party[con_gen_108$party==3] <- "I"
+
+con_gen_108$party <- as.factor(con_gen_108$party)   # recoding party as factor
+
+con_gen_108$rgroup <- as.factor(con_gen_108$rgroup) # recoding region/religion as factor
+con_gen_108$region <- as.factor(con_gen_108$region)
+
+con_gen_108 <- con_gen_108 %>%   # generating age squared and srvlng squared variables
+  mutate(agesq = age^2)
+
+con_gen_108 <- con_gen_108 %>%
+  mutate(srvlngsq = srvlng^2)
+
+con_gen_108 <- con_gen_108 %>%
+  mutate(totchi_fac = as.factor(totchi)) # generating totchi as a factor variable
 
 ```
 
@@ -68,3 +86,20 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+
+```{r, message=FALSE}
+
+regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   # regressing totchi on genold and controls
+
+beta_totchi <- summary(regression)$coefficients[2,1]
+
+
+regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   # regressing ngirls on genold and controls
+
+beta_ngirls <- summary(regression)$coefficients[2,1]
+
+regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="D"))
+
+
+```
+
