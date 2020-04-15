@@ -51,7 +51,9 @@ con_gen_108 <- left_join(cong108,genold108,by=c("district","statenam"))  # joini
 ```{r}
 # From inspection of the footnote, we will keep the basic characteristic variables (i.e. name, state, district), the # of daughters/children variables and the joined gender of oldest child variable, and then the control variables listed (race, gender, party, age, age squared, service length, service length squared, religion, region)
 
-con_gen_108 <- con_gen_108[,c(3:7,9,15,17:19,21,63)]  # dropping useless variables
+con_gen_108 <- con_gen_108[,c(3:7,9,12,15,17:19,21,63)]  # dropping useless variables
+con_gen_108$genold[con_gen_108$genold==""] <- NA    # replacing blanks as NAs
+con_gen_108$genold <- as.factor(con_gen_108$genold)
 
 
 ```
