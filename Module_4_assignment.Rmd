@@ -129,7 +129,5 @@ colnames(table) <- c("Congress number of daughters", "Congress number of childre
                      "Dems number of daughters", "Dems number of children",
                      "GOP number of daughters", "GOP number of children")
 print(table)
-
-
 ```
 
