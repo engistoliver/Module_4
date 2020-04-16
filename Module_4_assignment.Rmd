@@ -151,8 +151,8 @@ beta_ngirls_reps_se <- round(summary(regression)$coefficients[2,2],digits=2)
 table1 <- matrix(NA, 2, 6) # creating a blank matrix
 
 # renaming the columns to match the paper
-colnames(table1) <- c("# girls","# kids","# girls (D)","# kids (D)",
-                      "# daughters (R)","# kids (R)")   
+colnames(table1) <- c("# Girls","# Kids","# Girls (D)","# Kids (D)",
+                      "# Daughters (R)","# Kids (R)")   
 
  # renaming the rows to match the paper
 rownames(table1) <- c("First girl","SE")
