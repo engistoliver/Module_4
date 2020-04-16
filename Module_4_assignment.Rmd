@@ -16,30 +16,115 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 ```{r, message=FALSE}
 
-library(rio)
-library(tidyverse)
+library('rio')
+library('tidyverse')
+library('expss')
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+
+```{r, message=FALSE}
+Basic <- import("basic.dta")
+Genold108 <- import("genold108.dta")
+glimpse(Basic)
+glimpse(Genold108)
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r, message=FALSE}
+Temp <- Basic %>% filter(congress == 108)
+glimpse(Temp)
+```
+
+
 * join this subset with the *genold* dataset
+```{r}
+genold_set <- left_join(Temp, Genold108, by = c('district', 'statenam'))
+glimpse(genold_set)
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+```{r}
+genold_set <- genold_set %>% select(party, totchi, ngirls, genold, white, female, age, srvlng, rgroup, region )
+glimpse(genold_set)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+is.na(genold_set$female)
+genold_set$female <- factor(genold_set$female, labels = c("male", "female"))
+glimpse(genold_set)
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+genold_set$party <- factor(genold_set$party, labels = c("D", "R", "I"))
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r}
+genold_set$rgroup <- factor(genold_set$rgroup, labels = c("Protestant", "Catholic", "Other Christian", "Other religion", "None"))
+genold_set$region <- as.factor(genold_set$region)
+```
+
 * generate variables for age squared and service length squared
+```{r}
+genold_added <- genold_set %>% mutate(age_squared = age*age, srvlng_squared = srvlng*srvlng)
+glimpse(genold_added)
+```
 * create an additional variable of the number of children as factor variable
+```{r}
+genold_added <- genold_added %>% mutate(totchi_factor = totchi)
+genold_added$totchi_factor <- as.factor(genold_added$totchi_factor)
+```
+
+* filter out data without genold value
+```{r}
+genold_added <- genold_added %>% filter((genold == "G")| (genold == "B"))
+genold_added$genold <- as.factor(genold_added$genold)
+glimpse(genold_added)
+```
+
 
 # Replicationg Table 1 from the Appendix
-
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \ \tilde \quad x$, where $x$ stands for any linear combination of regressors. Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+```{r}
+model <- lm(totchi ~ genold + white + female + party + age + age_squared + srvlng + srvlng_squared + rgroup + region, data = genold_added)
+summary(model)
+```
+
 * Save the main coefficient of interest ($\beta_1$)
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
+```{r}
+genold_added_1 <- genold_added %>% filter((party == "D") |(party == "I"))
+lm1 <- lm(totchi ~ genold + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region, data = genold_added_1)
+summary(lm1)
+
+genold_added_2 <- genold_added %>% filter(party == "R")
+lm2 <- lm(totchi ~ genold + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region, data = genold_added_2)
+summary(lm2)
+```
+
+* Run regression for number of daughters
+```{r}
+model2 <- lm(ngirls ~ genold + totchi_factor + white + female + party + age + age_squared + srvlng + srvlng_squared + rgroup + region, data = genold_added)
+summary(model2)
+
+lm3 <- lm(ngirls ~ genold + totchi_factor + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region, data = genold_added_1)
+summary(lm3)
+
+lm4 <- lm(ngirls ~ genold + totchi_factor + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region, data = genold_added_2)
+summary(lm4)
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+Table <- apply_labels(Table, FC = 'Full Congress', ngirls = 'Number of daughters', totchi = 'Number of children', D = 
+'Democrats', 'R' = 'Republicans', genold = 'First child female, SD = 'SD', n = 'N')
+cro(Table$FC)
+
 * print the table
