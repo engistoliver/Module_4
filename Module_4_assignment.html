@@ -1681,9 +1681,9 @@ con_gen_108 &lt;- left_join(cong108,genold108,by=c(&quot;district&quot;,&quot;st
 # gender of oldest child variable, and then the control variables listed (race, gender,
 # party, age, age squared, service length, service length squared, religion, region).
 
-con_gen_108 &lt;- con_gen_108[,c(3:7,9,12,15:17:19,21,63)]  # dropping useless variables</code></pre>
-<pre><code>## Warning in 15:17:19: numerical expression has 3 elements: only the first used</code></pre>
-<pre class="r"><code>con_gen_108$genold[con_gen_108$genold==&quot;&quot;] &lt;- NA    # replacing blanks as NAs for genold
+con_gen_108 &lt;- con_gen_108[,c(3:7,9,12,15:19,21,63)]  # dropping useless variables
+
+con_gen_108$genold[con_gen_108$genold==&quot;&quot;] &lt;- NA    # replacing blanks as NAs for genold
 con_gen_108$genold &lt;- as.factor(con_gen_108$genold)  # recoding genold as factor
 
 con_gen_108$party[con_gen_108$party==1] &lt;- &quot;D&quot;   # replacing 1,2,3 with D,R,I for party
