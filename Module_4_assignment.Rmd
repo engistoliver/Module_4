@@ -18,11 +18,22 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+getwd()
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+
+```{r, message=FALSE}
+#I couldnt import the data without adding the haven library
+library(haven)
+basic <- read_dta("basic.dta")
+genold <- read_dta("genold108.dta")
+
+data <- merge(filter(basic, congress == 108), genold, by = "name")
+```
 
 # Data preparation
 
@@ -32,7 +43,28 @@ library(tidyverse)
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
-* create an additional variable of the number of children as factor variable
+* create an
+additional variable of the number of children as factor variable
+
+
+```{r, message=FALSE}
+keep <- c("party", "white", "female", "age", "srvlng", "region", "party", "rgroup", "totchi", "ngirls", "nboys",  "repub", "genold")
+data <-data[keep]
+data$genold[data$genold==""]<-NA
+data$party[data$party == 3] <- 1
+data <- na.omit(data, target.colnames = "genold")
+
+data$genold<-as.factor(data$genold)
+data$rgroup<-as.factor(data$rgroup)
+data$region<-as.factor(data$region)
+data["age2"]<-data["age"]^2
+data["srvlng2"]<-data["srvlng"]^2
+data["vno_ch"] = as.factor(data$totchi)
+data$party<-as.factor(data$party)
+
+#check if we have 227 rows
+length(data$genold) == 227
+```
 
 # Replicationg Table 1 from the Appendix
 
@@ -43,3 +75,49 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+
+
+```{r, message=FALSE}
+#1...dem
+#2...rep
+data_D <- filter(data, party == 1)
+data_R <- filter(data, party == 2)
+
+
+
+fit1 <- lm(totchi ~ genold + white + female + party + age + age2 +
+            srvlng + srvlng2  + region + rgroup, data)
+beta1 = coefficients(fit1)[2]
+fit2 <- lm(ngirls ~ genold + white + female + party + age + age2 +
+            srvlng + srvlng2  + region + rgroup, data)
+beta2 = coefficients(fit2)[2]
+#dem
+fit1D <- lm(totchi ~ genold + white + female  + age + age2 +
+            srvlng + srvlng2  + region + rgroup, data_D)
+beta1D = coefficients(fit1D)[2]
+fit2D <- lm(ngirls ~ genold + white + female  + age + age2 +
+            srvlng + srvlng2  + region + rgroup, data_D)
+beta2D = coefficients(fit2D)[2]
+#rep
+fit1R <- lm(totchi ~ genold + white + female  + age + age2 +
+            srvlng + srvlng2  + region + rgroup, data_R)
+beta1R = coefficients(fit1R)[2]
+fit2R <- lm(ngirls ~ genold + white + female  + age + age2 +
+            srvlng + srvlng2  + region + rgroup, data_R)
+beta2R = coefficients(fit2R)[2]
+
+
+
+result <- data.frame(c("first child female","standard error"))
+
+result["full/no of children"] <- c(beta1,summary(fit1)$coefficients[2,2])
+result["full/no of girls"] <- c(beta2,summary(fit2)$coefficients[2,2])
+
+result["dem/no of children"] <- c(beta1D,summary(fit1D)$coefficients[2,2])
+result["dem/no of girls"] <- c(beta2D,summary(fit2D)$coefficients[2,2])
+
+result["rep/no of children"] <- c(beta1R,summary(fit1R)$coefficients[2,2])
+result["rep/no of girls"] <- c(beta2R,summary(fit2R)$coefficients[2,2])
+result
+```
+
