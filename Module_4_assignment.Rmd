@@ -2,7 +2,10 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -18,6 +21,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)    # loading libraries
 library(tidyverse)      
+library(knitr)
 
 setwd("C:/Users/evans/OneDrive/Documents/Module_4")    # setting WD
 ```
@@ -49,7 +53,10 @@ con_gen_108 <- left_join(cong108,genold108,by=c("district","statenam"))  # joini
 * create an additional variable of the number of children as factor variable
 
 ```{r, message=FALSE}
-# From inspection of the footnote, we will keep the basic characteristic variables (i.e. name, state, district), the # of daughters/children variables and the joined gender of oldest child variable, and then the control variables listed (race, gender, party, age, age squared, service length, service length squared, religion, region)
+# From inspection of the footnote, we will keep the basic characteristic variables 
+# (i.e. name, state, district), the # of daughters/children variables and the joined
+# gender of oldest child variable, and then the control variables listed (race, gender,
+# party, age, age squared, service length, service length squared, religion, region).
 
 con_gen_108 <- con_gen_108[,c(3:7,9,12,15,17:19,21,63)]  # dropping useless variables
 
@@ -89,47 +96,75 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 ```{r, message=FALSE}
 
-regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   
 # regressing totchi on genold and controls
+regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region,con_gen_108)   
 
-beta_totchi <- summary(regression)$coefficients[2,1]
-beta_totchi_se <- summary(regression)$coefficients[2,2]
+# saving the coefficient and SE
+beta_totchi <- round(summary(regression)$coefficients[2,1],digits=2)   
+beta_totchi_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
-regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108)   
 # regressing ngirls on genold and controls
+regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng +
+                   srvlngsq + rgroup + region + totchi_fac,con_gen_108)   
 
-beta_ngirls <- summary(regression)$coefficients[2,1]
-beta_ngirls_se <- summary(regression)$coefficients[2,2]
+# saving the coefficient and SE
+beta_ngirls <- round(summary(regression)$coefficients[2,1],digits=2)   
+beta_ngirls_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
-regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="D" | name.x =="SANDERS, BERNARD"))
+# regressing totchi on genold and controls for dems and bernie
+regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region,con_gen_108,
+                 subset = (party=="D" | name.x =="SANDERS, BERNARD"))
 
-beta_totchi_dems <- summary(regression)$coefficients[2,1]
-beta_totchi_dems_se <- summary(regression)$coefficients[2,2]
+# saving the coefficient and SE
+beta_totchi_dems <- round(summary(regression)$coefficients[2,1],digits=2) 
+beta_totchi_dems_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
-regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party=="D" | name.x =="SANDERS, BERNARD"))
+# regressing ngirls on genold and controls for dems and bernie
+regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region + totchi_fac,con_gen_108,
+                 subset = (party=="D" | name.x =="SANDERS, BERNARD"))
 
-beta_ngirls_dems <- summary(regression)$coefficients[2,1]
-beta_ngirls_dems_se <- summary(regression)$coefficients[2,2]
+# saving the coefficient and SE
+beta_ngirls_dems <- round(summary(regression)$coefficients[2,1],digits=2) 
+beta_ngirls_dems_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
-regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="R"))
+# regressing totchi on genold and controls for reps
+regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng +
+                   srvlngsq + rgroup + region,con_gen_108,
+                 subset = (party=="R"))
 
-beta_totchi_reps <- summary(regression)$coefficients[2,1]
-beta_totchi_reps_se <- summary(regression)$coefficients[2,2]
+# saving the coefficient and SE
+beta_totchi_reps <- round(summary(regression)$coefficients[2,1],digits=2) 
+beta_totchi_reps_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
-regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party=="R"))
+# regressing ngirls on genold and controls for reps
+regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region + totchi_fac,con_gen_108,
+                 subset = (party=="R"))
 
-beta_ngirls_reps <- summary(regression)$coefficients[2,1]
-beta_ngirls_reps_se <- summary(regression)$coefficients[2,2]
+# saving the coefficient and SE
+beta_ngirls_reps <- round(summary(regression)$coefficients[2,1],digits=2) 
+beta_ngirls_reps_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
-table1 <- matrix(NA, 2, 6)
+table1 <- matrix(NA, 2, 6) # creating a blank matrix
 
-colnames(table1) <- c("# of daughters","# of children","# of daughters - Dems","# of children - Dems","# of daughters - Reps","# of children - Reps")
-rownames(table1) <- c("First child female","Standard error")
+# renaming the columns to match the paper
+colnames(table1) <- c("# girls","# kids","# girls (D)","# kids (D)",
+                      "# daughters (R)","# kids (R)")   
 
-table1[1,1:6] <- c(beta_ngirls,beta_totchi,beta_ngirls_dems,beta_totchi_dems,beta_ngirls_reps,beta_totchi_reps)
-table1[2,1:6] <- c(beta_ngirls_se,beta_totchi_se,beta_ngirls_dems_se,beta_totchi_dems_se,beta_ngirls_reps_se,beta_totchi_reps_se)
+ # renaming the rows to match the paper
+rownames(table1) <- c("First girl","SE")
+
+# filling in the values
+table1[1,1:6] <- c(beta_ngirls,beta_totchi,beta_ngirls_dems,beta_totchi_dems,
+                   beta_ngirls_reps,beta_totchi_reps)
+table1[2,1:6] <- c(beta_ngirls_se,beta_totchi_se,beta_ngirls_dems_se,
+                   beta_totchi_dems_se,beta_ngirls_reps_se,beta_totchi_reps_se)
 
 print(table1)
+
 
 ```
 
