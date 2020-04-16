@@ -1676,11 +1676,14 @@ con_gen_108 &lt;- left_join(cong108,genold108,by=c(&quot;district&quot;,&quot;st
 <li>generate variables for age squared and service length squared</li>
 <li>create an additional variable of the number of children as factor variable</li>
 </ul>
-<pre class="r"><code># From inspection of the footnote, we will keep the basic characteristic variables (i.e. name, state, district), the # of daughters/children variables and the joined gender of oldest child variable, and then the control variables listed (race, gender, party, age, age squared, service length, service length squared, religion, region)
+<pre class="r"><code># From inspection of the footnote, we will keep the basic characteristic variables 
+# (i.e. name, state, district), the # of daughters/children variables and the joined
+# gender of oldest child variable, and then the control variables listed (race, gender,
+# party, age, age squared, service length, service length squared, religion, region).
 
-con_gen_108 &lt;- con_gen_108[,c(3:7,9,12,15,17:19,21,63)]  # dropping useless variables
-
-con_gen_108$genold[con_gen_108$genold==&quot;&quot;] &lt;- NA    # replacing blanks as NAs for genold
+con_gen_108 &lt;- con_gen_108[,c(3:7,9,12,15:17:19,21,63)]  # dropping useless variables</code></pre>
+<pre><code>## Warning in 15:17:19: numerical expression has 3 elements: only the first used</code></pre>
+<pre class="r"><code>con_gen_108$genold[con_gen_108$genold==&quot;&quot;] &lt;- NA    # replacing blanks as NAs for genold
 con_gen_108$genold &lt;- as.factor(con_gen_108$genold)  # recoding genold as factor
 
 con_gen_108$party[con_gen_108$party==1] &lt;- &quot;D&quot;   # replacing 1,2,3 with D,R,I for party
@@ -1712,53 +1715,75 @@ con_gen_108 &lt;- con_gen_108 %&gt;%
 <li>print the table</li>
 </ul>
 <pre class="r"><code># regressing totchi on genold and controls
-regression &lt;- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   
+regression &lt;- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region,con_gen_108)   
 
-beta_totchi &lt;- round(summary(regression)$coefficients[2,1],digits=2)   # saving the coefficient and SE
+# saving the coefficient and SE
+beta_totchi &lt;- round(summary(regression)$coefficients[2,1],digits=2)   
 beta_totchi_se &lt;- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing ngirls on genold and controls
-regression &lt;- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108)   
+regression &lt;- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng +
+                   srvlngsq + rgroup + region + totchi_fac,con_gen_108)   
 
-beta_ngirls &lt;- round(summary(regression)$coefficients[2,1],digits=2)   # saving the coefficient and SE
+# saving the coefficient and SE
+beta_ngirls &lt;- round(summary(regression)$coefficients[2,1],digits=2)   
 beta_ngirls_se &lt;- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing totchi on genold and controls for dems and bernie
-regression &lt;- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party==&quot;D&quot; | name.x ==&quot;SANDERS, BERNARD&quot;))
+regression &lt;- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region,con_gen_108,
+                 subset = (party==&quot;D&quot; | party==&quot;I&quot;))
 
-beta_totchi_dems &lt;- round(summary(regression)$coefficients[2,1],digits=2) # saving the coefficient and SE
+# saving the coefficient and SE
+beta_totchi_dems &lt;- round(summary(regression)$coefficients[2,1],digits=2) 
 beta_totchi_dems_se &lt;- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing ngirls on genold and controls for dems and bernie
-regression &lt;- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party==&quot;D&quot; | name.x ==&quot;SANDERS, BERNARD&quot;))
+regression &lt;- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region + totchi_fac,con_gen_108,
+                 subset = (party==&quot;D&quot; | party==&quot;I&quot;))
 
-beta_ngirls_dems &lt;- round(summary(regression)$coefficients[2,1],digits=2) # saving the coefficient and SE
+# saving the coefficient and SE
+beta_ngirls_dems &lt;- round(summary(regression)$coefficients[2,1],digits=2) 
 beta_ngirls_dems_se &lt;- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing totchi on genold and controls for reps
-regression &lt;- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party==&quot;R&quot;))
+regression &lt;- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng +
+                   srvlngsq + rgroup + region,con_gen_108,
+                 subset = (party==&quot;R&quot;))
 
-beta_totchi_reps &lt;- round(summary(regression)$coefficients[2,1],digits=2) # saving the coefficient and SE
+# saving the coefficient and SE
+beta_totchi_reps &lt;- round(summary(regression)$coefficients[2,1],digits=2) 
 beta_totchi_reps_se &lt;- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing ngirls on genold and controls for reps
-regression &lt;- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party==&quot;R&quot;))
+regression &lt;- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
+                   srvlngsq + rgroup + region + totchi_fac,con_gen_108,
+                 subset = (party==&quot;R&quot;))
 
-beta_ngirls_reps &lt;- round(summary(regression)$coefficients[2,1],digits=2) # saving the coefficient and SE
+# saving the coefficient and SE
+beta_ngirls_reps &lt;- round(summary(regression)$coefficients[2,1],digits=2) 
 beta_ngirls_reps_se &lt;- round(summary(regression)$coefficients[2,2],digits=2)
 
 table1 &lt;- matrix(NA, 2, 6) # creating a blank matrix
 
-colnames(table1) &lt;- c(&quot;# girls&quot;,&quot;# kids&quot;,&quot;# girls (D)&quot;,&quot;# kids (D)&quot;,&quot;# daughters (R)&quot;,&quot;# kids (R)&quot;)   # renaming the columns to match the paper
-rownames(table1) &lt;- c(&quot;First girl&quot;,&quot;SE&quot;) # renaming the rows to match the paper
+# renaming the columns to match the paper
+colnames(table1) &lt;- c(&quot;# Girls&quot;,&quot;# Kids&quot;,&quot;# Girls (D)&quot;,&quot;# Kids (D)&quot;,
+                      &quot;# Daughters (R)&quot;,&quot;# Kids (R)&quot;)   
+
+ # renaming the rows to match the paper
+rownames(table1) &lt;- c(&quot;First girl&quot;,&quot;SE&quot;)
 
 # filling in the values
-table1[1,1:6] &lt;- c(beta_ngirls,beta_totchi,beta_ngirls_dems,beta_totchi_dems,beta_ngirls_reps,beta_totchi_reps)
-table1[2,1:6] &lt;- c(beta_ngirls_se,beta_totchi_se,beta_ngirls_dems_se,beta_totchi_dems_se,beta_ngirls_reps_se,beta_totchi_reps_se)
+table1[1,1:6] &lt;- c(beta_ngirls,beta_totchi,beta_ngirls_dems,beta_totchi_dems,
+                   beta_ngirls_reps,beta_totchi_reps)
+table1[2,1:6] &lt;- c(beta_ngirls_se,beta_totchi_se,beta_ngirls_dems_se,
+                   beta_totchi_dems_se,beta_ngirls_reps_se,beta_totchi_reps_se)
 
 print(table1)</code></pre>
-<pre><code>##            # girls # kids # girls (D) # kids (D) # daughters (R) # kids (R)
-## First girl    1.36  -0.08        1.39       0.09            1.23      -0.28
+<pre><code>##            # Girls # Kids # Girls (D) # Kids (D) # Daughters (R) # Kids (R)
+## First girl    1.36  -0.09        1.39       0.07            1.23      -0.28
 ## SE            0.08   0.15        0.11       0.18            0.11       0.23</code></pre>
 </div>
 

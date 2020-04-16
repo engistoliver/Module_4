@@ -3,9 +3,9 @@ title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -58,7 +58,7 @@ con_gen_108 <- left_join(cong108,genold108,by=c("district","statenam"))  # joini
 # gender of oldest child variable, and then the control variables listed (race, gender,
 # party, age, age squared, service length, service length squared, religion, region).
 
-con_gen_108 <- con_gen_108[,c(3:7,9,12,15,17:19,21,63)]  # dropping useless variables
+con_gen_108 <- con_gen_108[,c(3:7,9,12,15:17:19,21,63)]  # dropping useless variables
 
 con_gen_108$genold[con_gen_108$genold==""] <- NA    # replacing blanks as NAs for genold
 con_gen_108$genold <- as.factor(con_gen_108$genold)  # recoding genold as factor
@@ -97,7 +97,7 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 ```{r, message=FALSE}
 
 # regressing totchi on genold and controls
-regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + 
+regression <- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
                    srvlngsq + rgroup + region,con_gen_108)   
 
 # saving the coefficient and SE
@@ -105,7 +105,7 @@ beta_totchi <- round(summary(regression)$coefficients[2,1],digits=2)
 beta_totchi_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing ngirls on genold and controls
-regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng +
+regression <- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng +
                    srvlngsq + rgroup + region + totchi_fac,con_gen_108)   
 
 # saving the coefficient and SE
@@ -113,25 +113,25 @@ beta_ngirls <- round(summary(regression)$coefficients[2,1],digits=2)
 beta_ngirls_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing totchi on genold and controls for dems and bernie
-regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + 
+regression <- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
                    srvlngsq + rgroup + region,con_gen_108,
-                 subset = (party=="D" | name.x =="SANDERS, BERNARD"))
+                 subset = (party=="D" | party=="I"))
 
 # saving the coefficient and SE
 beta_totchi_dems <- round(summary(regression)$coefficients[2,1],digits=2) 
 beta_totchi_dems_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing ngirls on genold and controls for dems and bernie
-regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + 
+regression <- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
                    srvlngsq + rgroup + region + totchi_fac,con_gen_108,
-                 subset = (party=="D" | name.x =="SANDERS, BERNARD"))
+                 subset = (party=="D" | party=="I"))
 
 # saving the coefficient and SE
 beta_ngirls_dems <- round(summary(regression)$coefficients[2,1],digits=2) 
 beta_ngirls_dems_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing totchi on genold and controls for reps
-regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng +
+regression <- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng +
                    srvlngsq + rgroup + region,con_gen_108,
                  subset = (party=="R"))
 
@@ -140,7 +140,7 @@ beta_totchi_reps <- round(summary(regression)$coefficients[2,1],digits=2)
 beta_totchi_reps_se <- round(summary(regression)$coefficients[2,2],digits=2)
 
 # regressing ngirls on genold and controls for reps
-regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + 
+regression <- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
                    srvlngsq + rgroup + region + totchi_fac,con_gen_108,
                  subset = (party=="R"))
 
