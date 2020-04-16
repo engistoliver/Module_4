@@ -94,11 +94,26 @@ regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng
 beta_totchi <- summary(regression)$coefficients[2,1]
 
 
-regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   # regressing ngirls on genold and controls
+regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108)   # regressing ngirls on genold and controls
 
 beta_ngirls <- summary(regression)$coefficients[2,1]
 
-regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="D"))
+regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="D" | name.x =="SANDERS, BERNARD"))
+
+beta_totchi_dems <- summary(regression)$coefficients[2,1]
+
+regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party=="D" | name.x =="SANDERS, BERNARD"))
+
+beta_ngirls_dems <- summary(regression)$coefficients[2,1]
+
+regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="R"))
+
+beta_totchi_reps <- summary(regression)$coefficients[2,1]
+
+regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party=="R"))
+
+beta_ngirls_reps <- summary(regression)$coefficients[2,1]
+
 
 
 ```
