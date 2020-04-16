@@ -89,32 +89,47 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 ```{r, message=FALSE}
 
-regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   # regressing totchi on genold and controls
+regression <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108)   
+# regressing totchi on genold and controls
 
 beta_totchi <- summary(regression)$coefficients[2,1]
+beta_totchi_se <- summary(regression)$coefficients[2,2]
 
-
-regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108)   # regressing ngirls on genold and controls
+regression <- lm(ngirls ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108)   
+# regressing ngirls on genold and controls
 
 beta_ngirls <- summary(regression)$coefficients[2,1]
+beta_ngirls_se <- summary(regression)$coefficients[2,2]
 
 regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="D" | name.x =="SANDERS, BERNARD"))
 
 beta_totchi_dems <- summary(regression)$coefficients[2,1]
+beta_totchi_dems_se <- summary(regression)$coefficients[2,2]
 
 regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party=="D" | name.x =="SANDERS, BERNARD"))
 
 beta_ngirls_dems <- summary(regression)$coefficients[2,1]
+beta_ngirls_dems_se <- summary(regression)$coefficients[2,2]
 
 regression <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region,con_gen_108,subset = (party=="R"))
 
 beta_totchi_reps <- summary(regression)$coefficients[2,1]
+beta_totchi_reps_se <- summary(regression)$coefficients[2,2]
 
 regression <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi_fac,con_gen_108,subset = (party=="R"))
 
 beta_ngirls_reps <- summary(regression)$coefficients[2,1]
+beta_ngirls_reps_se <- summary(regression)$coefficients[2,2]
 
+table1 <- matrix(NA, 2, 6)
 
+colnames(table1) <- c("# of daughters","# of children","# of daughters - Dems","# of children - Dems","# of daughters - Reps","# of children - Reps")
+rownames(table1) <- c("First child female","Standard error")
+
+table1[1,1:6] <- c(beta_ngirls,beta_totchi,beta_ngirls_dems,beta_totchi_dems,beta_ngirls_reps,beta_totchi_reps)
+table1[2,1:6] <- c(beta_ngirls_se,beta_totchi_se,beta_ngirls_dems_se,beta_totchi_dems_se,beta_ngirls_reps_se,beta_totchi_reps_se)
+
+print(table1)
 
 ```
 
