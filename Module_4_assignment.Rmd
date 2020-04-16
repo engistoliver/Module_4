@@ -18,6 +18,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library('rio')
 library('tidyverse')
+library('knitr')
 library('expss')
 ```
 
@@ -123,8 +124,22 @@ summary(lm4)
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
-Table <- apply_labels(Table, FC = 'Full Congress', ngirls = 'Number of daughters', totchi = 'Number of children', D = 
-'Democrats', 'R' = 'Republicans', genold = 'First child female, SD = 'SD', n = 'N')
-cro(Table$FC)
+```{r}
+Column1 <- c('1.36***', '0.08', '227')
+Column2 <- c('-0.09', '0.15', '227')
+Column3 <- c('1.39***', '0.11', '105')
+Column4 <- c('0.07', '0.18', '105')
+Column5 <- c('1.23***', '0.11', '122')
+Column6 <- c('-0.28', '0.23', '122')
+
+Table <- data.frame(Column1, Column2, Column3, Column4, Column5, Column6 )
+row.names(Table) <- c('First child female','SD','N')
+colnames(Table) <- c('Number of daughters', 'Number of children', 'Number of daughters', 'Number of children','Number of daughters', 'Number of children')
+add_header_above(c(" " = 1, "Full Congress" = 2, "Democrats" = 2, "Republicans" = 2))
+Table
+
+```
+
+
 
 * print the table
