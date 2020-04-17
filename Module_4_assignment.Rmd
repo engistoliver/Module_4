@@ -18,11 +18,22 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+
+setwd('C:/Users/Hanzhe Zhao/Documents/Module_4')
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r}
+basic_data <- import('basic.dta') %>% as_tibble()
+genold_data <- import('genold108.dta') %>% as_tibble()
+
+basic108_data <- filter(basic_data, congress == 108)
+
+basic108_data <- left_join(basic108_data, genold_data, by = c('name', 'district', 'statenam'))
+```
 
 # Data preparation
 
@@ -33,6 +44,19 @@ library(tidyverse)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r}
+op_data <- select(basic108_data, white, genold, party, age, srvlng, rgroup, region, ngirls, totchi)
+
+op_data$genold <- na_if(op_data$genold, '') %>% as.factor()
+op_data$party <- factor(op_data$party, levels = c(1, 2, 3), labels = c('D', 'R', 'I'))
+op_data$rgroup <- as.factor(op_data$rgroup)
+op_data$region <- as.factor(op_data$region)
+
+op_data <- mutate(op_data, age_aqr = age^2, srvlng_sqr = srvlng^2)
+
+op_data <- mutate(op_data, totchi_factor = as.factor(op_data$totchi))
+```
 
 # Replicationg Table 1 from the Appendix
 
