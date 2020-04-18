@@ -74,7 +74,8 @@ reg_result <- function(lm){
   result <- summary(lm)[['coefficients']]
   coef <- result['genoldG', "Estimate"]
   std.error <- result['genoldG', "Std. Error"]
-  return (c(coef, std.error))
+  N <- nrow(lm[["model"]])
+  return (c(coef, std.error, N))
 }
 
 # Regression with totchi as dependent variable
@@ -83,6 +84,7 @@ lm_tc <- lm(totchi ~  genold + white + female + party + age + age_sqr
 
 coef_tc <- reg_result(lm_tc)[1]
 std.error_tc <- reg_result(lm_tc)[2]
+N_tc <- reg_result(lm_tc)[3]
 
 # Regression with ngirls as dependent variable
 lm_tg <- lm(ngirls ~  genold + white + female + party + age + age_sqr 
@@ -90,6 +92,7 @@ lm_tg <- lm(ngirls ~  genold + white + female + party + age + age_sqr
 
 coef_tg <- reg_result(lm_tg)[1]
 std.error_tg <- reg_result(lm_tg)[2]
+N_tg <- reg_result(lm_tg)[3]
 ```
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
@@ -97,9 +100,9 @@ std.error_tg <- reg_result(lm_tg)[2]
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 
 ```{r}
-# Assign the independent to Republicans
-op_data_de <- filter(op_data, party == 'D')
-op_data_re <- filter(op_data, party != 'R')
+# Assign the independent to Democrats
+op_data_de <- filter(op_data, party != 'R')
+op_data_re <- filter(op_data, party == 'R')
 
 # Regression with totchi as dependent variable, Democrats group
 lm_tcd <- lm(totchi ~  genold + white + female + age + age_sqr 
@@ -107,6 +110,7 @@ lm_tcd <- lm(totchi ~  genold + white + female + age + age_sqr
 
 coef_tcd <- reg_result(lm_tcd)[1]
 std.error_tcd <- reg_result(lm_tcd)[2]
+N_tcd <- reg_result(lm_tcd)[3]
 
 # Regression with ngirls as dependent variable, Democrats group
 lm_tgd <- lm(ngirls ~  genold + white + female + age + age_sqr 
@@ -114,6 +118,7 @@ lm_tgd <- lm(ngirls ~  genold + white + female + age + age_sqr
 
 coef_tgd <- reg_result(lm_tgd)[1]
 std.error_tgd <- reg_result(lm_tgd)[2]
+N_tgd <- reg_result(lm_tgd)[3]
 
 # Regression with totchi as dependent variable, Republicans group
 lm_tcr <- lm(totchi ~  genold + white + female + age + age_sqr 
@@ -121,6 +126,7 @@ lm_tcr <- lm(totchi ~  genold + white + female + age + age_sqr
 
 coef_tcr <- reg_result(lm_tcr)[1]
 std.error_tcr <- reg_result(lm_tcr)[2]
+N_tcr <- reg_result(lm_tcr)[3]
 
 # Regression with ngirls as dependent variable, Republicans group
 lm_tgr <- lm(ngirls ~  genold + white + female + age + age_sqr 
@@ -128,7 +134,8 @@ lm_tgr <- lm(ngirls ~  genold + white + female + age + age_sqr
 
 coef_tgr <- reg_result(lm_tgr)[1]
 std.error_tgr <- reg_result(lm_tgr)[2]
+N_tgr <- reg_result(lm_tgr)[3]
 ```
 
-* print the table
+* Print the table
 
