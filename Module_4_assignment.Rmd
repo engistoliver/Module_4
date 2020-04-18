@@ -1,7 +1,7 @@
 ---
-title: "Module 4 - Instructions"
-author: "Oliver Engist"
-date: "3/25/2020"
+title: "Module 4 - Assignment"
+author: "Edvin Ahlander (23826)"
+date: "4/17/2020"
 output: pdf_document
 ---
 
@@ -80,9 +80,9 @@ reg1 <- lm(totchi ~ genold + white + female + party + age + srvlng + rgroup + re
 
 reg2 <- lm(ngirls ~ genold + white + female + party + age + srvlng + rgroup + region + agesq + srvlngsq + totchifac, data = basic108)
 
-reg3 <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq, data=subset(basic108, party == "D" | name == "SANDERS, BERNARD"))
+reg3 <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq, data=subset(basic108, party == "D" | party == "I"))
 
-reg4 <- lm(ngirls ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq + totchifac, data=subset(basic108, party == "D" | name == "SANDERS, BERNARD"))
+reg4 <- lm(ngirls ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq + totchifac, data=subset(basic108, party == "D" | party == "I"))
 
 reg5 <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region + agesq + srvlngsq, data=subset(basic108, party == "R"))
 
@@ -99,7 +99,7 @@ output6 <- summary(reg6)
 
 stderrors <- c(output1$coefficients[2,2],output2$coefficients[2,2],output3$coefficients[2,2],output4$coefficients[2,2],output5$coefficients[2,2],output6$coefficients[2,2])
 
-N <- c(227,227,104,104,122,122)
+N <- c(227,227,105,105,122,122)
 N <- as.integer(N)
 
 table1 <- matrix(c(Betas,stderrors,N), ncol=6,nrow=3, byrow=TRUE)
@@ -107,15 +107,7 @@ table1 <- matrix(c(Betas,stderrors,N), ncol=6,nrow=3, byrow=TRUE)
 colnames(table1) <- c("FC, # of Children", "FC, # of Daughters", "Dem, # of Children", "Dem, # of Daughters", "Rep, # of Children", "Rep, # of Daughters")
 rownames(table1) <- c("First Child Female", "Standard Error", "N")
 
-table1 <- as.table(table1)
-
-table1
-
-summary(reg1)
-
-table <- matrix(ncol=6, nrow=3)
-
-
+print(table1)
 
 ```
 
