@@ -31,12 +31,12 @@ vars <- c("party", "genold", "ngirls", "totchi", "female", "white", "age",
           "srvlng","rgroup", "region")
 genold <- genold[vars]
 
-## Change variable classes
+## Change variable classes (+ reclassify independent as democrat)
 ## + generate variables for agesq and srvlnsq
 ## + generate factor variable for number of children
 genold <- mutate(genold,
                  genold = as_factor(na_if(genold, "")),
-                 party = factor(party, labels = c("D", "R", "I")),
+                 party = factor(party, labels = c("D", "R", "D")),
                  rgroup = as_factor(rgroup),
                  region = as_factor(region),
                  agesq = age^2,
@@ -44,6 +44,8 @@ genold <- mutate(genold,
                  totchi_f = as_factor(totchi))
 str(genold)
 
+# Drop observations for which we don't know genold
+genold <- drop_na(genold, genold)
 
 
 
@@ -59,6 +61,8 @@ rep_genold <- subset(genold, party == "R")
 reg <- lm(totchi ~ genold + female + white + age + agesq +
             srvlng + srvlngsq + rgroup + region,
           genold)
+summary(reg)
+
 ## Save beta1 and standard error
 betas <- c(coef(summary(reg))[2,1], coef(summary(reg))[2,2])
 
@@ -105,18 +109,22 @@ obs <- append(obs[-4], obs[-4])
 
 
 # Change table column names and row names
-colnames(betas) <- c("Full Congress: Number of Daughters",
-                     "Democrats: Number of Daughters",
-                     "Republicans: Number of Daughters",
-                     "Full Congress: Number of Children",
+colnames(betas) <- c("Full Congress: Number of Children",
                      "Democrats: Number of Children",
-                     "Republicans: Number of Children")
+                     "Republicans: Number of Children",
+                     "Full Congress: Number of Daughters",
+                     "Democrats: Number of Daughters",
+                     "Republicans: Number of Daughters"
+                     )
 betas <- round(betas, 3)
 betas <- rbind(betas, obs)
 betas <- as.data.frame(betas) %>% mutate(Metric = c("First child female", "Standard error", "N"))
 
 # Rearrange columns
-betas <- betas[,c(7,1,4,2,5,3,6)]
+betas <- betas[,c(7,4,1,5,2,6,3)]
+
+# Print table
+betas
 
 # Create spanning headers
 betas %>% gt() %>% tab_spanner_delim(delim = ":")
