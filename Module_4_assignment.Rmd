@@ -66,31 +66,69 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 
+* Save the main coefficient of interest ($\beta_1$)
+
 ```{r}
+# Creata a function to generate coefficient estimate and standard error
+reg_result <- function(lm){
+  result <- summary(lm)[['coefficients']]
+  coef <- result['genoldG', "Estimate"]
+  std.error <- result['genoldG', "Std. Error"]
+  return (c(coef, std.error))
+}
+
 # Regression with totchi as dependent variable
 lm_tc <- lm(totchi ~  genold + white + female + party + age + age_sqr 
             + srvlng + srvlng_sqr + rgroup + region, data = op_data)
-coef_tc <- coefficients(lm_tc) %>% as.matrix() %>% t() %>% as_tibble()
+
+coef_tc <- reg_result(lm_tc)[1]
+std.error_tc <- reg_result(lm_tc)[2]
 
 # Regression with ngirls as dependent variable
 lm_tg <- lm(ngirls ~  genold + white + female + party + age + age_sqr 
             + srvlng + srvlng_sqr + rgroup + region + totchi_factor, data = op_data)
-coef_tg <- coefficients(lm_tg) %>% as.matrix() %>% t() %>% as_tibble()
-```
 
-* Save the main coefficient of interest ($\beta_1$)
-
-```{r}
-beta_1_tc <- coef_tc$genoldG
-beta_1_tg <- coef_tg$genoldG
+coef_tg <- reg_result(lm_tg)[1]
+std.error_tg <- reg_result(lm_tg)[2]
 ```
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 
-```{r}
-
-```
-
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 
+```{r}
+# Assign the independent to Republicans
+op_data_de <- filter(op_data, party == 'D')
+op_data_re <- filter(op_data, party != 'R')
+
+# Regression with totchi as dependent variable, Democrats group
+lm_tcd <- lm(totchi ~  genold + white + female + age + age_sqr 
+            + srvlng + srvlng_sqr + rgroup + region, data = op_data_de)
+
+coef_tcd <- reg_result(lm_tcd)[1]
+std.error_tcd <- reg_result(lm_tcd)[2]
+
+# Regression with ngirls as dependent variable, Democrats group
+lm_tgd <- lm(ngirls ~  genold + white + female + age + age_sqr 
+            + srvlng + srvlng_sqr + rgroup + region + totchi_factor, data = op_data_de)
+
+coef_tgd <- reg_result(lm_tgd)[1]
+std.error_tgd <- reg_result(lm_tgd)[2]
+
+# Regression with totchi as dependent variable, Republicans group
+lm_tcr <- lm(totchi ~  genold + white + female + age + age_sqr 
+            + srvlng + srvlng_sqr + rgroup + region, data = op_data_re)
+
+coef_tcr <- reg_result(lm_tcr)[1]
+std.error_tcr <- reg_result(lm_tcr)[2]
+
+# Regression with ngirls as dependent variable, Republicans group
+lm_tgr <- lm(ngirls ~  genold + white + female + age + age_sqr 
+            + srvlng + srvlng_sqr + rgroup + region + totchi_factor, data = op_data_re)
+
+coef_tgr <- reg_result(lm_tgr)[1]
+std.error_tgr <- reg_result(lm_tgr)[2]
+```
+
 * print the table
+
