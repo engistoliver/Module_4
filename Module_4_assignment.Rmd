@@ -2,7 +2,10 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -18,6 +21,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+library(knitr)
 
 setwd('C:/Users/Hanzhe Zhao/Documents/Module_4')
 ```
@@ -77,7 +81,9 @@ reg_result <- function(lm){
   N <- nrow(lm[["model"]])
   return (c(coef, std.error, N))
 }
+```
 
+```{r}
 # Regression with totchi as dependent variable
 lm_tc <- lm(totchi ~  genold + white + female + party + age + age_sqr 
             + srvlng + srvlng_sqr + rgroup + region, data = op_data)
@@ -131,11 +137,32 @@ N_tcr <- reg_result(lm_tcr)[3]
 # Regression with ngirls as dependent variable, Republicans group
 lm_tgr <- lm(ngirls ~  genold + white + female + age + age_sqr 
             + srvlng + srvlng_sqr + rgroup + region + totchi_factor, data = op_data_re)
-
+  
 coef_tgr <- reg_result(lm_tgr)[1]
 std.error_tgr <- reg_result(lm_tgr)[2]
 N_tgr <- reg_result(lm_tgr)[3]
 ```
 
-* Print the table
+```{r}
+# Create a table of result
+table <- matrix (c(coef_tg, coef_tc, coef_tgd, coef_tcd, coef_tgr, coef_tcr,
+                 std.error_tg, std.error_tc, std.error_tgd, 
+                 std.error_tcd, std.error_tgr, std.error_tcr,
+                 N_tg, N_tc, N_tgd, N_tcd, N_tgr, N_tcr),
+                 nrow = 3, ncol = 6, byrow = TRUE)
 
+# Set rownames and colnames
+rownames(table) <- c('First child F', 'std. error','N') 
+#colnames(table) <- c('Full_Numbers of daughters', 'Full_Numbers of children',
+#                     'De_Numbers of daughters', 'De_Numbers of children', 
+#                     'Re_Numbers of daughters', 'Re_Numbers of children') 
+colnames(table) <- c('Full_num_da', 'Full_num_ch',
+                     'De_num_da', 'De_num_ch', 
+                     'Re_num_da', 'Re_num_ch') 
+```
+
+* Print the table
+```{r}
+knitr::kable(table, digits = 2, align = 'c', caption = "Appendix Table 1:
+             Evidence on Legislator Child Gender Mix Selection, 108th Congress") 
+```
