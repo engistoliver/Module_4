@@ -153,9 +153,6 @@ table <- matrix (c(coef_tg, coef_tc, coef_tgd, coef_tcd, coef_tgr, coef_tcr,
 
 # Set rownames and colnames
 rownames(table) <- c('First child F', 'std. error','N') 
-#colnames(table) <- c('Full_Numbers of daughters', 'Full_Numbers of children',
-#                     'De_Numbers of daughters', 'De_Numbers of children', 
-#                     'Re_Numbers of daughters', 'Re_Numbers of children') 
 colnames(table) <- c('Full_num_da', 'Full_num_ch',
                      'De_num_da', 'De_num_ch', 
                      'Re_num_da', 'Re_num_ch') 
