@@ -18,12 +18,25 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+
+setwd("/Users/nilshalvord/Desktop/HHS/7316 - Introduction to Data Analytics in R/Assignments/Assignment 2")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
+```{r, message = FALSE, error FALSE}
+#Import datasets
+import("basic.dta")
+import("genold108.dta")
+
+#Create subset of 108th congress
+basicsub <- filter(basic, congress == 108)
+
+#Join with genold dataset
+combined.data <- left_join(basicsub, genold108, by = "name")
+```
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
