@@ -26,7 +26,7 @@ setwd("/Users/nilshalvord/Desktop/HHS/7316 - Introduction to Data Analytics in R
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
-```{r, message = FALSE, error FALSE}
+```{r, message = FALSE, error = FALSE}
 #Import datasets
 import("basic.dta")
 import("genold108.dta")
@@ -41,12 +41,39 @@ combined.data <- left_join(basicsub, genold108, by = "name")
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+
+```{r, message = FALSE}
+#Drop variables
+combined.data <- combined.data %>% select(party, ngirls, totchi, rgroup, age, white, female, srvlng, genold, region)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
+```{r, message = FALSE}
+#Recode genold and add NAs
+combined.data$genold <- combined.data$genold %>% factor(levels = c("B", "G", "NA"), exclude = NULL)
+
+#Recode party variable
+combined.data$party <- combined.data$party %>% factor(levels = c(1, 2, 3), labels = c("D", "R", "I"))
+
+#Recode rgroup and region as factors
+combined.data$rgroup <- combined.data$rgroup %>% factor(
+  levels = c(0:4), labels = c("None", "Prot", "Cath", "Othchr", "Jewish"))
+
+combined.data$region <- combined.data$region %>% as.factor()
+
+#Generate variables for age and service length squared
+combined.data %>% mutate(agesquared = age ^ 2)
+
+combined.data %>% mutate(srvlngsquared = srvlng ^ 2)
+
+# children as factor
+combined.data %>% mutate(totchifactor = as.factor(totchi))
+```
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
