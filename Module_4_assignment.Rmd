@@ -18,6 +18,10 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+basic <- import("basic.dta")
+genold108 <- import("genold108.dta")
+con108 <- subset(basic, congress == 108)
+joined <- left_join(con108,genold108)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -27,12 +31,29 @@ library(tidyverse)
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
+* variables needed: white, female, party, age, age squared, srvlng, srvlng squared, religion/rgroup, region, ngirls 
 * drop all other variables.
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
-* Recode *party* as a factor with 3 levels (D, R, I)
+* Recode *party* as a factor with 3 levels (D, R, I). 
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r}
+tbl1_data <-select(joined, white, female, party, age, srvlng, rgroup, region, genold, ngirls, totchi)
+tbl1_data$agesqr <- factor(tbl1_data$age^2)
+tbl1_data$srvlngsqr <- factor(tbl1_data$srvlng^2)
+tbl1_data$genold <- factor(tbl1_data$genold)
+tbl1_data <- tbl1_data %>% 
+   mutate(genold = fct_recode(genold, "NA" = ""))
+tbl1_data <-tbl1_data  %>% 
+   mutate(party = fct_recode(party, "D" = "1", "R" = "2", "I" = "3")) 
+tbl1_data$party <- factor(tbl1_data$party)
+tbl1_data$rgroup <- factor(tbl1_data$rgroup)
+tbl1_data$region<- factor(tbl1_data$region)
+tbl1_data$totchi<- factor(tbl1_data$totchi)
+
+```
 
 # Replicationg Table 1 from the Appendix
 
@@ -42,4 +63,11 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Save the main coefficient of interest ($\beta_1$)
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
-* print the table
+* print the table. 
+
+```{r}
+controlv <- matrix(data = tbl1_data$white, tbl1_data$female,nrow = 1, ncol = 2)
+reg1 <- lm(totchi ~  data = tbl1_data)
+summary(reg1)
+```
+
