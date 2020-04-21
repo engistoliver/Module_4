@@ -1,5 +1,5 @@
 ---
-title: "Module 4 - Assignment"
+title: "Wanting Guo 41370 Module 4"
 author: "Wanting Guo"
 date: "4/21/2020"
 output:
@@ -128,4 +128,3 @@ beta_1_rep_ng
 table <- cbind(beta_1_ng,beta_1,beta_1_dem_ng,beta_1_dem,beta_1_rep_ng,beta_1_rep)
 print(table)
 ```
-
