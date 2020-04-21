@@ -2,10 +2,12 @@
 title: "Module 4 - Solutions"
 author: "Jacob Stevens (41652)"
 date: "21/04/2020"
-output: 
+output:
   pdf_document:
     df_print: kable
-  warning: false
+  html_document:
+    df_print: kable
+  warning: no
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -122,6 +124,13 @@ lfit <- lm(formula = totchi ~ 1 + genold + party + female + age + sqage + srvlng
 
 beta1all <- summary(lfit)[["coefficients"]][2,1]
 sbeta1all <- summary(lfit)[["coefficients"]][2,2]
+
+# regression
+lfitf <- lm(formula = ngirls ~ 1 + genold + party + female + age + sqage + srvlng
+          + sqsrv + white + region + rgroup, data = comb)
+
+beta1allf <- summary(lfitf)[["coefficients"]][2,1]
+sbeta1allf <- summary(lfitf)[["coefficients"]][2,2]
 ```
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r, message=FALSE}
@@ -135,19 +144,31 @@ dfit <- lm(formula = totchi ~ 1 + genold + female + age + sqage + srvlng
 rfit <- lm(formula = totchi ~ 1 + genold + female + age + sqage + srvlng
            + sqsrv + white + region + rgroup, data = rcomb)
 
-beta1d <- summary(dfit)[["coefficients"]][2,1]
-sbeta1d <- summary(dfit)[["coefficients"]][2,2]
+dfitf <- lm(formula = ngirls ~ 1 + genold + female + age + sqage + srvlng
+           + sqsrv + white + region + rgroup, data = dcomb)
 
-beta1r <- summary(rfit)[["coefficients"]][2,1]
-sbeta1r <- summary(rfit)[["coefficients"]][2,2]
+rfitf <- lm(formula = ngirls ~ 1 + genold + female + age + sqage + srvlng
+           + sqsrv + white + region + rgroup, data = rcomb)
+
+beta1d <- summary(dfitf)[["coefficients"]][2,1]
+sbeta1d <- summary(dfitf)[["coefficients"]][2,2]
+
+beta1r <- summary(rfitf)[["coefficients"]][2,1]
+sbeta1r <- summary(rfitf)[["coefficients"]][2,2]
+
+beta1df <- summary(dfitf)[["coefficients"]][2,1]
+sbeta1df <- summary(dfitf)[["coefficients"]][2,2]
+
+beta1rf <- summary(rfitf)[["coefficients"]][2,1]
+sbeta1rf <- summary(rfitf)[["coefficients"]][2,2]
 ```
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 ```{r, message=FALSE}
 # form coefficients into a table
-nm <- c("All", "Dems", "Reps + Ind")
-b <- c(beta1all, beta1d, beta1r)
+nm <- c("a", "b", "c", "d", "e", "f")
+b <- c(beta1all, beta1allf, beta1d, beta1df, beta1r, beta1rf)
 names(b) <- nm
-s <- c(sbeta1all, sbeta1d, sbeta1r)
+s <- c(sbeta1all, sbeta1allf, sbeta1d, sbeta1df, sbeta1r, sbeta1rf)
 names(s) <- nm
 
 tab <- bind_rows(b,s)
@@ -158,11 +179,17 @@ names(tab) <- nm
 ```{r}
 tab <- as.data.frame(tab)
 rownames(tab) <- c("Estimate", "SE")
+colnames(tab) <- c("Number of daughters", "Number of children", 
+                   "Number of daughters", "Number of children", 
+                   "Number of daughters", "Number of children")
 
 # nice formatting for the table 
-kable(tab) %>% 
+kable(tab, align = "c") %>% 
   kable_styling() %>% 
-  add_header_above(c(" " = 1, "Party Affiliation" = 3), bold = TRUE)
-
+  row_spec(0, italic=TRUE, bold=TRUE) %>%
+  column_spec(1, italic=TRUE, bold=TRUE, width="3cm") %>%
+  # Needs to be 2.3 for HTML
+  column_spec(2:7, width = "2cm") %>%
+  add_header_above(c(" " = 1, "All" = 2, "Dems" = 2, "Reps + Ind" = 2), bold = TRUE)
 ```
 

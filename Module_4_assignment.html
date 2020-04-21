@@ -463,7 +463,14 @@ lfit &lt;- lm(formula = totchi ~ 1 + genold + party + female + age + sqage + srv
           + sqsrv + white + region + rgroup, data = comb)
 
 beta1all &lt;- summary(lfit)[[&quot;coefficients&quot;]][2,1]
-sbeta1all &lt;- summary(lfit)[[&quot;coefficients&quot;]][2,2]</code></pre>
+sbeta1all &lt;- summary(lfit)[[&quot;coefficients&quot;]][2,2]
+
+# regression
+lfitf &lt;- lm(formula = ngirls ~ 1 + genold + party + female + age + sqage + srvlng
+          + sqsrv + white + region + rgroup, data = comb)
+
+beta1allf &lt;- summary(lfitf)[[&quot;coefficients&quot;]][2,1]
+sbeta1allf &lt;- summary(lfitf)[[&quot;coefficients&quot;]][2,2]</code></pre>
 <ul>
 <li>Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of <em>genold</em></li>
 </ul>
@@ -477,19 +484,31 @@ dfit &lt;- lm(formula = totchi ~ 1 + genold + female + age + sqage + srvlng
 rfit &lt;- lm(formula = totchi ~ 1 + genold + female + age + sqage + srvlng
            + sqsrv + white + region + rgroup, data = rcomb)
 
-beta1d &lt;- summary(dfit)[[&quot;coefficients&quot;]][2,1]
-sbeta1d &lt;- summary(dfit)[[&quot;coefficients&quot;]][2,2]
+dfitf &lt;- lm(formula = ngirls ~ 1 + genold + female + age + sqage + srvlng
+           + sqsrv + white + region + rgroup, data = dcomb)
 
-beta1r &lt;- summary(rfit)[[&quot;coefficients&quot;]][2,1]
-sbeta1r &lt;- summary(rfit)[[&quot;coefficients&quot;]][2,2]</code></pre>
+rfitf &lt;- lm(formula = ngirls ~ 1 + genold + female + age + sqage + srvlng
+           + sqsrv + white + region + rgroup, data = rcomb)
+
+beta1d &lt;- summary(dfitf)[[&quot;coefficients&quot;]][2,1]
+sbeta1d &lt;- summary(dfitf)[[&quot;coefficients&quot;]][2,2]
+
+beta1r &lt;- summary(rfitf)[[&quot;coefficients&quot;]][2,1]
+sbeta1r &lt;- summary(rfitf)[[&quot;coefficients&quot;]][2,2]
+
+beta1df &lt;- summary(dfitf)[[&quot;coefficients&quot;]][2,1]
+sbeta1df &lt;- summary(dfitf)[[&quot;coefficients&quot;]][2,2]
+
+beta1rf &lt;- summary(rfitf)[[&quot;coefficients&quot;]][2,1]
+sbeta1rf &lt;- summary(rfitf)[[&quot;coefficients&quot;]][2,2]</code></pre>
 <ul>
 <li>Collect all the <em>genold</em> coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.</li>
 </ul>
 <pre class="r"><code># form coefficients into a table
-nm &lt;- c(&quot;All&quot;, &quot;Dems&quot;, &quot;Reps + Ind&quot;)
-b &lt;- c(beta1all, beta1d, beta1r)
+nm &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;)
+b &lt;- c(beta1all, beta1allf, beta1d, beta1df, beta1r, beta1rf)
 names(b) &lt;- nm
-s &lt;- c(sbeta1all, sbeta1d, sbeta1r)
+s &lt;- c(sbeta1all, sbeta1allf, sbeta1d, sbeta1df, sbeta1r, sbeta1rf)
 names(s) &lt;- nm
 
 tab &lt;- bind_rows(b,s)
@@ -499,63 +518,106 @@ names(tab) &lt;- nm</code></pre>
 </ul>
 <pre class="r"><code>tab &lt;- as.data.frame(tab)
 rownames(tab) &lt;- c(&quot;Estimate&quot;, &quot;SE&quot;)
+colnames(tab) &lt;- c(&quot;Number of daughters&quot;, &quot;Number of children&quot;, 
+                   &quot;Number of daughters&quot;, &quot;Number of children&quot;, 
+                   &quot;Number of daughters&quot;, &quot;Number of children&quot;)
 
 # nice formatting for the table 
-kable(tab) %&gt;% 
+kable(tab, align = &quot;c&quot;) %&gt;% 
   kable_styling() %&gt;% 
-  add_header_above(c(&quot; &quot; = 1, &quot;Party Affiliation&quot; = 3), bold = TRUE)</code></pre>
+  row_spec(0, italic=TRUE) %&gt;%
+  column_spec(1, italic=TRUE, bold=TRUE, width=&quot;3cm&quot;) %&gt;%
+  column_spec(2:7, width = &quot;2.3cm&quot;) %&gt;%
+  add_header_above(c(&quot; &quot; = 1, &quot;All&quot; = 2, &quot;Dems&quot; = 2, &quot;Reps + Ind&quot; = 2), bold = TRUE)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="border-bottom:hidden" colspan="1">
 </th>
-<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="3">
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="2">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-Party Affiliation
+All
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Dems
+</div>
+</th>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Reps + Ind
 </div>
 </th>
 </tr>
 <tr>
-<th style="text-align:left;">
+<th style="text-align:left;font-style: italic;">
 </th>
-<th style="text-align:right;">
-All
+<th style="text-align:center;font-style: italic;">
+Number of daughters
 </th>
-<th style="text-align:right;">
-Dems
+<th style="text-align:center;font-style: italic;">
+Number of children
 </th>
-<th style="text-align:right;">
-Reps + Ind
+<th style="text-align:center;font-style: italic;">
+Number of daughters
+</th>
+<th style="text-align:center;font-style: italic;">
+Number of children
+</th>
+<th style="text-align:center;font-style: italic;">
+Number of daughters
+</th>
+<th style="text-align:center;font-style: italic;">
+Number of children
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td style="text-align:left;width: 3cm; font-weight: bold;font-style: italic;">
 Estimate
 </td>
-<td style="text-align:right;">
+<td style="text-align:center;width: 2.3cm; ">
 -0.0729718
 </td>
-<td style="text-align:right;">
-0.0032585
+<td style="text-align:center;width: 2.3cm; ">
+1.3069460
 </td>
-<td style="text-align:right;">
--0.2009949
+<td style="text-align:center;width: 2.3cm; ">
+1.4058786
+</td>
+<td style="text-align:center;width: 2.3cm; ">
+1.4058786
+</td>
+<td style="text-align:center;width: 2.3cm; ">
+1.1828166
+</td>
+<td style="text-align:center;width: 2.3cm; ">
+1.1828166
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td style="text-align:left;width: 3cm; font-weight: bold;font-style: italic;">
 SE
 </td>
-<td style="text-align:right;">
+<td style="text-align:center;width: 2.3cm; ">
 0.1558773
 </td>
-<td style="text-align:right;">
-0.1875687
+<td style="text-align:center;width: 2.3cm; ">
+0.1298641
 </td>
-<td style="text-align:right;">
-0.2379813
+<td style="text-align:center;width: 2.3cm; ">
+0.1748029
+</td>
+<td style="text-align:center;width: 2.3cm; ">
+0.1748029
+</td>
+<td style="text-align:center;width: 2.3cm; ">
+0.1876868
+</td>
+<td style="text-align:center;width: 2.3cm; ">
+0.1876868
 </td>
 </tr>
 </tbody>
