@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587376965010.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "910CC1C3",
+    "lastKnownWriteTime" : 1587391033,
+    "last_content_update" : 1587391033378,
+    "path" : "C:/Users/Jacob Stevens/OneDrive - Handelshögskolan i Stockholm/R/Module_4/code4.R",
+    "project_path" : "code4.R",
+    "properties" : {
+        "cursorPosition" : "39,0",
+        "scrollLine" : "29",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

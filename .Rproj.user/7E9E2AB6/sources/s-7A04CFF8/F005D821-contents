@@ -1,0 +1,132 @@
+# SCRAPING DATA FROM A WEBSITE
+
+rm(list=ls())
+
+# load libraries
+
+library("tidyverse")
+library("rvest")
+library("rio")
+library("magrittr")
+
+# url
+beersite <- "https://www.beeradvocate.com/beer/top-rated/"
+
+# extract data and look 
+data <- read_html(beersite)
+dtable <- html_table(data, header = NA) %>% as.data.frame()
+glimpse(dtable)
+
+# drop useless information
+dtable <- dtable[,-5]
+
+# fix variable names
+colnames(dtable) <- dtable[1,]
+colnames(dtable)[1] <- "Rank"
+colnames(dtable)[2] <- "Name"
+dtable <- as_tibble(dtable)
+dtable <- dtable[-1,]
+
+# correct variable class
+dtable$Ratings <- str_replace(dtable$Ratings, ",", "") %>% as.integer()
+dtable$Avg <- as.numeric(dtable$Avg)
+
+
+# STRING MANIPULATION
+
+# detect beers that list alcohol content
+alc <- str_detect(dtable$Name, "%")
+dtable <- filter(dtable, alc)
+
+# create independent string variable
+beers <- dtable$Name
+beers <- strsplit(beers, "\\|") %>% unlist()
+n <- length(beers)
+
+# form matrix and convert to tibble
+beers <- matrix(beers, n/2, byrow = TRUE) 
+colnames(beers) <- c("Beer", "ABV")
+beers <- as_tibble(beers)
+
+# MORE STRING MANIPULATIONS
+
+# rename cols
+colnames(beers) <- c("Name", "Percentage")
+
+# clean percentage column
+beers$Percentage <- str_trim(beers$Percentage, "both") %>% str_replace("\\%","")
+beers$Percentage <- as.numeric(beers$Percentage)
+
+# reinsert into main table
+dtable$Name <- beers$Name
+dtable <- add_column(dtable, beers$Percentage)
+
+# WRITING A FUNCTION THAT CAN BE REUSED
+cleanbeer <- function(strvec) {
+  strvec <- str_trim(strvec, "both") %>% str_replace("\\%","") %>% as.numeric()
+}
+
+# AUTOMATING THE PROCESS
+
+# vector of country codes
+ccodes <- c("au", "at", "de", "se", "uk", "us")
+
+# Extract data for each country into large tibble
+for(code in ccodes) {
+  
+  # extract data 
+  data <- paste(beersite, code, sep = "") %>% read_html()
+  dtable <- html_table(data, header = NA) %>% as.data.frame()
+  
+  # fix variable names
+  colnames(dtable) <- dtable[1,]
+  colnames(dtable)[1] <- "Rank"
+  colnames(dtable)[2] <- "Name"
+  dtable <- as_tibble(dtable)
+  dtable <- dtable[-1,]
+  dtable <- add_column(dtable, rep(code, times=length(dtable$Name)))
+  colnames(dtable)[6] <- "Country"
+  
+  # correct variable class
+  dtable$Ratings <- str_replace(dtable$Ratings, ",", "") 
+  if(is_character(dtable$Ratings)) dtable$Ratings <- as.numeric(dtable$Ratings)
+  dtable$Avg <- as.numeric(dtable$Avg)
+  
+  # create or append to table
+  if(exists("data.combined")) {
+    data.combined <- bind_rows(data.combined, dtable)
+  } else {
+    data.combined <- dtable
+  }
+}
+
+# remove "Yours"
+data.combined <- data.combined[,-5]
+
+# detect beers that list alcohol content
+alc <- str_detect(data.combined$Name, "%")
+data.combined <- filter(data.combined, alc)
+
+# create independent string variable
+beers <- data.combined$Name
+beers <- strsplit(beers, "\\|") %>% unlist()
+n <- length(beers)
+
+# form matrix and convert to tibble
+beers <- matrix(beers, n/2, byrow = TRUE) 
+colnames(beers) <- c("Beer", "ABV")
+beers <- as_tibble(beers)
+
+# rename cols
+colnames(beers) <- c("Name", "Percentage")
+
+# clean percentage column using earlier function
+beers$Percentage <- cleanbeer(beers$Percentage)
+
+# reinsert into main table
+data.combined$Name <- beers$Name
+data.combined <- add_column(data.combined, beers$Percentage)
+colnames(data.combined)[6] <- "Percentage"
+
+# Export!
+export(data.combined, "beers.dta")

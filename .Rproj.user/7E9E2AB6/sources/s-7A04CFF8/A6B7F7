@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587376847083.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A6B7F7",
+    "lastKnownWriteTime" : 1587391261,
+    "last_content_update" : 1587391261515,
+    "path" : "C:/Users/Jacob Stevens/OneDrive - Handelshögskolan i Stockholm/R/Module_4/Module_4_assignment_WIP.Rmd",
+    "project_path" : "Module_4_assignment_WIP.Rmd",
+    "properties" : {
+        "cursorPosition" : "12,50",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,0 +1,15 @@
+# by party
+dcomb <- subset(comb, comb$party == "D")
+rcomb <- subset(comb, comb$party == "R" | comb$party == "I")
+
+
+dfit <- lm(totchi ~ 1 + dcomb$genold + dcomb$female + dcomb$age 
+           + dcomb$sqage + dcomb$srvlng + dcomb$sqsrv + dcomb$white + dcomb$region 
+           + dcomb$rgroup)
+
+rfit <- lm(totchi ~ 1 + rcomb$genold + rcomb$female + rcomb$age 
+           + rcomb$sqage + rcomb$srvlng + rcomb$sqsrv + rcomb$white + rcomb$region 
+           + rcomb$rgroup)
+
+beta1d <- dfit$coeficients[2]
+beta1r <- dfit$coeficients[2]

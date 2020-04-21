@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587384496145.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "492796977",
+    "id" : "F005D821",
+    "lastKnownWriteTime" : 1586773982,
+    "last_content_update" : 1586773982,
+    "path" : "C:/Users/Jacob Stevens/OneDrive - Handelshögskolan i Stockholm/R/R Module 3.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
