@@ -19,7 +19,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 library(rio)
 library(tidyverse)
 setwd("~/Module_4")
-getwd()
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -31,12 +31,15 @@ Genold <- import("genold108.dta")
 
 * create a subset of the 108th congress from the *basic* dataset
 ```{r}
-Subset <- Basic[(Basic$congress==108),]
+Subset <- Basic %>% filter(congress==108)
 ```
 
-
-
 * join this subset with the *genold* dataset
+```{r, message=FALSE}
+Data <- left_join(Genold, Subset, by=c("statenam", "district", "name"))
+
+```
+
 
 # Data preparation
 
