@@ -15,11 +15,9 @@ I encourage you to take a look at the paper, as we will come back to it later in
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
 library(rio)
 library(tidyverse)
 setwd("~/Module_4")
-
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -30,33 +28,136 @@ Genold <- import("genold108.dta")
 ```
 
 * create a subset of the 108th congress from the *basic* dataset
+
 ```{r}
 Subset <- Basic %>% filter(congress==108)
 ```
 
 * join this subset with the *genold* dataset
-```{r, message=FALSE}
-Data <- left_join(Genold, Subset, by=c("statenam", "district", "name"))
 
+```{r, message=FALSE, warning=FALSE}
+Data <- left_join(Subset, Genold, by=c("statenam", "district", "name"))
 ```
-
-
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+```{r}
+Data <- Data %>% select("totchi", "ngirls", "genold", "district", "statenam",
+                        "name", "white", "female", "party", "repub", "age", "srvlng", 
+                        "rgroup", "region")
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+Data$genold[Data$genold==""] <- NA
+Data$genold <- as.factor(Data$genold)
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+Data$party[Data$party==1] <- "D"
+Data$party[Data$party==2] <- "R"
+Data$party[Data$party==3] <- "I"
+
+Data$party <- as.factor(Data$party)
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r}
+Data$rgroup <- as.factor(Data$rgroup)
+Data$region <- as.factor(Data$region)
+```
+
 * generate variables for age squared and service length squared
+```{r}
+Data$agesq <- Data$age^2
+Data$srvlngsq <- Data$srvlng^2
+```
+
 * create an additional variable of the number of children as factor variable
+```{r}
+Data$nkids <- as.factor(Data$totchi)
+```
 
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+```{r}
+# First, I drop Bernie Sanders and recode Virgil Goode
+Data <- Data[!((Data$party=="I") & (Data$genold=="NA")),] # Dropping Bernie Sanders
+Data$party[(Data$party=="I")] <- "D" # Recoding Virgil Goode as a Republican
+
+# Regression with number of children as dependent variable
+reg.totchi <- lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
+              srvlngsq + rgroup + region, data=Data)
+
+# Regression with number of daughters as dependent variable
+reg.ngirls <- lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
+              srvlngsq + rgroup + region + nkids, data=Data)
+```
+
 * Save the main coefficient of interest ($\beta_1$)
+```{r}
+# Regression with number of children as dependent variable
+b1.totchi <- round(summary(reg.totchi)$coefficients[2, c(1,2)], digits=2)
+# Saving coeff and std.err. and rounding to two decimals 
+
+# Regression with number of children as dependent variable
+b1.ngirls <- round(summary(reg.ngirls)$coefficients[2, c(1,2)], digits=2)
+```
+
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r}
+# Regression with number of children as dependent variable for Democrats
+reg.totchi.D <- 
+  lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
+       srvlngsq + rgroup + region, Data, subset = (party=="D"))
+b1.totchi.D <- 
+  round(summary(reg.totchi.D)$coefficients[2, c(1,2)], digits=2) 
+# Saving coeff. and std.err. 
+
+# Regression with number of children as dependent variable for Democrats
+reg.ngirls.D <- 
+  lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
+       srvlngsq + rgroup + region + nkids, Data, subset = (party=="D"))
+# nkids introduces fixed effects
+b1.ngirls.D <- round(summary(reg.ngirls.D)$coefficients[2, c(1,2)], digits=2)
+
+# Regression with number of children as dependent variable for Republicans
+reg.totchi.R <- 
+  lm(totchi ~ genold + white + female + repub + age + agesq + srvlng + 
+       srvlngsq + rgroup + region, Data, subset = (party=="R"))
+b1.totchi.R <- 
+  round(summary(reg.totchi.R)$coefficients[2, c(1,2)], digits=2)
+
+# Regression with number of daughters as dependent variable for Republicans
+reg.ngirls.R <- 
+  lm(ngirls ~ genold + white + female + repub + age + agesq + srvlng + 
+       srvlngsq + rgroup + region + nkids, Data, subset = (party=="R"))
+b1.ngirls.R <- round(summary(reg.ngirls.R)$coefficients[2, c(1,2)], digits=2)
+```
+
+
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r}
+Table <- matrix(c(b1.ngirls, b1.totchi, b1.ngirls.D, b1.totchi.D, b1.ngirls.R, b1.totchi.R), nrow=2, ncol=6)
+rownames(Table) <- c("Estimate", "Standard error")
+colnames(Table) <- c("Number of daughters ", "Number of children", 
+                     "Number of daughters", "Number of children", 
+                     "Number of daughters" , "Number of children")
+```
+
 * print the table
+```{r}
+knitr::kable(Table, format="markdown")
+```
+
+
+
+
+
