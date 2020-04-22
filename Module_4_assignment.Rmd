@@ -28,8 +28,8 @@ setwd("/Users/nilshalvord/Desktop/HHS/7316 - Introduction to Data Analytics in R
 
 ```{r, message = FALSE, error = FALSE}
 #Import datasets
-import("basic.dta")
-import("genold108.dta")
+basic <- import("basic.dta")
+genold108 <- import("genold108.dta")
 
 #Create subset of 108th congress
 basicsub <- filter(basic, congress == 108)
@@ -67,12 +67,12 @@ combined.data$rgroup <- combined.data$rgroup %>% factor(
 combined.data$region <- combined.data$region %>% as.factor()
 
 #Generate variables for age and service length squared
-combined.data %>% mutate(agesquared = age ^ 2)
+combined.data <- combined.data %>% mutate(agesquared = age ^ 2)
 
-combined.data %>% mutate(srvlngsquared = srvlng ^ 2)
+combined.data <- combined.data %>% mutate(srvlngsquared = srvlng ^ 2)
 
 # children as factor
-combined.data %>% mutate(totchifactor = as.factor(totchi))
+combined.data <- combined.data %>% mutate(totchifactor = as.factor(totchi))
 ```
 # Replicationg Table 1 from the Appendix
 
@@ -80,6 +80,76 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
+
+```{r, message = FALSE, error = FALSE}
+#Run regression
+totchi_linreg_full <- lm(totchi ~  genold + age + agesquared + rgroup + white + female + srvlng + srvlngsquared + party + region, data = combined.data)
+
+fem_linreg_full <- lm(ngirls ~  genold + age + agesquared + rgroup + white + female + srvlng + srvlngsquared + party + region + totchifactor, data = combined.data)
+
+#Save main coefficient
+beta_tot_full <- coef(totchi_linreg_full)["genoldG"]
+
+beta_ngirls_full <- coef(fem_linreg_full)["genoldG"]
+
+#Save standard errors
+stderror_tot_full <- summary(totchi_linreg_full)$coef[2,2]
+
+stderror_ngirls_full <- summary(fem_linreg_full)$coef[2,2]
+```
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+
+```{r, message = FALSE}
+#Run the same regression for democrats
+democrat_data <- filter(combined.data, party == "D")
+
+totchi_linreg_Dem <- lm(totchi ~  genold + age + agesquared + rgroup + white + female + srvlng + srvlngsquared + region, data = democrat_data)
+
+fem_linreg_Dem <- lm(ngirls ~  genold + age + agesquared + rgroup + white + female + srvlng + srvlngsquared + region + totchifactor, data = democrat_data)
+
+#Save betas
+beta_tot_Dem <- coef(totchi_linreg_Dem)["genoldG"]
+
+beta_ngirls_Dem <- coef(fem_linreg_Dem)["genoldG"]
+
+#Save standard errors
+stderror_tot_Dem <- summary(totchi_linreg_Dem)$coef[2,2]
+
+stderror_ngirls_Dem <- summary(fem_linreg_Dem)$coef[2,2]
+
+#Run the same regression for republicans
+repub_data <- filter(combined.data, party == "R")
+
+totchi_linreg_Rep <- lm(totchi ~  genold + age + agesquared + rgroup + white + female + srvlng + srvlngsquared + region, data = repub_data)
+
+fem_linreg_Rep <- lm(ngirls ~  genold + age + agesquared + rgroup + white + female + srvlng + srvlngsquared + region + totchifactor, data = repub_data)
+
+#Save betas
+beta_tot_Rep <- coef(totchi_linreg_Rep)["genoldG"]
+
+beta_ngirls_Rep <- coef(fem_linreg_Rep)["genoldG"]
+
+#Save standard errors
+stderror_tot_Rep <- summary(totchi_linreg_Rep)$coef[2,2]
+
+stderror_ngirls_Rep <- summary(fem_linreg_Rep)$coef[2,2]
+```
+
 * print the table
+```{r, message = FALSE, error = FALSE}
+betas <- round(c(beta_ngirls_full, beta_tot_full, beta_ngirls_Dem, beta_tot_Dem, beta_ngirls_Rep, beta_tot_Rep), digits = 2)
+
+all_stderrors <- round(c(stderror_ngirls_full, stderror_tot_full, stderror_ngirls_Dem, stderror_tot_Dem, stderror_ngirls_Rep, stderror_tot_Rep), digits = 2)
+
+num_obs <- c(length(totchi_linreg_full[["residuals"]]), length(totchi_linreg_full[["residuals"]]), length(totchi_linreg_Dem[["residuals"]]), length(totchi_linreg_Dem[["residuals"]]), length(totchi_linreg_Rep[["residuals"]]), length(totchi_linreg_Rep[["residuals"]]))
+
+table1 <- matrix(c(betas, all_stderrors, format(num_obs, digits = 0)), ncol = 6, byrow = TRUE)
+
+colnames(table1) <- c("Numbers of daughters", "Number of children", "Numbers of daughters", "Number of children", "Numbers of daughters", "Number of children")
+
+rownames(table1) <- c("First child female", "Standard error", "N")
+
+print(table1)
+```
