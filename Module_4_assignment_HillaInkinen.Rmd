@@ -160,7 +160,9 @@ colnames(Table) <- c("Full Congress Number of children",
 
 * print the table
 ```{r}
+
 knitr::kable(Table, format="markdown")
+
 ```
 
 
