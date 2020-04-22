@@ -2,7 +2,9 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
-output: pdf_document
+output:
+  pdf_document: default
+  word_document: default
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -15,24 +17,66 @@ I encourage you to take a look at the paper, as we will come back to it later in
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
 library(rio)
 library(tidyverse)
+library(dplyr)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+basic <- import("basic.dta")
+genold <- import("genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r}
+basic108 <- subset.data.frame(basic, congress == 108)
+```
+
 * join this subset with the *genold* dataset
+```{r}
+basic108 <- cbind(basic108,genold)
+```
+
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+```{r}
+select108 <- data.frame(basic108$ngirls,basic108$totchi,basic108$party,basic108$rgroup,basic108$region, basic108$age, basic108$female, basic108$srvlng,basic108$white, genold$genold)
+select108 <- rename(select108,"ngirls"="basic108.ngirls","totchi"="basic108.totchi","party"="basic108.party","rgroup"="basic108.rgroup","region"="basic108.region","genold"="genold.genold", "age" = "basic108.age","female"="basic108.female","srvlng"="basic108.srvlng","white" = "basic108.white")
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+select108$genold <-na_if(select108$genold,"")
+select108$genold <- as.factor(select108$genold)
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+select108$party <- factor(select108$party, levels = c(1,2,3), labels = c("D","R","I"))
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r}
+select108$rgroup <- as.factor(select108$rgroup)
+select108$region <- as.factor(select108$region)
+```
+
 * generate variables for age squared and service length squared
+```{r}
+select108 <- mutate(select108, "age_sqr" = select108$age^2)
+select108 <- mutate(select108, "srvlng_sqr" = select108$srvlng^2)
+```
+
 * create an additional variable of the number of children as factor variable
+```{r}
+totchi_fc <- as.factor(basic108$totchi)
+select108 <- mutate(select108, "totchi_fc" = totchi_fc)
+```
+
 
 # Replicationg Table 1 from the Appendix
 
@@ -40,6 +84,85 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
+```{r}
+lm_108 <- lm(totchi ~ genold + white + female + party + age + age_sqr + srvlng + srvlng_sqr + rgroup + region, data = select108)
+coef_108 <- coefficients(lm_108) %>% as.matrix() %>% t() %>% as_tibble()
+lm_ngirls_108 <- lm(ngirls ~ genold + white + female + party + age + age_sqr + srvlng + srvlng_sqr + rgroup + region, data = select108)
+coef_ngirls_108 <- coefficients(lm_ngirls_108) %>% as.matrix() %>% t() %>% as_tibble()
+```
+
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
+```{r}
+# regression for Democrats
+de_108 <- subset.data.frame(select108, select108$party == "D")
+temp <- subset.data.frame(select108, party == "I")
+de_108 <- rbind(de_108,temp)
+lm_de <- lm(totchi ~ genold + white + female +  age + age_sqr + srvlng + srvlng_sqr + rgroup + region, data = de_108)
+coef_de <- coefficients(lm_108) %>% as.matrix() %>% t() %>% as_tibble()
+
+de_ngirls <- subset.data.frame(select108, select108$party == "D")
+temp_g <- subset.data.frame(select108, party == "I")
+de_ngirls <- rbind(de_ngirls,temp_g)
+lm_de_ngirls <- lm(ngirls ~ genold + white + female +  age + age_sqr + srvlng + srvlng_sqr + rgroup + region, data = de_ngirls)
+coef_de_ngirls <- coefficients(lm_de_ngirls) %>% as.matrix() %>% t() %>% as_tibble()
+
+# regression for Republicans
+re_108 <- subset.data.frame(select108, select108$party == "R")
+lm_re <- lm(totchi ~ genold + white + female + age + age_sqr + srvlng + srvlng_sqr + rgroup + region, data = re_108)
+coef_re <- coefficients(lm_108) %>% as.matrix() %>% t() %>% as_tibble()
+
+re_ngirls <- subset.data.frame(select108, select108$party == "R")
+lm_re_ngirls <- lm(ngirls ~ genold + white + female + age + age_sqr + srvlng + srvlng_sqr + rgroup + region, data = re_ngirls)
+coef_re <- coefficients(lm_re_ngirls) %>% as.matrix() %>% t() %>% as_tibble()
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r}
+# generate coefficient estimate and str.error
+result_108 <- summary(lm_108)[["coefficients"]]
+re_coef_108 <- result_108["genoldG","Estimate"]
+std.err_108 <- result_108["genoldG","Std. Error"]
+N_108 <- nrow((lm_108[["model"]]))
+sum_108 <- c(re_coef_108,std.err_108,N_108)
+
+result_de <- summary(lm_de)[["coefficients"]]
+re_coef_de <- result_de["genoldG","Estimate"]
+std.err_de <- result_de["genoldG","Std. Error"]
+N_de <- nrow((lm_de[["model"]]))
+sum_de <- c(re_coef_de,std.err_de,N_de)
+
+result_re <- summary(lm_re)[["coefficients"]]
+re_coef_re <- result_re["genoldG","Estimate"]
+std.err_re <- result_re["genoldG","Std. Error"]
+N_re <- nrow((lm_re[["model"]]))
+sum_re <- c(re_coef_re,std.err_re,N_re)
+
+result_ngirls_108 <- summary(lm_ngirls_108)[["coefficients"]]
+re_coef_ngirls_108 <- result_ngirls_108["genoldG","Estimate"]
+std.err_ngirls_108 <- result_ngirls_108["genoldG","Std. Error"]
+N_ngirls_108 <- nrow((lm_ngirls_108[["model"]]))
+sum_ngirls_108 <- c(re_coef_ngirls_108,std.err_ngirls_108,N_ngirls_108)
+
+result_de_ngirls <- summary(lm_de_ngirls)[["coefficients"]]
+re_coef_de_ngirls <- result_de_ngirls["genoldG","Estimate"]
+std.err_de_ngirls <- result_de_ngirls["genoldG","Std. Error"]
+N_de_ngirls <- nrow((lm_de_ngirls[["model"]]))
+sum_de_ngirls <- c(re_coef_de_ngirls,std.err_de_ngirls,N_de_ngirls)
+
+result_re_ngirls <- summary(lm_re_ngirls)[["coefficients"]]
+re_coef_re_ngirls <- result_re_ngirls["genoldG","Estimate"]
+std.err_re_ngirls <- result_re_ngirls["genoldG","Std. Error"]
+N_re_ngirls <- nrow((lm_re_ngirls[["model"]]))
+sum_re_ngirls <- c(re_coef_re_ngirls,std.err_re_ngirls,N_re_ngirls)
+
+
+sum <- data.frame(sum_108,sum_de,sum_re,sum_ngirls_108,sum_de_ngirls,sum_re_ngirls)
+
+```
+
 * print the table
+```{r}
+print(sum)
+
+```
+
