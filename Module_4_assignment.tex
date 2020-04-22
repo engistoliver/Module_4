@@ -1,0 +1,404 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Module 4 - Instructions},
+  pdfauthor={Oliver Engist},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Module 4 - Instructions}
+\author{Oliver Engist}
+\date{3/25/2020}
+
+\begin{document}
+\maketitle
+
+In the next assignment we want to replicate some plots from the paper
+``Female Socialization: How Daughters Affect Their Legislator Fathers'
+Voting on Women's Issues'' (Washington, 2008). The paper explores
+whether having a daughter makes politicians more sensitive to women's
+rights issues and how this is reflected in their voting behavior. The
+main identifying assumption is that after controlling for the number of
+children, the gender composition is random. This might be violated if
+families that have a preference for girls keep having children until
+they have a girl. In this assignment we will prepare a dataset that
+allows us to test whether families engage in such a ``female child
+stopping rule''.
+
+I encourage you to take a look at the paper, as we will come back to it
+later in the course.
+
+\hypertarget{setup}{%
+\section{Setup}\label{setup}}
+
+\begin{itemize}
+\tightlist
+\item
+  Load the libraries ``Rio'' and ``tidyverse''
+\item
+  Change the path of the working directory to your working directory.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(rio)}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(knitr)}
+\KeywordTok{setwd}\NormalTok{(}\StringTok{"C:/Users/Samsung/Documents/Module_4"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  import the data sets \emph{basic.dta} and \emph{genold108.dta}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Basic <-}\StringTok{ }\KeywordTok{import}\NormalTok{(}\StringTok{"basic.dta"}\NormalTok{)}
+\NormalTok{Genold <-}\StringTok{ }\KeywordTok{import}\NormalTok{(}\StringTok{"genold108.dta"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  create a subset of the 108th congress from the \emph{basic} dataset
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Congress_}\DecValTok{108}\NormalTok{ <-}\StringTok{ }\NormalTok{Basic[(Basic}\OperatorTok{$}\NormalTok{congress}\OperatorTok{==}\DecValTok{108}\NormalTok{),] }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  join this subset with the \emph{genold} dataset
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Congress_}\DecValTok{108}\NormalTok{, Genold, }\DataTypeTok{key =} \KeywordTok{c}\NormalTok{(}\StringTok{"district"}\NormalTok{, }\StringTok{"statenam"}\NormalTok{, }\StringTok{"state"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Joining, by = c("district", "statenam", "name")
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `district` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `statenam` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Column `name` has different attributes on LHS and RHS of join
+\end{verbatim}
+
+\hypertarget{data-preparation}{%
+\section{Data preparation}\label{data-preparation}}
+
+\begin{itemize}
+\tightlist
+\item
+  check table 1 in the appendix of the paper and decide which variables
+  are necessary for the analysis (check the footnote for control
+  variables)
+\item
+  drop all other variables.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined <-}\StringTok{ }\NormalTok{data.combined }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\StringTok{"white"}\NormalTok{,}\StringTok{"female"}\NormalTok{, }\StringTok{"party"}\NormalTok{, }\StringTok{"age"}\NormalTok{, }\StringTok{"srvlng"}\NormalTok{, }\StringTok{"ngirls"}\NormalTok{, }\StringTok{"totchi"}\NormalTok{,}\StringTok{"rgroup"}\NormalTok{, }\StringTok{"region"}\NormalTok{, }\StringTok{"genold"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Recode \emph{genold} such that gender is a factor variable and missing
+  values are coded as NAs.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{genold <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{genold }\OperatorTok{%>%}\StringTok{ }\KeywordTok{na_if}\NormalTok{(}\StringTok{""}\NormalTok{)}
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{genold <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{genold }\OperatorTok{%>%}\StringTok{ }\KeywordTok{as.factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Recode \emph{party} as a factor with 3 levels (D, R, I)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{party <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{party }\OperatorTok{%>%}\StringTok{ }\KeywordTok{recode}\NormalTok{(}\StringTok{"1"}\NormalTok{=}\StringTok{"D"}\NormalTok{, }\StringTok{"2"}\NormalTok{=}\StringTok{"R"}\NormalTok{, }\StringTok{"3"}\NormalTok{=}\StringTok{"I"}\NormalTok{)}
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{party <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{party }\OperatorTok{%>%}\StringTok{ }\KeywordTok{as.factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Recode \emph{rgroup} and \emph{region} as factors.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{rgroup <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{rgroup }\OperatorTok{%>%}\StringTok{ }\KeywordTok{as.factor}\NormalTok{()}
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{region <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{region }\OperatorTok{%>%}\StringTok{ }\KeywordTok{as.factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  generate variables for age squared and service length squared
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined <-}\StringTok{ }\NormalTok{data.combined }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{agesq =}\NormalTok{ age}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{data.combined <-}\StringTok{ }\NormalTok{data.combined }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{srvlngsq =}\NormalTok{ srvlng}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+* create an additional variable of the number of children as factor variable
+
+```r
+data.combined <- data.combined %>% mutate(numchi = totchi)
+data.combined$numchi <- data.combined$numchi %>% as.factor()
+\end{verbatim}
+
+\hypertarget{replicating-table-1-from-the-appendix}{%
+\section{Replicating Table 1 from the
+Appendix}\label{replicating-table-1-from-the-appendix}}
+
+We haven't covered regressions in R yet. Use the function \emph{lm()}.
+The function takes the regression model (formula) and the data as an
+input. The model is written as \(y \sim x\), where \(x\) stands for any
+linear combination of regressors (e.g.~\(y \sim x_1 + x_2 + female\)).
+Use the help file to understand the function.
+
+\begin{itemize}
+\tightlist
+\item
+  Run the regression
+  \(total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X\) where
+  \(\gamma\) stands for a vector of coefficients and \(X\) is a matrix
+  that contains all columns that are control
+  variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm.totchi <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(totchi }\OperatorTok{~}\StringTok{ }\NormalTok{genold }\OperatorTok{+}\StringTok{ }\NormalTok{white }\OperatorTok{+}\StringTok{ }\NormalTok{party }\OperatorTok{+}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{agesq }\OperatorTok{+}\StringTok{ }\NormalTok{srvlng }\OperatorTok{+}\StringTok{ }\NormalTok{srvlngsq }\OperatorTok{+}\StringTok{ }\NormalTok{rgroup }\OperatorTok{+}\StringTok{ }\NormalTok{region, }\DataTypeTok{data=}\NormalTok{data.combined)}
+
+
+
+\NormalTok{lm.ngirls <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(ngirls }\OperatorTok{~}\StringTok{ }\NormalTok{genold }\OperatorTok{+}\StringTok{ }\NormalTok{white }\OperatorTok{+}\StringTok{ }\NormalTok{party }\OperatorTok{+}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{agesq }\OperatorTok{+}\StringTok{ }\NormalTok{srvlng }\OperatorTok{+}\StringTok{ }\NormalTok{srvlngsq }\OperatorTok{+}\StringTok{ }\NormalTok{rgroup }\OperatorTok{+}\StringTok{ }\NormalTok{region }\OperatorTok{+}\StringTok{ }\NormalTok{numchi, }\DataTypeTok{data=}\NormalTok{data.combined)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Save the main coefficient of interest (\(\beta_1\))
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{totchicoef <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.totchi)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{totchicoefSE <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.totchi)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+
+\NormalTok{ngirlscoef <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.ngirls)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{ngirlscoefSE <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.ngirls)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Run the same regression separately for Democrats and Republicans
+  (assign the independent to one of the parties). Save the coefficient
+  and standard error of \emph{genold}. I recode the Independent
+  candidates (Bernie Sanders and Virgile Goode) as Republicans because
+  Sanders will not be included in the regression (due to unavailable
+  data) and Goode now identifies as a republican.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.combined}\OperatorTok{$}\NormalTok{party <-}\StringTok{ }\NormalTok{data.combined}\OperatorTok{$}\NormalTok{party }\OperatorTok{%>%}\StringTok{ }\KeywordTok{recode}\NormalTok{(}\StringTok{"I"}\NormalTok{=}\StringTok{"R"}\NormalTok{)}
+\NormalTok{lm.totchidem <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(totchi }\OperatorTok{~}\StringTok{ }\NormalTok{genold }\OperatorTok{+}\StringTok{ }\NormalTok{white }\OperatorTok{+}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{agesq }\OperatorTok{+}\StringTok{ }\NormalTok{srvlng }\OperatorTok{+}\StringTok{ }\NormalTok{srvlngsq }\OperatorTok{+}\StringTok{ }\NormalTok{rgroup }\OperatorTok{+}\StringTok{ }\NormalTok{region, }\DataTypeTok{data=}\NormalTok{data.combined[data.combined}\OperatorTok{$}\NormalTok{party}\OperatorTok{==}\StringTok{"D"}\NormalTok{,])}
+\NormalTok{totchidemcoef <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.totchidem)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{totchidemcoefSE <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.totchidem)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+
+\NormalTok{lm.ngirlsdem <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(ngirls }\OperatorTok{~}\StringTok{ }\NormalTok{genold }\OperatorTok{+}\StringTok{ }\NormalTok{white }\OperatorTok{+}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{agesq }\OperatorTok{+}\StringTok{ }\NormalTok{srvlng }\OperatorTok{+}\StringTok{ }\NormalTok{srvlngsq }\OperatorTok{+}\StringTok{ }\NormalTok{rgroup }\OperatorTok{+}\StringTok{ }\NormalTok{region }\OperatorTok{+}\StringTok{ }\NormalTok{numchi, }\DataTypeTok{data=}\NormalTok{data.combined[data.combined}\OperatorTok{$}\NormalTok{party}\OperatorTok{==}\StringTok{"D"}\NormalTok{,])}
+\NormalTok{ngirlsdemcoef <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.ngirlsdem)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{ngirlsdemcoefSE <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.ngirlsdem)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+
+\NormalTok{lm.totchirep <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(totchi }\OperatorTok{~}\StringTok{ }\NormalTok{genold }\OperatorTok{+}\StringTok{ }\NormalTok{white }\OperatorTok{+}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{agesq }\OperatorTok{+}\StringTok{ }\NormalTok{srvlng }\OperatorTok{+}\StringTok{ }\NormalTok{srvlngsq }\OperatorTok{+}\StringTok{ }\NormalTok{rgroup }\OperatorTok{+}\StringTok{ }\NormalTok{region, }\DataTypeTok{data=}\NormalTok{data.combined[data.combined}\OperatorTok{$}\NormalTok{party}\OperatorTok{==}\StringTok{"R"}\NormalTok{,])}
+\NormalTok{totchirepcoef <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.totchirep)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{totchirepcoefSE <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.totchirep)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+
+\NormalTok{lm.ngirlsrep <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(ngirls }\OperatorTok{~}\StringTok{ }\NormalTok{genold }\OperatorTok{+}\StringTok{ }\NormalTok{white }\OperatorTok{+}\StringTok{ }\NormalTok{age }\OperatorTok{+}\StringTok{ }\NormalTok{agesq }\OperatorTok{+}\StringTok{ }\NormalTok{srvlng }\OperatorTok{+}\StringTok{ }\NormalTok{srvlngsq }\OperatorTok{+}\StringTok{ }\NormalTok{rgroup }\OperatorTok{+}\StringTok{ }\NormalTok{region }\OperatorTok{+}\StringTok{ }\NormalTok{numchi, }\DataTypeTok{data=}\NormalTok{data.combined[data.combined}\OperatorTok{$}\NormalTok{party}\OperatorTok{==}\StringTok{"R"}\NormalTok{,])}
+\NormalTok{ngirlsrepcoef <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.ngirlsrep)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{ngirlsrepcoefSE <-}\StringTok{ }\KeywordTok{summary}\NormalTok{(lm.ngirlsrep)}\OperatorTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Collect all the \emph{genold} coefficients from the six regressions,
+  including their standard errors and arrange them in a table as in the
+  paper.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Appendix1 <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(ngirlscoef, totchicoef, ngirlsdemcoef, totchidemcoef, ngirlsrepcoef, totchirepcoef, ngirlscoefSE, totchicoefSE, ngirlsdemcoefSE, totchidemcoefSE, ngirlsrepcoefSE, totchirepcoefSE), }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{Appendix1 <-}\StringTok{ }\KeywordTok{as.table}\NormalTok{(Appendix1)}
+\KeywordTok{colnames}\NormalTok{(Appendix1) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Full Congress Number of Girls"}\NormalTok{, }\StringTok{"Full Congress Total Number of Children"}\NormalTok{, }\StringTok{"Democrats Number of Girls"}\NormalTok{, }\StringTok{"Democrats Total Number of Children"}\NormalTok{, }\StringTok{"Republicans Number of Girls"}\NormalTok{, }\StringTok{"Republicans Total Number of Children"}\NormalTok{)}
+\KeywordTok{rownames}\NormalTok{(Appendix1) =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"First child female"}\NormalTok{, }\StringTok{"Standard Error"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  print the table
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(Appendix1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                    Full Congress Number of Girls
+## First child female                    1.36279933
+## Standard Error                        0.07884215
+##                    Full Congress Total Number of Children
+## First child female                            -0.08333704
+## Standard Error                                 0.14878273
+##                    Democrats Number of Girls Democrats Total Number of Children
+## First child female                1.41063380                         0.11521688
+## Standard Error                    0.11176315                         0.17890763
+##                    Republicans Number of Girls
+## First child female                  1.24071355
+## Standard Error                      0.11182949
+##                    Republicans Total Number of Children
+## First child female                          -0.28056559
+## Standard Error                               0.22981019
+\end{verbatim}
+
+\end{document}
