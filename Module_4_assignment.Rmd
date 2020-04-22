@@ -14,7 +14,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 
 library(rio)
 library(tidyverse)
@@ -39,8 +39,9 @@ joined <- left_join(con108,genold108)
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
-```{r}
-tbl1_data <-select(joined, white, female, party, age, srvlng, rgroup, region, genold, ngirls, totchi)
+```{r, message=FALSE, warning=FALSE}
+tbl1_data <-select(joined, white, female, party, age, srvlng, rgroup, region, 
+                   genold, ngirls, totchi)
 tbl1_data$genold <- factor(tbl1_data$genold)
 tbl1_data$genold <- tbl1_data$genold %>% na_if("")
 tbl1_data$party <- factor(tbl1_data$party)
@@ -52,6 +53,7 @@ tbl1_data$agesq <- tbl1_data$age^2
 tbl1_data$srvlngsq <- tbl1_data$srvlng^2
 tbl1_data$totchi_factor<- factor(tbl1_data$totchi)
 
+
 ```
 
 # Replicationg Table 1 from the Appendix
@@ -59,52 +61,77 @@ tbl1_data$totchi_factor<- factor(tbl1_data$totchi)
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \ \tilde \quad x$, where $x$ stands for any linear combination of regressors. Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
-
-```{r}
-#Regression with total children as depedent variable across all parties
-reg1 <- lm(totchi ~ genold + white + female + party + age + srvlng + rgroup + region + srvlngsq + agesq, data = tbl1_data)
+Regression with total children as depedent variable across all parties
+```{r, message=FALSE, warning=FALSE}
+reg1 <- lm(totchi ~ genold + white + female + party + age + srvlng + rgroup + region 
+           + srvlngsq + agesq, data = tbl1_data)
 totchi_congress_beta <- summary(reg1)$coefficients["genoldG","Estimate"]
 totchi_congress_se <- summary(reg1)$coefficients["genoldG","Std. Error"]
 con_obs <- nobs(reg1)
+```
 
-#Regression with number of daughters as dependent variable across all parties
-ngreg <- lm(ngirls ~ genold + totchi + white + female + party + age + srvlng + rgroup + region + srvlngsq + agesq, data = tbl1_data)
-coef_ngreg <- coefficients(ngreg) %>% as.matrix() %>% t() %>% as_tibble()
+Regression with number of daughters as dependent variable across all parties
+```{r, message=FALSE, warning=FALSE}
+ngreg <- lm(ngirls ~ genold + totchi + white + female + party + age + srvlng + rgroup 
+            + region + srvlngsq + agesq, data = tbl1_data)
 ngirls_congress_beta <- summary(ngreg)$coefficients["genoldG","Estimate"]
 ngirls_congress_se <- summary(ngreg)$coefficients["genoldG","Std. Error"]
+```
 
-#Regression of total children as dependent variable across democrats
+Regression of total children as dependent variable across democrats
+```{r, message=FALSE, warning=FALSE}
 ddata <- filter(tbl1_data, party == "D")
-dreg <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region + srvlngsq + agesq, data = ddata)
-summary(dreg)
+dreg <- lm(totchi ~ genold + white + female + age + srvlng + rgroup + region 
+           + srvlngsq + agesq, data = ddata)
 totchi_d_beta <- summary(dreg)$coefficients["genoldG","Estimate"]
 totchi_d_se <- summary(dreg)$coefficients["genoldG","Std. Error"]
 d_obs <- nobs(dreg)
+```
 
-#Regression with number of daughters as dependent variable across democrats
-ngdreg <- lm(ngirls ~ genold + totchi + white + female + age + srvlng + rgroup + region + srvlngsq + agesq, data = ddata)
+Regression with number of daughters as dependent variable across democrats
+```{r, message=FALSE, warning=FALSE}
+ngdreg <- lm(ngirls ~ genold + totchi + white + female + age + srvlng + rgroup + region 
+             + srvlngsq + agesq, data = ddata)
 ngirls_d_beta <- summary(ngdreg)$coefficients["genoldG","Estimate"]
 ngirls_d_se <- summary(ngdreg)$coefficients["genoldG","Std. Error"]
+```
 
-#Regression of total children as dependent variable across republicans 
+Regression of total children as dependent variable across republicans 
+```{r, message=FALSE, warning=FALSE}
 rdata <- filter(tbl1_data, party == "R")
-rreg <- lm(totchi~ genold + white + female + age + srvlng + rgroup + region + srvlngsq + agesq, data = rdata)
+rreg <- lm(totchi~ genold + white + female + age + srvlng + rgroup + region 
+           + srvlngsq + agesq, data = rdata)
 totchi_r_beta <- summary(rreg)$coefficients["genoldG","Estimate"]
 totchi_r_se <- summary(rreg)$coefficients["genoldG","Std. Error"]
 r_obs <- nobs(rreg)
-
-#Regression with number of daughters as dependent variable across rebublicans 
-ngrreg <- lm(ngirls ~ genold + totchi + white + female + age + srvlng + rgroup + region + srvlngsq + agesq, data = rdata)
-ngirls_r_beta <- summary(ngrreg)$coefficients["genoldG","Estimate"]
-ngirls_r_se <- summary(ngrreg)$coefficients["genoldG","Std. Error"]
-
-#Create table with coefficients and std. errors
-final_data <- matrix(c(ngirls_congress_beta, totchi_congress_beta, ngirls_d_beta, totchi_d_beta, ngirls_r_beta, totchi_r_beta, ngirls_congress_se, totchi_congress_se, ngirls_d_se, totchi_d_se, ngirls_r_se, totchi_r_se, con_obs, con_obs, d_obs, d_obs, r_obs, r_obs),ncol=6,byrow=TRUE)
-colnames(final_data) <- c("C Number of daugthers", "C Number of children", "D Number of daugthers", "D Number of children", "R Number of daugthers", "R Number of children")
-rownames(final_data) <- c("First Child Female", "Std Error", "Observations")
-final_data <- round(final_data, digits = 2)
 ```
 
+Regression with number of daughters as dependent variable across rebublicans 
+```{r, message=FALSE, warning=FALSE}
+ngrreg <- lm(ngirls ~ genold + totchi + white + female + age + srvlng + rgroup + region 
+             + srvlngsq + agesq, data = rdata)
+ngirls_r_beta <- summary(ngrreg)$coefficients["genoldG","Estimate"]
+ngirls_r_se <- summary(ngrreg)$coefficients["genoldG","Std. Error"]
+```
+
+Create table with coefficients and std. errors
+```{r, message=FALSE, warning=FALSE}
+final_data <- matrix(c(ngirls_congress_beta, totchi_congress_beta, ngirls_d_beta, totchi_d_beta, 
+                       ngirls_r_beta, totchi_r_beta, ngirls_congress_se, totchi_congress_se, 
+                       ngirls_d_se, totchi_d_se, ngirls_r_se, totchi_r_se, con_obs, con_obs, 
+                       d_obs, d_obs, r_obs, r_obs),ncol=6,byrow=TRUE)
+colnames(final_data) <- c("C Number of daugthers", "C Number of children", 
+                          "D Number of daugthers", "D Number of children", 
+                          "R Number of daugthers", "R Number of children")
+rownames(final_data) <- c("First Child Female", "Std Error", "Observations")
+final_data <- round(final_data, digits = 2)
+print(final_data)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+library(knitr)
+```
 
 * Save the main coefficient of interest ($\beta_1$)
 * Run the same regression separately for Democrats (including Bernie) and Republicans. Save the coefficient and standard error of *genold*
