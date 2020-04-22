@@ -2,7 +2,9 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -180,14 +182,14 @@ regtab1 <- regtab1[c(1,2),]
 regobs <- c(reg1n, reg2n, reg5n, reg6n, reg3n, reg4n)
 regtab1 <- rbind(regtab1,regobs)
 colnames(regtab1) <- c("Full Congress: Number of daughters", 
-                       "Full Congress: Number of children",
+                       "               Number of children",
                        "Democrats: Number of daughters", 
-                       "Democrats: Number of children",
+                       "           Number of children",
                        "Republican: Number of daughters", 
-                       "Republicans: Number of children")
-rownames(regtab1) <- c("First child female", "Standard Errors", "N")
+                       "            Number of children")
+rownames(regtab1) <- c("First Child Female", "Standard Errors", "N")
 
-kable(regtab1)
+kable(regtab1, format = "markdown")
 
 ```
 
