@@ -19,7 +19,7 @@ I encourage you to take a look at the paper, as we will come back to it later in
 library(rio)
 library(tidyverse)
 setwd("~/Module_4")
-
+getwd()
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
