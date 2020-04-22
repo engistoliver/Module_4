@@ -1,0 +1,157 @@
+---
+title: "R - PS4"
+author: "Lingzhi Huang"
+date: "4/22/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Setup
+```{r, message=FALSE}
+
+library(rio)
+library(tidyverse)
+library(knitr)
+```
+```{r}
+basic<- import('basic.dta')
+genold<- import('genold108.dta')
+```
+
+```{r}
+basic108th <- subset(basic, basic$congress==108,)
+```
+
+```{r, message=FALSE}
+Combinedtable <- inner_join(genold,basic108th, by='name')
+print(Combinedtable)
+```
+```{r}
+Combinedtable <- Combinedtable[,c('name','genold','party','ngirls','nboys','totchi','rgroup','region','repub','srvlng','female','white','age')]
+print(Combinedtable)
+```
+
+# Data preparation
+
+```{r}
+Combinedtable$genold <- as.factor(Combinedtable$genold)
+Combinedtable$genold[Combinedtable$genold == ''] <- NA
+print(Combinedtable)
+```
+
+```{r}
+Combinedtable$party <- factor(Combinedtable$party, levels = c(1,2,3), labels=c("D", "R", "I"))
+Combinedtable$rgroup <- factor(Combinedtable$rgroup)
+Combinedtable$region <- factor(Combinedtable$region)
+print(Combinedtable)
+```
+
+generate variables for age squared and service length squared
+```{r}
+Combinedtable<- Combinedtable%>%mutate(Agesqr=age^2)
+Combinedtable <- Combinedtable%>%mutate(Srvlngsqr=srvlng^2)
+```
+create an additional variable of the number of children as factor variable
+```{r}
+Combinedtable$childrenfactor<-as.factor(Combinedtable$totchi)
+```
+
+# Replicating Table 1 from the Appendix
+
+regression on number of children
+```{r}
+lm1 <- lm(totchi~ genold + white + party +female+age + Agesqr + srvlng+ Srvlngsqr+ rgroup+ region, data = Combinedtable)
+```
+
+Save the main coefficient of interest
+```{r}
+coeffcient1<-coefficients(lm1)
+coeffcient1<-as.matrix(coeffcient1)
+beta1<-coeffcient1[2,1]
+summary1<-summary(lm1)
+se_1<-summary1$coefficients[2,2]
+```
+
+regression on number of children
+```{r}
+lm2<-lm(ngirls~ genold+ party+ rgroup + region
+         + srvlng + female + white + age + Agesqr
+         + Srvlngsqr + childrenfactor, data=Combinedtable)
+
+summary2<-summary(lm2)
+beta12<-summary2$coefficients[2,1]
+se_2<-summary2$coefficients[2,2]
+
+```
+
+Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+
+```{r}
+republicans<-Combinedtable[Combinedtable$repub==1,]
+democrats<-Combinedtable[Combinedtable$repub==0,]
+
+lm3<-lm(totchi~ genold+ rgroup + region
+           + srvlng + female + white + age + Agesqr 
+           + Srvlngsqr , data=republicans)
+
+lm4<-lm(totchi~ genold+ + rgroup + region 
+           + srvlng + female + white + age + Agesqr
+           + Srvlngsqr , data=democrats)
+
+ 
+summary4<-summary(lm4)
+beta14<-summary4$coefficients[2,1]
+se_4<-summary4$coefficients[2,2]
+
+summary3<-summary(lm3)
+beta13<-summary3$coefficients[2,1]
+se_3<-summary3$coefficients[2,2]
+```
+
+```{r}
+lm5<-lm(ngirls~ genold+ + rgroup + region
+            + srvlng + female + white + age + Agesqr
+            + Srvlngsqr + childrenfactor , data=democrats)
+
+lm6<-lm(ngirls~ genold+ rgroup + region 
+            + srvlng + female + white + age + Agesqr 
+            + Srvlngsqr + childrenfactor , data=republicans)
+
+
+summary5<-summary(lm5)
+beta15<-summary5$coefficients[2,1]
+se_5<-summary5$coefficients[2,2]
+
+summary6<-summary(lm6)
+beta16<-summary6$coefficients[2,1]
+se_6<-summary6$coefficients[2,2]
+
+table<-matrix(c(beta1,beta12,beta13,
+                beta14,beta15,beta16,se_1,se_2,se_3,
+                se_4,se_5,se_6),ncol=6,nrow=2,byrow=TRUE)
+
+rownames(table)<-c("First child female","s.e.")
+colnames(table)<-c("N girls full congress", "N children full congress", "N girls dem.", "N children dem.","N girls rep.","N children rep.")
+```
+
+* print the table
+```{r}
+print(table)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
