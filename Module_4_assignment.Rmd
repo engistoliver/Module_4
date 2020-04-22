@@ -18,28 +18,177 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+library(knitr)
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+
+```{r,message=FALSE}
+
+basic <- import("basic.dta")
+genold108 <- import("genold108.dta")
+
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r, message=FALSE}
+
+congress108th <- basic[basic$congress == 108,]
+
+```
+
+
 * join this subset with the *genold* dataset
+
+```{r,message=FALSE, warning=FALSE}
+
+data_108th <- inner_join(genold108, congress108th, by="name")
+
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
-* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
-* Recode *party* as a factor with 3 levels (D, R, I)
-* Recode *rgroup* and *region* as factors.
-* generate variables for age squared and service length squared
-* create an additional variable of the number of children as factor variable
+```{r,message=FALSE}
 
+data_108th <- data_108th[,c("name", "genold", "ngirls", "totchi", 
+                            "repub", "party", "white", "female", 
+                            "age", "srvlng", "rgroup", "region")]
+
+```
+
+* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r,message=FALSE}
+
+for (i in 1:435) {
+  if (data_108th$genold[i] == ""){
+    data_108th$genold[i] <- "NA"
+  }
+}
+
+data_108th$genold <- factor(data_108th$genold, exclude = "NA")
+
+```
+* Recode *party* as a factor with 3 levels (D, R, I)
+```{r,message=FALSE}
+
+data_108th$party <- factor(data_108th$party, labels = c("D", "R", "I"))
+
+```
+* Recode *rgroup* and *region* as factors.
+```{r,message=FALSE}
+
+data_108th$region <- as.factor(data_108th$region)
+data_108th$rgroup <- as.factor(data_108th$rgroup)
+
+```
+* generate variables for age squared and service length squared
+```{r,message=FALSE}
+
+data_108th$agesq <- data_108th$age^2
+data_108th$srvlngsq <- data_108th$srvlng^2
+
+```
+* create an additional variable of the number of children as factor variable
+```{r,message=FALSE}
+
+data_108th$numofchild <- as.factor(data_108th$totchi)
+
+```
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
+```{r,message=FALSE}
+
+#Regression of number of girls on gender of oldest child (All)
+reg1 <- lm(ngirls ~ genold + white + 
+             female + repub + age + agesq + srvlng + 
+             srvlngsq + rgroup + region, data = data_108th)
+
+regbeta1 <- summary(reg1)$coefficients[2,]
+print(regbeta1)
+reg1n <- 435-208
+
+#Regression of number of children on gender of oldest child (All)
+reg2 <- lm(totchi ~ genold + white + 
+             female + repub + age + agesq + srvlng + 
+             srvlngsq + rgroup + region, data = data_108th)
+
+regbeta2 <- summary(reg2)$coefficients[2,]
+print(regbeta2)
+reg2n <- 435-208
+
+```
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r,message=FALSE}
+
+#Regression of number of girls on gender of oldest child (Republican)
+reg3 <- lm(ngirls ~ genold + white + 
+             female + age + agesq + srvlng + 
+             srvlngsq + rgroup + region, 
+           data = data_108th[data_108th$repub==1,])
+
+regbeta3 <- summary(reg3)$coefficients[2,]
+print(regbeta3)
+reg3n <- nrow(subset(data_108th, data_108th$repub=="1")) - 106
+
+#Regression of number of children on gender of oldest child (Republican)
+reg4 <- lm(totchi ~ genold + white + 
+             female + age + agesq + srvlng + 
+             srvlngsq + rgroup + region, 
+           data = data_108th[data_108th$repub==1,])
+
+regbeta4 <- summary(reg4)$coefficients[2,]
+print(regbeta4)
+reg4n <- nrow(subset(data_108th, data_108th$repub=="1")) - 106
+
+#Regression of number of girls on gender of oldest child (Democrat)
+reg5 <- lm(ngirls ~ genold + white + 
+             female + age + agesq + srvlng + 
+             srvlngsq + rgroup + region, 
+           data = data_108th[data_108th$repub==0,])
+
+regbeta5 <- summary(reg5)$coefficients[2,]
+print(regbeta5)
+reg5n <- nrow(subset(data_108th, data_108th$repub=="0")) - 102
+
+#Regression of number of children on gender of oldest child (Democrat)
+reg6 <- lm(totchi ~ genold + white + 
+             female + age + agesq + srvlng + 
+             srvlngsq + rgroup + region, 
+           data = data_108th[data_108th$repub==0,])
+
+regbeta6 <- summary(reg6)$coefficients[2,]
+print(regbeta6)
+reg6n <- nrow(subset(data_108th, data_108th$repub=="0")) - 102
+
+```
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+```{r,message=FALSE}
+
+regtab1 <- rbind(regbeta1,regbeta2,regbeta5,regbeta6,regbeta3,regbeta4)
+regtab1 <- as.data.frame(regtab1)
+regtab1 <- round(regtab1, digits=2)
+regtab1 <- t(regtab1)
+regtab1 <- regtab1[c(1,2),]
+regobs <- c(reg1n, reg2n, reg5n, reg6n, reg3n, reg4n)
+regtab1 <- rbind(regtab1,regobs)
+colnames(regtab1) <- c("Full Congress: Number of daughters", 
+                       "Full Congress: Number of children",
+                       "Democrats: Number of daughters", 
+                       "Democrats: Number of children",
+                       "Republican: Number of daughters", 
+                       "Republicans: Number of children")
+rownames(regtab1) <- c("First child female", "Standard Errors", "N")
+
+kable(regtab1)
+
+```
+
+
