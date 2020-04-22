@@ -18,6 +18,11 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 library(rio)
 library(tidyverse)
+setwd("C:/Users/elena/Desktop/Universita/SSE/Semester 2/7316R/Module_4")
+basic <- import("C:/Users/elena/Desktop/Universita/SSE/Semester 2/7316R/Module_4/basic.dta")
+genold <- import("C:/Users/elena/Desktop/Universita/SSE/Semester 2/7316R/Module_4/genold108.dta")
+basic108 <- basic %>% filter(congress==108)
+genoldjoined108 <- left_join(basic108, genold, by="name")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -33,7 +38,17 @@ library(tidyverse)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
-
+```{r, message=FALSE}
+genoldjoined108 <- genoldjoined108 %>% select(white, female, party, age, srvlng,
+                                         rgroup, region, totchi, ngirls, nboys, genold)
+genoldjoined108$genold <- genoldjoined108$genold %>% na_if("") %>% as.factor()
+genoldjoined108$party <- genoldjoined108$party %>% recode("D"=1, "R"=2, "I"=3) %>%          as.factor()
+genoldjoined108$rgroup <- genoldjoined108$rgroup %>% as.factor()
+genoldjoined108$region <- genoldjoined108$region %>% as.factor()
+genoldjoined108 <- genoldjoined108 %>% mutate(agesq = age^2)
+genoldjoined108 <- genoldjoined108 %>% mutate(srvlngsq = srvlng^2)
+genoldjoined108$numbchildren <- genoldjoined108$totchi %>% as.factor()
+```
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
