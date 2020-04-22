@@ -35,7 +35,7 @@ genold <- genold[vars]
 ## + generate variables for agesq and srvlnsq
 ## + generate factor variable for number of children
 genold <- mutate(genold,
-                 genold = as_factor(na_if(genold, "")),
+                 genold = factor(na_if(genold, ""), levels = c("B", "G")),
                  party = factor(party, labels = c("D", "R", "D")),
                  rgroup = as_factor(rgroup),
                  region = as_factor(region),
@@ -55,11 +55,11 @@ genold <- drop_na(genold, genold)
 dem_genold <- subset(genold, party == "D")
 rep_genold <- subset(genold, party == "R")
 
-
+str(genold)
 
 ## Run LS regression for all representatives: total children
 reg <- lm(totchi ~ genold + female + white + age + agesq +
-            srvlng + srvlngsq + rgroup + region,
+            srvlng + srvlngsq + rgroup + region + party,
           genold)
 summary(reg)
 
@@ -84,7 +84,7 @@ betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
 ## Run LS regression for all reps: daughters
 reg <- lm(ngirls ~ genold + female + white + age + agesq +
-            srvlng + srvlngsq + rgroup + region,
+            srvlng + srvlngsq + rgroup + region + party,
           genold)
 betas <- cbind(betas, c(coef(summary(reg))[2,1], coef(summary(reg))[2,2]))
 
