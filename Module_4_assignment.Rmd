@@ -2,7 +2,9 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -13,33 +15,123 @@ I encourage you to take a look at the paper, as we will come back to it later in
 
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
+* I set warning = FALSE, message = FALSE.
 
-```{r, message=FALSE}
-
+```{r, warning=FALSE, message=FALSE}
 library(rio)
 library(tidyverse)
+library(knitr)
+setwd("C:/Users/Samsung/Documents/Module_4")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+Basic <- import("basic.dta")
+Genold <- import("genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r}
+Congress_108 <- Basic[(Basic$congress==108),] 
+```
+
 * join this subset with the *genold* dataset
+```{r}
+data.combined <- left_join(Congress_108, Genold, key = c("district", "statenam", "state"))
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
-* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
-* Recode *party* as a factor with 3 levels (D, R, I)
-* Recode *rgroup* and *region* as factors.
-* generate variables for age squared and service length squared
-* create an additional variable of the number of children as factor variable
+```{r}
+data.combined <- data.combined %>% select("white","female", "party", "age", "srvlng", "ngirls", "totchi","rgroup", "region", "genold")
+```
 
-# Replicationg Table 1 from the Appendix
+* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+data.combined$genold <- data.combined$genold %>% na_if("")
+data.combined$genold <- data.combined$genold %>% as.factor()
+```
+
+* Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+data.combined$party <- data.combined$party %>% recode("1"="D", "2"="R", "3"="I")
+data.combined$party <- data.combined$party %>% as.factor()
+```
+
+* Recode *rgroup* and *region* as factors.
+```{r}
+data.combined$rgroup <- data.combined$rgroup %>% as.factor()
+data.combined$region <- data.combined$region %>% as.factor()
+```
+
+* generate variables for age squared and service length squared
+```{r}
+data.combined <- data.combined %>% mutate(agesq = age^2)
+data.combined <- data.combined %>% mutate(srvlngsq = srvlng^2)
+```
+
+* create an additional variable of the number of children as factor variable
+```{r}
+data.combined <- data.combined %>% mutate(numchi = totchi)
+data.combined$numchi <- data.combined$numchi %>% as.factor()
+```
+
+
+# Replicating Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+```{r}
+lm.totchi <- lm(totchi ~ genold + white + party + age + agesq + srvlng + srvlngsq + rgroup + region, data=data.combined)
+
+lm.ngirls <- lm(ngirls ~ genold + white + party + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, data=data.combined)
+```
+
 * Save the main coefficient of interest ($\beta_1$)
-* Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r}
+totchicoef <- summary(lm.totchi)$coefficients[2,1]
+totchicoefSE <- summary(lm.totchi)$coefficients[2,2]
+
+ngirlscoef <- summary(lm.ngirls)$coefficients[2,1]
+ngirlscoefSE <- summary(lm.ngirls)$coefficients[2,2]
+```
+
+* Run the same regression separately for Democrats and Republicans (assign the
+independent to one of the parties). Save the coefficient and standard error of *genold*. I recode the Independent candidates (Bernie Sanders and Virgile Goode) as Republicans because Sanders will not be included in the regression (due to unavailable data) and Goode now identifies as a republican.
+```{r}
+data.combined$party <- data.combined$party %>% recode("I"="R")
+lm.totchidem <- lm(totchi ~ genold + white + age + agesq + srvlng + srvlngsq + rgroup + region, data=data.combined[data.combined$party=="D",])
+totchidemcoef <- summary(lm.totchidem)$coefficients[2,1]
+totchidemcoefSE <- summary(lm.totchidem)$coefficients[2,2]
+
+lm.ngirlsdem <- lm(ngirls ~ genold + white + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, data=data.combined[data.combined$party=="D",])
+ngirlsdemcoef <- summary(lm.ngirlsdem)$coefficients[2,1]
+ngirlsdemcoefSE <- summary(lm.ngirlsdem)$coefficients[2,2]
+
+lm.totchirep <- lm(totchi ~ genold + white + age + agesq + srvlng + srvlngsq + rgroup + region, data=data.combined[data.combined$party=="R",])
+totchirepcoef <- summary(lm.totchirep)$coefficients[2,1]
+totchirepcoefSE <- summary(lm.totchirep)$coefficients[2,2]
+
+lm.ngirlsrep <- lm(ngirls ~ genold + white + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, data=data.combined[data.combined$party=="R",])
+ngirlsrepcoef <- summary(lm.ngirlsrep)$coefficients[2,1]
+ngirlsrepcoefSE <- summary(lm.ngirlsrep)$coefficients[2,2]
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r}
+Appendix1 <- matrix(c(ngirlscoef, totchicoef, ngirlsdemcoef, totchidemcoef, ngirlsrepcoef, totchirepcoef, ngirlscoefSE, totchicoefSE, ngirlsdemcoefSE, totchidemcoefSE, ngirlsrepcoefSE, totchirepcoefSE), nrow = 2, byrow = TRUE)
+Appendix1 <- as.table(Appendix1)
+colnames(Appendix1) = c("Full Congr # Girls", "Full Congr Total # Children", "Dem # Girls", "Dem Total # Children", "Rep # Girls", "Rep Total # Children")
+rownames(Appendix1) = c("First child female", "Standard Error")
+```
+
 * print the table
+```{r}
+print(Appendix1)
+
+```
+
+
