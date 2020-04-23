@@ -3,6 +3,7 @@ title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "3/25/2020"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
