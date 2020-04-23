@@ -40,7 +40,7 @@ genoldjoined108 <- left_join(basic108, genold, by="name")
 * create an additional variable of the number of children as factor variable
 ```{r, message=FALSE}
 genoldjoined108 <- genoldjoined108 %>% select(white, female, party, age, srvlng,
-                                         rgroup, region, totchi, ngirls, nboys, genold)
+                                         rgroup, region, totchi, ngirls, genold)
 genoldjoined108$genold <- genoldjoined108$genold %>% na_if("") %>% as.factor()
 genoldjoined108$party <- genoldjoined108$party %>% recode("D"=1, "R"=2, "I"=3) %>%          as.factor()
 genoldjoined108$rgroup <- genoldjoined108$rgroup %>% as.factor()
@@ -54,7 +54,48 @@ genoldjoined108$numbchildren <- genoldjoined108$totchi %>% as.factor()
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+
+```{r, message=FALSE}
+X <- c(genoldjoined108$white, genoldjoined108$female, genoldjoined108$party, genoldjoined108$age, genoldjoined108$agesq, genoldjoined108$srvlng, genoldjoined108$srvlngsq, genoldjoined108$rgroup, genoldjoined108$region)
+reg1 <- lm(totchi ~ genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region, data = genoldjoined108)
+beta1_tot_full <- reg1[["coefficients"]][["genoldG"]]
+stde_beta1_tot_full <- sqrt(diag(vcov(reg1)))[2]
+```
+
 * Save the main coefficient of interest ($\beta_1$)
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+
+```{r, message=FALSE}
+genoldjoined108$dem <- as.numeric(genoldjoined108$party == 1)
+genoldjoined108$rep <- as.numeric(genoldjoined108$party != 1)
+
+reg2 <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region, data = genoldjoined108, subset = dem == 1)
+beta1_tot_dem <- reg2[["coefficients"]][["genoldG"]]
+stde_beta1_tot_dem <- sqrt(diag(vcov(reg2)))[2]
+
+reg3 <- lm(totchi ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region, data = genoldjoined108, subset = rep == 1)
+beta1_tot_rep <- reg3[["coefficients"]][["genoldG"]]
+stde_beta1_tot_rep <- sqrt(diag(vcov(reg3)))[2]
+
+reg4 <- lm(ngirls ~ genold + white + female + age + agesq + party + srvlng + srvlngsq + rgroup + region + totchi, data = genoldjoined108)
+beta1_fem_full <- reg4[["coefficients"]][["genoldG"]]
+stde_beta1_fem_full <- sqrt(diag(vcov(reg4)))[2]
+
+reg5 <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi, data = genoldjoined108, subset = dem == 1)
+beta1_fem_dem <- reg5[["coefficients"]][["genoldG"]]
+stde_beta1_fem_dem <- sqrt(diag(vcov(reg5)))[2]
+
+reg6 <- lm(ngirls ~ genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + totchi, data = genoldjoined108, subset = rep == 1)
+beta1_fem_rep <- reg6[["coefficients"]][["genoldG"]]
+stde_beta1_fem_rep <- sqrt(diag(vcov(reg6)))[2]
+```
+
 * print the table
+```{r, message=FALSE}
+summarytable <- matrix(c(beta1_tot_full,beta1_fem_full,beta1_tot_dem, beta1_fem_dem, beta1_tot_rep, beta1_fem_rep, stde_beta1_tot_full, stde_beta1_fem_full, stde_beta1_tot_dem, stde_beta1_fem_dem, stde_beta1_tot_rep, stde_beta1_fem_rep), nrow = 2, ncol = 6, byrow = TRUE)
+colnames(summarytable) <- c("Full congress: No. of children", "Full congress: No. of girls", "Democrats: no. of children", "Democrats: no. of girls", "Republicans: no. of children", "Republicans: no. of girls")
+rownames(summarytable) <- c("Coefficient", "Standard error")
+print(summarytable)
+```
+
