@@ -1,8 +1,10 @@
 ---
-title: "Module 4 - Instructions"
-author: "Oliver Engist"
-date: "3/25/2020"
-output: pdf_document
+title: "Module 4 - Assignment"
+author: "Zhi Li"
+date: "4/23/2020"
+output:
+  html_document:
+    df_print: paged
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -15,24 +17,52 @@ I encourage you to take a look at the paper, as we will come back to it later in
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
-library(rio)
-library(tidyverse)
+library(rio); library(tidyverse)
+setwd("C:/Users/Zhi/Desktop/Module_4")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
+```{r, message=FALSE}
+library(readstata13)
+basic <- read.dta13("basic.dta"); genold108 <- read.dta13("genold108.dta")
+basic108 <- basic[(basic$congress==108),]
+info <- inner_join(genold108[, 3:4], basic108, by="name")
+```
+
+
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+
+```{r, message=FALSE}
+info <- info %>%
+  select(region, ngirls, totchi, rgroup, srvlng, party, age, white, female,
+         alabort, moreserv, moredef, morecrimesp, protgay, genold)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
+
+```{r, message=FALSE}
+info <- info %>% mutate_all(na_if, "")
+info$genold <- factor(info$genold, levels = c("B", "G"), labels = (0:1))
+info$party <- factor(info$party, levels = (1:3), labels = c("D", "R", "I"))
+info$rgroup <- factor(info$rgroup); info$region <- factor(info$region)
+```
+
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r, message=FALSE}
+info$age_sq <- info$age^2; info$srvlng_sq <- info$srvlng^2
+info$numchi <- factor(info$totchi)
+```
+
 
 # Replicationg Table 1 from the Appendix
 
@@ -40,6 +70,64 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
+
+```{r, message=FALSE}
+full_chi <- lm(totchi ~ genold + white + female + party + age + age_sq +
+                 srvlng + srvlng_sq + rgroup + region + alabort + moreserv +
+                 moredef + morecrimesp + protgay, data = info)
+E2 <- coef(summary(full_chi))["genold1","Estimate"]
+S2 <- coef(summary(full_chi))["genold1","Std. Error"]
+```
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+
+```{r, message=FALSE}
+info_dem <- info[(info$party == "D"),]
+dem_chi <- lm(totchi ~ genold + white + female + age + age_sq + srvlng +
+                srvlng_sq + rgroup + region + alabort + moreserv + moredef +
+                morecrimesp + protgay, data = info_dem)
+E4 <- coef(summary(dem_chi))["genold1","Estimate"]
+S4 <- coef(summary(dem_chi))["genold1","Std. Error"]
+
+info_others <- info[(info$party != "D"),]
+others_chi <- lm(totchi ~ genold + white + female + age + age_sq + srvlng +
+                   srvlng_sq + rgroup + region + alabort + moreserv + moredef +
+                   morecrimesp + protgay, data = info_others)
+E6 <- coef(summary(others_chi))["genold1","Estimate"]
+S6 <- coef(summary(others_chi))["genold1","Std. Error"]
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+
+```{r, message=FALSE}
+full_dau <- lm(ngirls ~ genold + white + female + party + age + age_sq +
+                 srvlng + srvlng_sq + rgroup + region + alabort + moreserv +
+                 moredef + morecrimesp + protgay, data = info)
+E1 <- coef(summary(full_dau))["genold1","Estimate"]
+S1 <- coef(summary(full_dau))["genold1","Std. Error"]
+
+dem_dau <- lm(ngirls ~ genold + white + female + age + age_sq + srvlng +
+                srvlng_sq + rgroup + region + alabort + moreserv +
+                moredef + morecrimesp + protgay, data = info_dem)
+E3 <- coef(summary(dem_dau))["genold1","Estimate"]
+S3 <- coef(summary(dem_dau))["genold1","Std. Error"]
+
+others_dau <- lm(ngirls ~ genold + white + female + age + age_sq + srvlng +
+                   srvlng_sq + rgroup + region + alabort + moreserv + moredef +
+                   morecrimesp + protgay, data = info_others)
+E5 <- coef(summary(others_dau))["genold1","Estimate"]
+S5 <- coef(summary(others_dau))["genold1","Std. Error"]
+```
+
 * print the table
+
+```{r, message=FALSE}
+table1 <- matrix(c(E1, E2, E3, E4, E5, E6, S1, S2, S3, S4, S5, S6),
+                 nrow = 2, byrow = TRUE)
+rownames(table1) <- c("Estimates of beta1", "Standard errors of beta1")
+colnames(table1) <- c("Full_# of daughters", "Full_# of children",
+                      "Dem_# of daughters", "Dem_# of children",
+                      "Rep_# of daughters", "Rep_# of children")
+table1 <- as.data.frame(table1)
+print(table1)
+```
