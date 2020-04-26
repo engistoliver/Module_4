@@ -12,34 +12,149 @@ I encourage you to take a look at the paper, as we will come back to it later in
 # Setup
 
 * Load the libraries "Rio" and "tidyverse"
+
+```{r}
+install.packages("rio")
+install.packages("tidyverse")
+```
 * Change the path of the working directory to your working directory.
-
-```{r, message=FALSE}
-
-library(rio)
-library(tidyverse)
+```{r}
+setwd("~/R/Module_4")
 ```
 
-* import the data sets *basic.dta* and *genold108.dta*
-* create a subset of the 108th congress from the *basic* dataset
-* join this subset with the *genold* dataset
+```{r}
+library(rio)
+library(tidyverse)
+```* import the data sets *basic.dta* and *genold108.dta*
+```{r}
+basicdata<-import("~/R/Module_4/basic.dta")
+genold<-import("~/R/Module_4/genold108.dta")
+```
 
+* create a subset of the 108th congress from the *basic* dataset
+```{r}
+basicdata$congress<-as.character(basicdata$congress)
+cong108<-subset(basicdata,basicdata$congress=="108")
+```
+
+* join this subset with the *genold* dataset
+```{r}
+congadd<-c()
+for (i in 1:435) {
+  
+ for (j in 1:435) {
+   if (cong108$name[i]==genold$name[j])
+     congadd[i]<-genold$genold[j]
+ }
+    
+}
+cong108<-cong108%>%mutate(congadd)
+```
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
-* drop all other variables.
-* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
-* Recode *party* as a factor with 3 levels (D, R, I)
-* Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
+* Recode *rgroup* and *region* as factors
+* drop all other variables.
+```{r}
+regre<-select(cong108,"white","female","party","age","srvlng","rgroup","region","congadd","totchi")
+regre<-regre%>%mutate(agesquare=agesquare)
+regre<-regre%>%mutate(servicesquare=servicesquare)
+children<-matrix(unlist(regre),ncol = 11,byrow = FALSE)
+children[children==""]<-NA
+children_cl<-na.omit(children)
+```
+
+* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+children_cl<-as.data.frame(children_cl)
+children_name<-c("white","female","party","age","srvlng","rgroup","region","congadd","totchi","agesq","servicesq")
+names(children_cl)<-children_name
+x<-select(children_cl,"white","female","party","age","srvlng","rgroup","region","congadd","agesq","servicesq")
+x$white<-as.numeric(x$white)
+x$female<-as.numeric(x$female)
+x$party<-as.numeric(x$party)
+x$age<-as.numeric(x$age)
+x$srvlng<-as.numeric(x$srvlng)
+x$rgroup<-as.numeric(x$rgroup)
+x$region<-as.numeric(x$region)
+x$agesq<-as.numeric(x$agesq)
+x$servicesq<-as.numeric(x$servicesq)
+x$white<-as.numeric(x$white)
+x$congadd<-str_replace(x$congadd,"G","1")
+x$congadd<-str_replace(x$congadd,"B","0") 
+x$congadd<-as.numeric(x$congadd)
+```
+* Recode *party* as a factor with 3 levels (D, R, I)
+
+
 * create an additional variable of the number of children as factor variable
+```{r}
+tochi<-children_cl$totchi
+tochi<-as.numeric(tochi)
+```
+
 
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+```{r}
+install.packages("broom")
+library(broom)
+lm_x<-lm(tochi~white+female+party+age+srvlng+rgroup+region+congadd+agesq+servicesq,data=x)
+tidy_1<-tidy(lm_x)
+```
 * Save the main coefficient of interest ($\beta_1$)
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r}
+children_dem<-children_cl[children_cl$party==1,]
+children_rep<-children_cl[children_cl$party==2,]
+x_dem<-select(children_dem,"white","female","party","age","srvlng","rgroup","region","congadd","agesq","servicesq")
+x_dem$white<-as.numeric(x_dem$white)
+x_dem$female<-as.numeric(x_dem$female)
+x_dem$party<-as.numeric(x_dem$party)
+x_dem$age<-as.numeric(x_dem$age)
+x_dem$srvlng<-as.numeric(x_dem$srvlng)
+x_dem$rgroup<-as.numeric(x_dem$rgroup)
+x_dem$region<-as.numeric(x_dem$region)
+x_dem$agesq<-as.numeric(x_dem$agesq)
+x_dem$servicesq<-as.numeric(x_dem$servicesq)
+x_dem$white<-as.numeric(x_dem$white)
+x_dem$congadd<-str_replace(x_dem$congadd,"G","1")
+x_dem$congadd<-str_replace(x_dem$congadd,"B","0") 
+x_dem$congadd<-as.numeric(x_dem$congadd)
+tochi_dem<-children_dem$totchi
+tochi_dem<-as.numeric(tochi_dem)
+lm_dem<-lm(tochi_dem~white+female+party+age+srvlng+rgroup+region+congadd+agesq+servicesq,data=x_dem)
+tidy_dem<-tidy(lm_dem)
+
+x_rep<-select(children_rep,"white","female","party","age","srvlng","rgroup","region","congadd","agesq","servicesq")
+x_rep$white<-as.numeric(x_rep$white)
+x_rep$female<-as.numeric(x_rep$female)
+x_rep$party<-as.numeric(x_rep$party)
+x_rep$age<-as.numeric(x_rep$age)
+x_rep$srvlng<-as.numeric(x_rep$srvlng)
+x_rep$rgroup<-as.numeric(x_rep$rgroup)
+x_rep$region<-as.numeric(x_rep$region)
+x_rep$agesq<-as.numeric(x_rep$agesq)
+x_rep$servicesq<-as.numeric(x_rep$servicesq)
+x_rep$white<-as.numeric(x_rep$white)
+x_rep$congadd<-str_replace(x_rep$congadd,"G","1")
+x_rep$congadd<-str_replace(x_rep$congadd,"B","0") 
+x_rep$congadd<-as.numeric(x_rep$congadd)
+tochi_rep<-children_rep$totchi
+tochi_rep<-as.numeric(tochi_rep)
+lm_rep<-lm(tochi_rep~white+female+party+age+srvlng+rgroup+region+congadd+agesq+servicesq,data=x_rep)
+tidy_rep<-tidy(lm_rep)
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r}
+tabble<-c(tidy_1$estimate[8],tidy_1$std.error[8],tidy_dem$estimate[8],tidy_dem$std.error[8],tidy_rep$estimate[8],tidy_rep$std.error[8])
+tabble<-matrix(data=tabble,nrow=3,byrow=TRUE)
+```
 * print the table
+```{r}
+print(tabble)
