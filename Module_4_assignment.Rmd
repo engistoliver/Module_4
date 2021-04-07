@@ -101,10 +101,25 @@ reg5 <- lm(totchi ~ genold + white + female + age + age_sq + srvlng + srvlng_sq 
 
 reg6 <- lm(ngirls ~ genold + white + female + age + age_sq + srvlng + srvlng_sq + rgroup + region + n_chi_factor, data=subset(cong108.data, party == "R"))
 
-# save main coefficient of interest
+# Save main coefficient of interest
 beta1 <- c(reg1$coefficients[2],reg2$coefficients[2],reg3$coefficients[2],reg4$coefficients[2],reg5$coefficients[2],reg6$coefficients[2])
+beta1 <- sprintf(beta1, fmt = '%#.2f')
 
-# Find the standard errors
+# Save the standard errors of the main variable of interest genold
+se <- c(summary(reg1)$coefficients[2,2],summary(reg2)$coefficients[2,2],summary(reg3)$coefficients[2,2],summary(reg4)$coefficients[2,2],summary(reg5)$coefficients[2,2],summary(reg6)$coefficients[2,2])
+se <- sprintf(se, fmt = '%#.2f')
 
+# Generate a vector containing the total sample size N
+N <- c(length(resid(reg1)), length(resid(reg2)),length(resid(reg3)),length(resid(reg4)),length(resid(reg5)),length(resid(reg6)))
+
+# Create the table as a matrix
+table1 <- matrix(c(beta1,se,N), ncol=6,nrow=3, byrow=TRUE)
+
+# Add column and row names to the table
+colnames(table1) <- c("Full Congress, Number of Children", "Full Congress, Number of Daughters", "Democrats, Number of Children", "Democrats, Number of Daughters", "Republican, Number of Children", "Republican, Number of Daughters")
+
+rownames(table1) <- c("First child female", "Standard Error", "N")
+
+print(table1)
 
 ```
