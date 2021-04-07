@@ -40,7 +40,6 @@ cong108.data <- left_join(genold108.data, basic108.data, by=c("name", "statenam"
 
 ```
 
-
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
@@ -50,6 +49,33 @@ cong108.data <- left_join(genold108.data, basic108.data, by=c("name", "statenam"
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r, message=FALSE}
+# keep only variables used in table 1 in appendix
+cong108.data <- cong108.data %>%
+  select(genold, ngirls, totchi, rgroup, region, srvlng, female, white, age, party)
+
+# recode genold as a factor variable
+cong108.data$genold <- as.factor(cong108.data$genold)
+
+# recode missing values as NAs for genold
+cong108.data$genold <- cong108.data$genold %>% na_if("")
+
+# recode party as an ordered factor with 3 levels
+cong108.data$party <- factor(cong108.data$party, levels=c(1,2,3), ordered = TRUE)
+
+# recode rgroup and region as factor
+cong108.data$rgroup <- as.factor(cong108.data$rgroup)
+cong108.data$region <- as.factor(cong108.data$region)
+
+# generate variables for age squared and service length squared
+cong108.data <- cong108.data %>% mutate(age_sq = age^2) 
+cong108.data <- cong108.data %>% mutate(srvlng_sq = srvlng^2) 
+
+# generate total children variable as factor 
+cong108.data <- cong108.data  %>% mutate(n_chi_factor = as.factor(cong108.data$totchi)) 
+
+```
 
 # Replicationg Table 1 from the Appendix
 
