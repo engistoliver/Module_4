@@ -1,7 +1,7 @@
 ---
 title: "Module 4 - Instructions"
-author: "Oliver Engist"
-date: "04/04/2021"
+author: "Queennie Huang"
+date: "07/04/2021"
 output: pdf_document
 ---
 
@@ -17,11 +17,29 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 library(rio)
 library(tidyverse)
+
+# change path of working directory
+getwd()
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r, message=FALSE}
+
+# import data
+basic.data <- import("basic.dta")
+genold108.data <- import("genold108.dta")
+
+# create subset of the 108th congress from basic dataset
+basic108.data <- basic.data %>% filter(congress == "108")
+
+# merge data
+cong108.data <- left_join(genold108.data, basic108.data, by=c("name", "statenam", "district"))
+
+```
+
 
 # Data preparation
 
