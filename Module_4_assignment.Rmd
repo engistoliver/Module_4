@@ -40,7 +40,6 @@ basic108 <- basic %>% filter(basic$congress == 108)
 merged <- left_join(genold, basic108, by=c("name", "statenam", "district"))
 ```
 
-
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
@@ -50,6 +49,30 @@ merged <- left_join(genold, basic108, by=c("name", "statenam", "district"))
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r message=FALSE}
+#DROP VARIABLES.
+merged <- merged %>%
+  select(name, genold, ngirls, totchi, rgroup, region, srvlng, female, white, age, party)
+
+#RECODE "GENOLD". 
+merged$genold <- as.factor(merged$genold)
+merged$genold <- merged$genold %>% na_if("")
+
+#RECODE "PARTY". 
+merged$party <- factor(merged$party, levels=c(1,2,3), labels <- c("D", "R", "I"), ordered = TRUE)
+
+#RECODE "RGROUP" AND "REGION". 
+merged$rgroup <- as.factor(merged$rgroup)
+merged$region <- as.factor(merged$region)
+
+#GENERATE VARIABLES. 
+merged <- merged %>% mutate(age_sq = age^2) 
+merged <- merged %>% mutate(srvlng_sq = srvlng^2) 
+
+#CREATE NEW VARIABLE FOR NO. OF CHILDREN. 
+merged$tot_chi_fac <- as.factor(merged$totchi)
+```
 
 # Replicationg Table 1 from the Appendix
 
