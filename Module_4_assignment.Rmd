@@ -29,6 +29,10 @@ getwd()
 
 ```{r message=FALSE}
 
+#IMPORT DATA.
+basic <- import("basic.dta")
+genold <- import("genold108.dta")
+
 ```
 
 
