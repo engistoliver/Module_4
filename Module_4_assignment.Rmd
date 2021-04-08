@@ -1,7 +1,7 @@
 ---
 title: "Module 4 - Instructions"
 author: "Andrea Schmidt"
-date: "04/04/2021"
+date: "08/04/2021"
 output: pdf_document
 ---
 
@@ -15,13 +15,22 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 ```{r, message=FALSE}
 
+#LOAD LIBRARIES.
 library(rio)
 library(tidyverse)
+
+#SET WORKING DIRECTORY. 
+getwd()
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r message=FALSE}
+
+```
+
 
 # Data preparation
 
