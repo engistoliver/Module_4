@@ -101,11 +101,25 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
   
 
 #SAVE BETA1 COEFF.
+ beta1 <- c(reg1$coefficients[2],reg2$coefficients[2],reg3$coefficients[2],reg4$coefficients[2],reg5$coefficients[2],reg6$coefficients[2])
 
 #SAVE SE.
+output1 <- summary(reg1)
+output2 <- summary(reg2)
+output3 <- summary(reg3)
+output4 <- summary(reg4)
+output5 <- summary(reg5)
+output6 <- summary(reg6)
 
-#PRINT TABLE. 
+SE <- c(output1$coefficients[2,2],output2$coefficients[2,2],output3$coefficients[2,2],output4$coefficients[2,2],output5$coefficients[2,2],output6$coefficients[2,2])
 
+#PRINT & FORMAT TABLE. 
+table <- matrix(c(beta1,SE), ncol=6,nrow=2, byrow=TRUE)
+
+colnames(table) <- c("Full Congress, # of Children", "Full Congress, # of Daughters", "Democrats, # of Children", "Democrats, # of Daughters", "Republican, # of Children", "Republican, # of Daughters")
+rownames(table) <- c("First child female", "Standard Error")
+
+print(table)
 
 ```
 
