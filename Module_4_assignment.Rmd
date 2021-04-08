@@ -33,6 +33,11 @@ getwd()
 basic <- import("basic.dta")
 genold <- import("genold108.dta")
 
+#CREATE SUBSET. 
+basic108 <- basic %>% filter(basic$congress == 108)
+
+#MERGE DATASETS. 
+merged <- left_join(genold, basic108, by=c("name", "statenam", "district"))
 ```
 
 
