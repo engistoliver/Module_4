@@ -137,27 +137,70 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 regression <- lm(totchi ~ genold + white + female + party + age + agesq + 
                    srvlng + srvlngsq + rgroup + region, data = data)
 
-beta1 <- regression$coefficients[2]
-beta1
+beta1_full <- regression$coefficients["genoldG"]
+beta1_full
 ```
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r, message=FALSE}
-str(data$party)
+# Assigning independents to the democratic party
+data[data$party=="I",7] <- "D"
 
-data[data$party==3,] <- 1
-
+# Democrat subset of observations
 data_dem <- data %>%
-  filter(party == 1) 
+  filter(party == "D") 
 
-reg_by_party <- data %>% 
-  group_by(party) %>%
-  do(estimates = lm(totchi ~ genold + white + female + party + age + agesq + 
-                   srvlng + srvlngsq + rgroup + region, data = data))
+regression_dem <- lm(totchi ~ genold + white + female + age + agesq + 
+                   srvlng + srvlngsq + rgroup + region, data = data_dem)
 
-reg_dem <- reg_by_party[1,]
+beta1_dem <- regression_dem$coefficients["genoldG"]
+beta1_dem
+```
 
+```{r, message=FALSE}
+# Republican subset of observations
+data_rep <- data %>%
+  filter(party == "R")
+
+regression_rep <- lm(totchi ~ genold + white + female + age + agesq + 
+                   srvlng + srvlngsq + rgroup + region, data = data_rep)
+
+beta1_rep <- regression_rep$coefficients["genoldG"]
+beta1_rep
 ````
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+```{r, message=FALSE, include=FALSE}
+# Full congress
+sum_full <- summary(regression)
+coeff_full <- sum_full$coefficients
+std_full <- coeff_full[2,2]
+
+rm(list = c("sum_full", "coeff_full"))
+
+# Democrats
+sum_dem <- summary(regression_dem)
+coeff_dem <- sum_dem$coefficients
+std_dem <- coeff_dem[2,2]
+
+rm(list = c("sum_dem", "coeff_dem"))
+
+# Republicans
+sum_rep <- summary(regression_rep)
+coeff_rep <- sum_rep$coefficients
+std_rep <- coeff_rep[2,2]
+
+rm(list = c("sum_rep", "coeff_rep"))
+
+# Setting up the table:
+beta1s <- c(beta1_full, beta1_dem, beta1_rep)
+stds <- c(std_dem, std_full, std_rep)
+
+table <- rbind(beta1s, stds)
+table <- round(table, 2)
+rownames(table) <- c("First_child_female", "Standard_errors")
+colnames(table) <- c("genoldG_full", "genoldG_dem", "genoldG_rep")
+
+print(table)
+````
