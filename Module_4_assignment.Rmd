@@ -14,24 +14,118 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
+# Suggested code chunks with R code by Carl Edvin Steinvall, 23830.
 
 library(rio)
 library(tidyverse)
+
+# Setting the working directory. 
+setwd("/Users/carledvinsteinvall/Desktop/7316 R Course/Assignments/Assignment 4/Module_4")
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
+```{r, message=FALSE}
+# Importing the two data sets and assigning them to two different objects, one-by-one.
+basic_dta <- import("basic.dta") 
+genold_dta <- import("genold108.dta")
+
+# Creating a subset of the 108th congress from the basic dataset using filter() 
+# with the logical statement 'congress == 108' as argument. Assigning the subset
+# to a new object. 
+basic_108th <- basic_dta %>%
+  filter(congress == 108)
+
+# Joining the datasets using the function left_join(). 
+data <- left_join(basic_108th, genold_dta)
+```
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+
+```{r, message=FALSE, include=FALSE}
+# Starting off by looking at the data set and having a glimpse at the variables.
+View(data)
+glimpse(data)
+
+# The variables that are kept for the analysis are used as arguments in select().
+# I assign these changes to a new object data. Further data preparation is
+# done on this data object. 
+data <- data %>%
+  select(genold, ngirls, nboys, totchi, white, female, party, age, srvlng, rgroup, region)
+
+data <- data %>% as_tibble()
+
+# Having a look at the new data object. 
+View(data)
+str(data)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r, message=FALSE}
+# Replacing "" with NAs for the variable genold.
+data$genold <- data$genold %>% na_if("")
+
+# Recoding genold as a factor variable. 
+data <- data %>%
+  mutate(genold = as.factor(genold))
+
+# Checking if the recoding of genold seems correct.
+str(data$genold)
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r, message=FALSE}
+# Recoding party as a factor. 
+# str(data$party)
+
+# Observing that an observation of 1 corresponds to Democrat, 2 to Republican and
+# 3 to independent. Applying this as the vector argument of levels. further, the
+# corresponding labels wanted are "D", "R" and "I".
+data <- data %>%
+  mutate(party = factor(party, levels = c(1, 2, 3), labels = c("D", "R", "I")))
+
+str(data$party)
+````
+
 * Recode *rgroup* and *region* as factors.
+```{r, message=FALSE}
+# Recoding the variable rgroup as factor (assigning labels based on description 
+# in column)
+data$rgroup <- data$rgroup %>%
+  factor(levels = c(0:4), labels = c("None", "Prot", "Cath/Orth", "Othchr", "Jewish"))
+
+str(data$rgroup)
+````
+
+```{r, message=FALSE}
+# Recoding the variable region as factor. No arguments needed. 
+data$region <- data$region %>% factor()
+
+str(data$region)
+````
+
 * generate variables for age squared and service length squared
+```{r, message=FALSE}
+# The variables for age squared and service length squared are created using 
+# mutate().
+data <- data %>%
+  mutate(agesq = age^2) %>%
+  mutate(srvlngsq = srvlng^2)
+````
+
 * create an additional variable of the number of children as factor variable
+```{r, message=FALSE}
+# Creating a variable of number of children as factor variable. I make it ordered.
+data <- data %>%
+  mutate(nchildren = factor(totchi))
+
+str(data$nchildren)
+````
 
 # Replicationg Table 1 from the Appendix
 
@@ -39,6 +133,31 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
+```{r, message=FALSE, include=FALSE}
+regression <- lm(totchi ~ genold + white + female + party + age + agesq + 
+                   srvlng + srvlngsq + rgroup + region, data = data)
+
+beta1 <- regression$coefficients[2]
+beta1
+```
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r, message=FALSE}
+str(data$party)
+
+data[data$party==3,] <- 1
+
+data_dem <- data %>%
+  filter(party == 1) 
+
+reg_by_party <- data %>% 
+  group_by(party) %>%
+  do(estimates = lm(totchi ~ genold + white + female + party + age + agesq + 
+                   srvlng + srvlngsq + rgroup + region, data = data))
+
+reg_dem <- reg_by_party[1,]
+
+````
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
