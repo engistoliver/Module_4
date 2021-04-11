@@ -49,7 +49,6 @@ data <- left_join(basic_108th, genold_dta)
 
 ```{r, message=FALSE, include=FALSE}
 # Starting off by looking at the data set and having a glimpse at the variables.
-View(data)
 glimpse(data)
 
 # The variables that are kept for the analysis are used as arguments in select().
@@ -61,7 +60,6 @@ data <- data %>%
 data <- data %>% as_tibble()
 
 # Having a look at the new data object. 
-View(data)
 str(data)
 ```
 
@@ -120,7 +118,7 @@ data <- data %>%
 
 * create an additional variable of the number of children as factor variable
 ```{r, message=FALSE}
-# Creating a variable of number of children as factor variable. I make it ordered.
+# Creating a variable of number of children as factor variable.
 data <- data %>%
   mutate(nchildren = factor(totchi))
 
@@ -133,60 +131,85 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
+# Regression of the variable totchi on genold and the covariates from the table
+# in the appendix.
 regression <- lm(totchi ~ genold + white + female + party + age + agesq + 
                    srvlng + srvlngsq + rgroup + region, data = data)
 
+# Saving the parameter estimate by assigning it to an object. 
 beta1_full <- regression$coefficients["genoldG"]
 beta1_full
 ```
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r, message=FALSE}
-# Assigning independents to the democratic party
+# Recoding observations of independents so that they count to the democratic party. 
+# The rows in the object data are selected by a logical statement and the column
+# selected is the seventh column which the column for party.
 data[data$party=="I",7] <- "D"
 
-# Democrat subset of observations
+# Assigning the Democrat subset of observations to a new object.
 data_dem <- data %>%
   filter(party == "D") 
 
+# Running the same regression as previously, but by just applying the subsetted
+# data set with observations of democrats. 
 regression_dem <- lm(totchi ~ genold + white + female + age + agesq + 
                    srvlng + srvlngsq + rgroup + region, data = data_dem)
 
+# Saving the parameter estimate by assigning it to an object. 
 beta1_dem <- regression_dem$coefficients["genoldG"]
 beta1_dem
 ```
 
 ```{r, message=FALSE}
-# Republican subset of observations
+# Assigning the Republican subset of observations to a new object.
 data_rep <- data %>%
   filter(party == "R")
 
+# Running the regression for Republicans.
 regression_rep <- lm(totchi ~ genold + white + female + age + agesq + 
                    srvlng + srvlngsq + rgroup + region, data = data_rep)
 
+# Saving the parameter estimate by assigning it to an object.
 beta1_rep <- regression_rep$coefficients["genoldG"]
 beta1_rep
 ````
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
-* print the table
 ```{r, message=FALSE, include=FALSE}
-# Full congress
+# Full congress----------------------------------------------------------------
+# Extracting the standard error of genold from the full congress regression.
 sum_full <- summary(regression)
-coeff_full <- sum_full$coefficients
-std_full <- coeff_full[2,2]
+std_full <- sum_full$coefficients[2,2]
 
+# Removing the 
 rm(list = c("sum_full", "coeff_full"))
 
-# Democrats
+
+regression_full_ngirls <- lm(ngirls ~ genold + white + female + party + age + 
+                            agesq + srvlng + srvlngsq + rgroup + region, data = data)
+
+beta1_full_ngirls <- regression_full_ngirls$coefficients["genoldG"]
+sum_full_ngirls <- summary(regression_ngirls)
+std_full_ngirls <- sum_full_ngirls$coefficients[2,2]
+
+rm("sum_full_ngirls")
+
+# Democrats -------------------------------------------------------------------
 sum_dem <- summary(regression_dem)
 coeff_dem <- sum_dem$coefficients
 std_dem <- coeff_dem[2,2]
 
 rm(list = c("sum_dem", "coeff_dem"))
 
-# Republicans
+regression_dem_ngirls <- lm(ngirls ~ genold + white + female + party + age + 
+                            agesq + srvlng + srvlngsq + rgroup + region, data = data_dem)
+
+beta1_dem_ngirls <- regression_dem_ngirls$coefficients["genoldG"]
+
+# Republicans -----------------------------------------------------------------
 sum_rep <- summary(regression_rep)
 coeff_rep <- sum_rep$coefficients
 std_rep <- coeff_rep[2,2]
@@ -202,5 +225,11 @@ table <- round(table, 2)
 rownames(table) <- c("First_child_female", "Standard_errors")
 colnames(table) <- c("genoldG_full", "genoldG_dem", "genoldG_rep")
 
+# table <- table %>% as_tibble 
+
+```
+
+* print the table
+```{r, message=FALSE}
 print(table)
-````
+```
