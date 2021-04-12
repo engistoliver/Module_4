@@ -46,9 +46,9 @@ data <- left_join(basic_108th, genold_dta)
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
 
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
 # Starting off by looking at the data set and having a glimpse at the variables.
-glimpse(data)
+# glimpse(data)
 
 # The variables that are kept for the analysis are used as arguments in select().
 # I assign these changes to a new object data. Further data preparation is
@@ -60,7 +60,7 @@ data <- data %>%
 data <- data %>% as_tibble()
 
 # Having a look at the new data object. 
-str(data)
+# str(data)
 ```
 
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
@@ -77,10 +77,9 @@ str(data$genold)
 ```
 
 * Recode *party* as a factor with 3 levels (D, R, I)
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
 # Recoding party as a factor. 
 str(data$party)
-# View(data$party)
 
 # Observing that an observation of 1 corresponds to Democrat, 2 to Republican and
 # 3 to independent. Applying this as the vector argument of levels. further, the
@@ -178,7 +177,7 @@ beta1_rep
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
 # Full congress
 # Extracting the standard error of genold from the full congress regression.
 sum_full <- summary(regression)
@@ -202,7 +201,7 @@ std_full_ngirls <- sum_full_ngirls$coefficients[2,2]
 rm("sum_full_ngirls")
 ```
 
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
 # Democrats
 # Repeating the above on the Democratic subset.
 # Extracting the standard error of genold from the Democrat regression.
@@ -228,7 +227,7 @@ std_dem_ngirls <- sum_dem_ngirls$coefficients[2,2]
 rm("sum_dem_ngirls")
 ```
 
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
 # Republicans
 # Repeating the above on the Republican subset.
 sum_rep <- summary(regression_rep)
@@ -252,7 +251,7 @@ std_rep_ngirls <- sum_rep_ngirls$coefficients[2,2]
 rm("sum_rep_ngirls")
 ```
 
-```{r, message=FALSE, include=FALSE}
+```{r, message=FALSE}
 # Table
 # Setting up the table:
 # Assigning the estimated betas and standard errors to two vectors (ordered the 
@@ -269,12 +268,13 @@ table <- rbind(beta, se)
 table <- round(table, 2)
 
 # Assigning names to the rows and columns
-rownames(table) <- c("First_child_female", "Standard_errors")
-colnames(table) <- c("ngirls_full", "genoldG_full", "ngirls_dem", "genoldG_dem", 
-                     "ngirls_rep", "genoldG_rep")
+rownames(table) <- c("1st_child_female", "Standard_err")
+colnames(table) <- c("ngirls_full", "totchi_full", "ngirls_dem", "totchi_dem", 
+                     "ngirls_rep", "totchi_rep")
 ```
 
 * print the table
 ```{r, message=FALSE}
 print(table)
+
 ```
