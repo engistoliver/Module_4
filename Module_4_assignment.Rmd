@@ -5,6 +5,7 @@ date: "04/04/2021"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -16,8 +17,10 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-# Suggested code chunks with R code for solutions by Carl Edvin Steinvall, 23830.
+# Suggested code chunks containing R code for solving the questions by 
+# Carl Edvin Steinvall, 23830.
 
+# Loading the libraries "Rio" and "tidyverse"
 library(rio)
 library(tidyverse)
 
@@ -53,8 +56,7 @@ data <- left_join(basic_108th, genold_dta)
 # glimpse(data)
 
 # The variables that are kept for the analysis are used as arguments in select().
-# I assign these changes to a new object data. Further data preparation is
-# done on this data object. 
+# I assign these changes to the same data object.
 data <- data %>%
   select(genold, ngirls, nboys, totchi, white, female, party, age, srvlng, rgroup, region)
 
@@ -80,11 +82,11 @@ str(data$genold)
 
 * Recode *party* as a factor with 3 levels (D, R, I)
 ```{r, message=FALSE}
-# Recoding party as a factor. 
-str(data$party)
+# Looking at the structure of the variable party.
+# str(data$party)
 
 # Observing that an observation of 1 corresponds to Democrat, 2 to Republican and
-# 3 to independent. Applying this as the vector argument of levels. further, the
+# 3 to independent. Applying this to the vector argument of levels. Further, the
 # corresponding labels wanted are "D", "R" and "I".
 data <- data %>%
   mutate(party = factor(party, levels = c(1, 2, 3), labels = c("D", "R", "I")))
@@ -95,7 +97,7 @@ str(data$party)
 * Recode *rgroup* and *region* as factors.
 ```{r, message=FALSE}
 # Recoding the variable rgroup as factor (assigning labels based on description 
-# in column)
+# in the column of the tibble)
 data$rgroup <- data$rgroup %>%
   factor(levels = c(0:4), labels = c("None", "Prot", "Cath/Orth", "Othchr", "Jewish"))
 
@@ -134,7 +136,7 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 * Save the main coefficient of interest ($\beta_1$)
 ```{r, message=FALSE}
-# Regression of the variable totchi on genold and the covariates from the table
+# Regression of the variable totchi on genold and the covariates from Table 1
 # in the appendix.
 regression <- lm(totchi ~ genold + white + female + party + age + agesq + 
                    srvlng + srvlngsq + rgroup + region, data = data)
@@ -166,7 +168,8 @@ beta1_dem
 ```
 
 ```{r, message=FALSE}
-# Assigning the Republican subset of observations to a new object.
+# Assigning the Republican subset of observations to a new object (like I did
+# for the democratic subset).
 data_rep <- data %>% filter(party == "R")
 
 # Running the regression for Republicans similar to the regression for democrats.
@@ -191,7 +194,7 @@ rm("sum_full")
 # Running the regression for ngirls on genold and covariates for full congress.
 # According to the notes of the table in the appendix, the number of daughters
 # regressions also include fixed effects for total number of children. So, I add
-# the variable of number of children as factor variable (nchildren) created 
+# the variable of number of children as a factor variable (nchildren) created 
 # before.
 regression_full_ngirls <- lm(ngirls ~ genold + white + female + party + age + 
                             agesq + srvlng + srvlngsq + rgroup + region +
@@ -210,16 +213,16 @@ rm("sum_full_ngirls")
 
 ```{r, message=FALSE}
 # Democrats
-# Repeating the above on the Democratic subset.
-# Extracting the standard error of genold from the Democrat regression.
+# Repeating the above on the Democratic party subset.
+# Extracting the standard error of genold from the Democratic party regression.
 sum_dem <- summary(regression_dem)
 std_dem <- sum_dem$coefficients[2,2]
 
 # Removing object
 rm("sum_dem")
 
-# Running the regression for ngirls on genold and covariates for Democrats subset.
-# I omit the party variable like previously.
+# Running the regression for ngirls on genold and covariates for Democratic
+# subset. I omit the party variable like previously.
 regression_dem_ngirls <- lm(ngirls ~ genold + white + female + age + agesq + 
                             srvlng + srvlngsq + rgroup + region + nchildren, 
                             data = data_dem)
@@ -227,7 +230,7 @@ regression_dem_ngirls <- lm(ngirls ~ genold + white + female + age + agesq +
 # Saving the parameter estimate by assigning it to an object. 
 beta1_dem_ngirls <- regression_dem_ngirls$coefficients["genoldG"]
 
-# Extracting the std. of genold like before.
+# Extracting the std. error of genold like before.
 sum_dem_ngirls <- summary(regression_dem_ngirls)
 std_dem_ngirls <- sum_dem_ngirls$coefficients[2,2]
 
@@ -273,7 +276,7 @@ se <- c(std_full_ngirls, std_full, std_dem_ngirls, std_dem,
 # Combining the two vectors by row and assigning them to a new object.
 table <- rbind(beta, se)
 
-# Rounding the elements to two digits as in the table.
+# Rounding the elements to two digits as in the Table 1 in the appendix.
 table <- round(table, 2)
 
 # Assigning names to the rows and columns
