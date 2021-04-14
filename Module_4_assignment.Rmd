@@ -17,6 +17,7 @@ output: pdf_document
 
 library(rio)
 library(tidyverse)
+library(magrittr)
 
 setwd("C:/Users/Victoria/Desktop/INTRO R/Module_4")
 #```
@@ -30,20 +31,44 @@ genold.data <- import("genold108.dta")
 
 basic108.data <- filter(basic.data, congress==108)
 
-combined.data <- left_join(basic108.data, genold.data, by="name")
-
-
-
+combined.data <- left_join(genold.data, basic108.data)
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
-* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
-* Recode *party* as a factor with 3 levels (D, R, I)
+#* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+#* Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+
+
+congress.data <- combined.data %>% select(name, ngirls, anygirls, genold, totchi, party, rgroup,region, age, female, white, srvlng )
+
+congress.data$genold <- as.factor(congress.data$genold)
+is.na(congress.data$genold)
+
+#congress.data$genold %<>% map(as.factor, na.rm=TRUE)
+#congress.data$genold[genold != 'B'| genold != G] <- 'NA'
+#i dont know how to set missing values to na
+
+#congress.data$genold <- str_pad(congress.data$genold, 0, pad = "NA")
+
+congress.data <- congress.data %>% mutate(party2 = party)
+
+for (i in party2) { if(party2 == '1') { congress.data$party2 <- "D"} else if (congress.data$party2 == '2') {congress.data$party2 <- "R"} else {congress.data$party2 <- "I"}}
+#i do not get any sensible out put here, recoding the party 
+
+congress.data$region <- as.factor(congress.data$region)
+congress.data$rgroup <- as.factor(congress.data$rgroup)
+
+congress.data <- congress.data %>% mutate(age_sq = age^2)
+congress.data <- congress.data %>% mutate(srvlng_sq = srvlng^2)
+congress.data <- congress.data %>% mutate(totchi_factor = as.factor(totchi))
+
+
 
 # Replicationg Table 1 from the Appendix
 
@@ -54,3 +79,11 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+
+X <- congress.data %>% matrix(c(congress.data$party, congress.data$rgroup, congress.data$region, congress.data$age, congress.data$female, congress.data$white, congress.data$srvlng))
+
+lm($totchi = \beta_0 + \beta_1 genold + \gamma'X$, congress.data)
+
+
+
+
