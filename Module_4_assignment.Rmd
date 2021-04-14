@@ -1,27 +1,39 @@
 ---
 title: "Module 4 - Instructions"
-author: "Oliver Engist"
-date: "04/04/2021"
+author: "Victoria Gruner"
+date: "14/04/2021"
 output: pdf_document
 ---
 
-In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
+#In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
 
 
 # Setup
 
-* Load the libraries "Rio" and "tidyverse"
-* Change the path of the working directory to your working directory.
+#* Load the libraries "Rio" and "tidyverse"
+#* Change the path of the working directory to your working directory.
 
-```{r, message=FALSE}
+#```{r, message=FALSE}
 
 library(rio)
 library(tidyverse)
-```
 
-* import the data sets *basic.dta* and *genold108.dta*
-* create a subset of the 108th congress from the *basic* dataset
-* join this subset with the *genold* dataset
+setwd("C:/Users/Victoria/Desktop/INTRO R/Module_4")
+#```
+
+#* import the data sets *basic.dta* and *genold108.dta*
+#* create a subset of the 108th congress from the *basic* dataset
+#* join this subset with the *genold* dataset
+
+basic.data <- import("basic.dta")
+genold.data <- import("genold108.dta")
+
+basic108.data <- filter(basic.data, congress==108)
+
+combined.data <- dataframe(basic108.data, genold.data)
+
+
+
 
 # Data preparation
 
