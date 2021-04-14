@@ -30,7 +30,7 @@ genold.data <- import("genold108.dta")
 
 basic108.data <- filter(basic.data, congress==108)
 
-combined.data <- dataframe(basic108.data, genold.data)
+combined.data <- left_join(basic108.data, genold.data, by="name")
 
 
 
