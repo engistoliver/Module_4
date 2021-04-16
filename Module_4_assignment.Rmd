@@ -145,3 +145,6 @@ beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2
 ```
 
 * print the table
+```{r}
+summary(reg_totchi_congress,reg_totchi_D,reg_totchi_R, reg_ngirls_congress, reg_ngirls_D,reg_ngirls_R)
+```
