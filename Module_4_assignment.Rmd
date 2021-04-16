@@ -122,7 +122,7 @@ beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 ```{r}
-# I redo all of the regressions above, but with number of daughters as dependent variable instead.
+# I redo all of the regressions above, but with number of daughters as dependent variable instead, and extract all of the variables we are interested in.
 
 reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region, combined_dataset)
 reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
