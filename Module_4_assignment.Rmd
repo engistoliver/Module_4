@@ -123,6 +123,25 @@ beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 ```{r}
 # I redo all of the regressions above, but with number of daughters as dependent variable instead.
+
+reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region, combined_dataset)
+reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
+reg_ngirls_R <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "R")
+
+beta1_ngirls_congress <- reg_ngirls_congress[["coefficients"]][["genoldG"]]
+beta1_ngirls_D <- reg_ngirls_D[["coefficients"]][["genoldG"]]
+beta1_ngirls_R <- reg_ngirls_R[["coefficients"]][["genoldG"]]
+
+anova_ngirls_congress <- summary(reg_ngirls_congress)
+anova_ngirls_D <- summary(reg_ngirls_D)
+anova_ngirls_R <- summary(reg_ngirls_R)
+
+beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2]]
+
+beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2]]
+
+beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2]]
+
 ```
 
 * print the table
