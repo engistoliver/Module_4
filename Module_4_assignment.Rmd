@@ -63,8 +63,20 @@ combined_dataset$party <- combined_dataset$party %>% as.factor()
 ```
 
 * Recode *rgroup* and *region* as factors.
+```{r}
+combined_dataset$rgroup <- combined_dataset$rgroup %>% as.factor() 
+combined_dataset$region <- combined_dataset$region %>% as.factor()
+```
+
 * generate variables for age squared and service length squared
+```{r}
+combined_dataset <- combined_dataset %>% mutate(age_sq = age^2 , srvlng_sq = srvlng^2)
+```
+
 * create an additional variable of the number of children as factor variable
+```{r}
+combined_dataset <- combined_dataset %>% mutate(n_children = as.factor(totchi))
+```
 
 # Replicationg Table 1 from the Appendix
 
