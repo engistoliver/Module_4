@@ -85,7 +85,7 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 ```{r}
-regression <- lm(totchi~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region, combined_dataset)
+reg_totchi_congress <- lm(totchi~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region, combined_dataset)
 ```
 
 * Save the main coefficient of interest ($\beta_1$)
@@ -95,7 +95,8 @@ beta_1 <- regression[["coefficients"]][["genoldG"]]
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r}
-
+reg_totchi_D <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
+reg_totchi_R <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "R")
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
