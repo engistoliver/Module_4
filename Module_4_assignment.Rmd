@@ -59,7 +59,7 @@ combined_dataset$genold %>% glimpse() %>% is.na()
 
 * Recode *party* as a factor with 3 levels (D, R, I)
 ```{r}
-combined_dataset$party <- combined_dataset$party %>% as.factor() %>% 
+combined_dataset$party <- combined_dataset$party %>% as.factor() 
 ```
 
 * Recode *rgroup* and *region* as factors.
