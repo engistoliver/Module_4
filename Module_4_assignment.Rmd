@@ -95,11 +95,34 @@ beta1_totchi_congress <- reg_totchi_congress[["coefficients"]][["genoldG"]]
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r}
+#I perform the regression on total child for two subsets of data: if democrat, if republican.
+
 reg_totchi_D <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
 reg_totchi_R <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "R")
+
+# I extract the beta coefficients for gender of oldest children from the two regressions.
+
 beta1_totchi_D <- reg_totchi_D[["coefficients"]][["genoldG"]]
 beta1_totchi_R <- reg_totchi_R[["coefficients"]][["genoldG"]]
+
+# Analysis of Variance, I create a summary table where I can view the standard errors of the beta1 coefficients.
+
+anova_totchi_congress <- summary(reg_totchi_congress)
+anova_totchi_D <- summary(reg_totchi_D)
+anova_totchi_R <- summary(reg_totchi_R)
+
+# I collect the standard errors for the estimate parameters.
+
+beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2]]
+
+beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2]]
+
+beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2]]
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r}
+# I redo all of the regressions above, but with number of daughters as dependent variable instead.
+```
+
 * print the table
