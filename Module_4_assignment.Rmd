@@ -90,13 +90,15 @@ reg_totchi_congress <- lm(totchi~ genold + age + age_sq + party + srvlng + srvln
 
 * Save the main coefficient of interest ($\beta_1$)
 ```{r}
-beta_1 <- regression[["coefficients"]][["genoldG"]]
+beta1_totchi_congress <- reg_totchi_congress[["coefficients"]][["genoldG"]]
 ```
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r}
 reg_totchi_D <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
 reg_totchi_R <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "R")
+beta1_totchi_D <- reg_totchi_D[["coefficients"]][["genoldG"]]
+beta1_totchi_R <- reg_totchi_R[["coefficients"]][["genoldG"]]
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
