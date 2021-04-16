@@ -20,15 +20,48 @@ library(tidyverse)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+basic <- import("basic.dta")
+genold108 <- import("genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r}
+basic <- basic %>% filter(congress == "108")
+```
+
 * join this subset with the *genold* dataset
+```{r}
+combined_dataset <- left_join(genold108,basic, by = c("district", "statenam", "name"))
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
+
+To recreate appendix Table 1, the following variables are included: total children (totchi), number of daughters (ngirls), Political party (party), First child gander (genold). For the set of control variables, we need: race (white), gender (female), age(age), experience proxied by age squarred (age^2), service length (srvlng), service length squarred (srvlng^2), religion(rgroup) and region (region).
+
 * drop all other variables.
+```{r}
+combined_dataset <- select(combined_dataset,totchi,ngirls,party,genold,female,age,srvlng,rgroup,region)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+combined_dataset$genold <- combined_dataset$genold  %>% as.factor() %>% na_if("")
+combined_dataset$genold <- combined_dataset$genold 
+```
+
+```{r, eval=FALSE}
+#control
+combined_dataset$genold %>% glimpse() %>% is.na()
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+combined_dataset$party <- combined_dataset$party %>% as.factor() %>% 
+```
+
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
