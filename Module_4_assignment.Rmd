@@ -52,7 +52,7 @@ combineddata <- inner_join(basic108, genold, by=c("name", "district", "statenam"
 
 ```{r, message=FALSE warning=FALSE}
 #keep only relevant variables
-combineddata %<>% select(party, statenam, ngirls, totchi, rgroup, region, srvlng, female, white, age, alabort, moreserv, moredef, morecrimesp, protgay, genold)
+combineddata %<>% select(party, statenam, ngirls, totchi, rgroup, region, srvlng, female, white, age, genold)
 
 #recode *genold* to factor. Observation not fitting any of the levels automatically become NA
 combineddata$genold %<>% factor(levels=c("G", "B"))
@@ -83,7 +83,11 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * print the table
 
 ```{r, message=FALSE, warning=FALSE}
+#create a vector of control variables:
+reg2 <- lm(totchi~genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region, combineddata)
+summary(reg2)
 
+beta1_totchi_cong <- reg2[["coefficients"]][["genoldB"]]
 
 
 ```
