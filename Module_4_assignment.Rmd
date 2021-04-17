@@ -83,11 +83,61 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * print the table
 
 ```{r, message=FALSE, warning=FALSE}
-#create a vector of control variables:
-reg2 <- lm(totchi~genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region, combineddata)
-summary(reg2)
+#Creating subsets for democrats and repub, and running the six regressions and saving coefficients and standard deviations. 
+Demsubset <- combineddata %>% filter(party=="D")
+Repsubset <- combineddata %>% filter(party=="R")
 
-beta1_totchi_cong <- reg2[["coefficients"]][["genoldB"]]
+###number of daughters, full congress
+#numchi works as a fixed effect since it is a factor variable, created before. Will be in all regressions on number of daughters. 
+reg1 <- lm(ngirls~genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, combineddata)
+#save the beta1 from the reg1 list
+beta1_dau_con <- reg1[["coefficients"]][["genoldB"]]
+#save the summary list and enter it to find the link to the standard deviation since I did not find the standard deviation in the reg1 list. The SD of beta1 is the second number in the second column in the "genoldB"-row. 
+sum_dau_con <- summary(reg1)
+SD_dau_con <- sum_dau_con[["coefficients"]][["genoldB",2]]
+
+####number of children, full congress
+reg2 <- lm(totchi~genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region, combineddata)
+#save the beta1 from the reg2 list:
+beta1_chi_con <- reg2[["coefficients"]][["genoldB"]]
+#save summary list to save SD, as before.
+sum_chi_con <- summary(reg2)
+SD_chi_con <- sum_chi_con[["coefficients"]][["genoldB",2]]
+
+####number of daughters, democrats
+reg3 <- lm(ngirls~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, Demsubset)
+#save the beta1 from the reg3 list:
+beta1_dau_dem <- reg3[["coefficients"]][["genoldB"]]
+#save the summary list to save SD:
+sum_dau_dem <- summary(reg3)
+SD_dau_dem <- sum_dau_dem[["coefficients"]][["genoldB",2]]
+
+####number of children, democrats
+reg4 <- lm(totchi~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region, Demsubset)
+#save the beta1 from the reg4 list:
+beta1_chi_dem <- reg4[["coefficients"]][["genoldB"]]
+#save the summary list to save SD:
+sum_chi_dem <- summary(reg4)
+SD_chi_dem <- sum_chi_dem[["coefficients"]][["genoldB",2]]
+
+####number of daughters, republicans
+reg5 <- lm(ngirls~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, Repsubset)
+#save the beta1 from the reg5 list:
+beta1_dau_rep <- reg5[["coefficients"]][["genoldB"]]
+#save the summary list to save SD:
+sum_dau_rep <- summary(reg5)
+SD_dau_rep <- sum_dau_rep[["coefficients"]][["genoldB",2]]
+
+####number of children, republicans
+reg6 <- lm(totchi~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region, Repsubset)
+#save the beta1 from the reg6 list:
+beta1_chi_rep <- reg6[["coefficients"]][["genoldB"]]
+#save the summary list to save SD:
+sum_chi_rep <- summary(reg6)
+SD_chi_rep <- sum_chi_rep[["coefficients"]][["genoldB",2]]
+
+#We can note that we have received the correct values on all coefficients and standard deviations, but with the opposite sign on all coefficients, since genold took B as 1, which is why it got the name genoldB in the regression outputs. 
+
 
 
 ```
