@@ -14,9 +14,10 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
 library(rio)
 library(tidyverse)
+setwd("C:/Users/Adam Json Lindh/Desktop/Module_4")
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
