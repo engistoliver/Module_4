@@ -43,7 +43,7 @@ To recreate appendix Table 1, the following variables are included: total childr
 
 * drop all other variables.
 ```{r}
-combined_dataset <- select(combined_dataset,totchi,ngirls,party,genold,female,age,srvlng,rgroup,region)
+combined_dataset <- select(combined_dataset,totchi,ngirls,party,genold,female,age,srvlng,rgroup,region, white)
 ```
 
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
@@ -85,7 +85,7 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 ```{r}
-reg_totchi_congress <- lm(totchi~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region, combined_dataset)
+reg_totchi_congress <- lm(totchi~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region + white, combined_dataset)
 ```
 
 * Save the main coefficient of interest ($\beta_1$)
@@ -97,8 +97,8 @@ beta1_totchi_congress <- reg_totchi_congress[["coefficients"]][["genoldG"]]
 ```{r}
 #I perform the regression on total child for two subsets of data: if democrat, if republican.
 
-reg_totchi_D <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
-reg_totchi_R <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "R")
+reg_totchi_D <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "D")
+reg_totchi_R <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "R")
 
 # I extract the beta coefficients for gender of oldest children from the two regressions.
 
@@ -124,9 +124,9 @@ beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2
 ```{r}
 # I redo all of the regressions above, but with number of daughters as dependent variable instead, and extract all of the variables we are interested in.
 
-reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region, combined_dataset)
-reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "D")
-reg_ngirls_R <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region, combined_dataset, party == "R")
+reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset)
+reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset, party == "D")
+reg_ngirls_R <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset, party == "R")
 
 beta1_ngirls_congress <- reg_ngirls_congress[["coefficients"]][["genoldG"]]
 beta1_ngirls_D <- reg_ngirls_D[["coefficients"]][["genoldG"]]
@@ -146,5 +146,5 @@ beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2
 
 * print the table
 ```{r}
-summary(reg_totchi_congress,reg_totchi_D,reg_totchi_R, reg_ngirls_congress, reg_ngirls_D,reg_ngirls_R)
+#summary(reg_totchi_congress,reg_totchi_D,reg_totchi_R, reg_ngirls_congress, reg_ngirls_D,reg_ngirls_R)
 ```
