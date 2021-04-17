@@ -17,11 +17,28 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 library(rio)
 library(tidyverse)
+
+setwd("/Users/wilmernivaprintz/Documents/Master- Termin 2/7316- Intro to R/Assignments/A4/Module_4")
+
+#I also load other packages:
+ library(plyr)
+  library(magrittr)
+  library(rvest)
+  library(glue)
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
+
+```{r, message=FALSE warning=FALSE}
+basic <- import("basic.dta")
+genold <- import("genold108.dta")
+basic108 <- basic %>% filter(basic$congress==108)
+combineddata <- inner_join(basic108, genold, by=c("name", "district", "statenam"))
+#I viewed both data sets and saw that name, district and statenam seemed to be identifying variables. If they contained the exact same combinations of name, district, and state, an inner-join would create a new data set also with 435 observations, which it did. Also I double checked that the name variable had the same name in both data sets, which it did. We see that we have 62 variables, which is the genold variable added to the 61 variables in basic108.
+```
 
 # Data preparation
 
@@ -33,6 +50,28 @@ library(tidyverse)
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
+```{r, message=FALSE warning=FALSE}
+#keep only relevant variables
+combineddata %<>% select(party, statenam, ngirls, totchi, rgroup, region, srvlng, female, white, age, alabort, moreserv, moredef, morecrimesp, protgay, genold)
+
+#recode *genold* to factor. Observation not fitting any of the levels automatically become NA
+combineddata$genold %<>% factor(levels=c("G", "B"))
+
+#recode party
+combineddata$party %<>% factor(levels=c("1", "2", "3"))
+combineddata$party %<>% revalue(c("1"="D","2"="R","3"="I"))
+
+#recode rgroup and region
+combineddata$rgroup %<>% factor(levels=c("0", "1", "2", "3", "4"))
+combineddata$region %<>% factor(levels=c("1", "2", "3", "4", "5", "6", "7", "8", "9"))
+
+#create new variables
+combineddata %<>% mutate(agesq = age^2)
+combineddata %<>% mutate(srvlngsq = srvlng^2)
+combineddata %<>% mutate(numchi = factor(totchi))
+```
+
+
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
@@ -42,3 +81,9 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+
+```{r, message=FALSE, warning=FALSE}
+
+
+
+```
