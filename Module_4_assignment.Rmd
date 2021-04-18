@@ -44,7 +44,8 @@ To recreate appendix Table 1, the following variables are included: total childr
 
 * drop all other variables.
 ```{r}
-combined_dataset <- select(combined_dataset,totchi,ngirls,party,genold,female,age,srvlng,rgroup,region, white)
+combined_dataset <- select(combined_dataset,totchi,ngirls,party,genold,
+        female,age,srvlng,rgroup,region, white)
 ```
 
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
@@ -60,7 +61,8 @@ combined_dataset$genold %>% glimpse() %>% is.na()
 
 * Recode *party* as a factor with 3 levels (D, R, I)
 ```{r}
-combined_dataset$party <- combined_dataset$party %>% as.factor() %>% recode("1"="D","2"="R","3"="I")
+combined_dataset$party <- combined_dataset$party %>% as.factor() %>% recode("1"="D",
+                                                                    "2"="R","3"="I")
 
 ```
 
@@ -86,7 +88,8 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 ```{r}
-reg_totchi_congress <- lm(totchi~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region + white, combined_dataset)
+reg_totchi_congress <- lm(totchi~ genold + age + age_sq + party + srvlng + srvlng_sq +
+                            rgroup + region + white, combined_dataset)
 ```
 
 * Save the main coefficient of interest ($\beta_1$)
@@ -98,10 +101,13 @@ beta1_totchi_congress <- reg_totchi_congress[["coefficients"]][["genoldG"]]
 ```{r}
 #I perform the regression on total child for two subsets of data: if democrat, if republican.
 
-reg_totchi_D <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "D")
-reg_totchi_R <- lm(totchi~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "R")
+reg_totchi_D <- lm(totchi~ genold + age + age_sq +
+        srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "D")
+reg_totchi_R <- lm(totchi~ genold + age + age_sq + 
+                     srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "R")
 
-# I extract the beta coefficients for gender of oldest children from the two regressions.
+# I extract the beta coefficients for gender of 
+# oldest children from the two regressions.
 
 beta1_totchi_D <- reg_totchi_D[["coefficients"]][["genoldG"]]
 beta1_totchi_R <- reg_totchi_R[["coefficients"]][["genoldG"]]
@@ -125,7 +131,8 @@ beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2
 ```{r}
 # I redo all of the regressions above, but with number of daughters as dependent variable instead, and extract all of the variables we are interested in.
 
-reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset)
+reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + 
+                            srvlng_sq + rgroup + region + white + n_children, combined_dataset)
 reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset, party == "D")
 reg_ngirls_R <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset, party == "R")
 
@@ -152,7 +159,7 @@ beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2
 library(knitr)
 # install.packages("stargazer")
 library(stargazer)
-stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,reg_totchi_R,reg_ngirls_R,type='text', title="Regression Results", align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldG" )
+stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,reg_totchi_R,reg_ngirls_R,type='text', title="APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress", align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldG" )
 
 ```
 > 
