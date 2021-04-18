@@ -148,11 +148,11 @@ beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2
 * print the table
 ```{r, echo=TRUE,warning=FALSE}
 # I use the stargazer package to print the necessery code for a LaTeX table.
-install.packages("knitr")
+# install.packages("knitr")
 library(knitr)
-install.packages("stargazer")
+# install.packages("stargazer")
 library(stargazer)
-print(stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,reg_totchi_R,reg_ngirls_R, title="Regression Results", align=TRUE, dep.var.labels=c("Full Congress","Democrats", "Republican")))
+stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,reg_totchi_R,reg_ngirls_R,type='text', title="Regression Results", align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldG")
 
 ```
 > 
