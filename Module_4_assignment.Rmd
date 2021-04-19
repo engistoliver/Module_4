@@ -138,6 +138,9 @@ SD_chi_rep <- sum_chi_rep[["coefficients"]][["genoldB",2]]
 
 #We can note that we have received the correct values on all coefficients and standard deviations, but with the opposite sign on all coefficients, since genold took B as 1, which is why it got the name genoldB in the regression outputs. 
 
-
+##Create and print table
+install.packages("stargazer")
+library(stargazer)
+stargazer(reg1 ,reg2,reg3,reg4,reg5,reg6,type='text', title="Regression Results", align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldB" )
 
 ```
