@@ -18,26 +18,30 @@ In the next assignment we want to replicate some plots from the paper "Female So
 library(rio)
 library(tidyverse)
 
-setwd("/Users/wilmernivaprintz/Documents/Master- Termin 2/7316- Intro to R/Assignments/A4/Module_4")
+#load knitr and magrittr
 
-#I also load other packages:
- library(plyr)
-  library(magrittr)
-  library(rvest)
-  library(glue)
+library(knitr)
+library(magrittr)
 
+#load stargazer for plotting
+library(stargazer)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
-```{r, message=FALSE warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 basic <- import("basic.dta")
 genold <- import("genold108.dta")
 basic108 <- basic %>% filter(basic$congress==108)
 combineddata <- inner_join(basic108, genold, by=c("name", "district", "statenam"))
-#I viewed both data sets and saw that name, district and statenam seemed to be identifying variables. If they contained the exact same combinations of name, district, and state, an inner-join would create a new data set also with 435 observations, which it did. Also I double checked that the name variable had the same name in both data sets, which it did. We see that we have 62 variables, which is the genold variable added to the 61 variables in basic108.
+#I viewed both data sets and saw that name, district and statenam seemed to be 
+#identifying variables. If they contained the exact same combinations of name, 
+#district, and state, an inner-join would create a new data set also with 435 
+#observations, which it did. Also I double checked that the name variable had 
+#the same name in both data sets, which it did. We see that we have 62 variables, 
+#which is the genold variable added to the 61 variables in basic108.
 ```
 
 # Data preparation
@@ -50,16 +54,18 @@ combineddata <- inner_join(basic108, genold, by=c("name", "district", "statenam"
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
-```{r, message=FALSE warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 #keep only relevant variables
-combineddata %<>% select(party, statenam, ngirls, totchi, rgroup, region, srvlng, female, white, age, genold)
+combineddata %<>% select(party, statenam, ngirls, totchi,
+                         rgroup, region, srvlng, female, white, age, genold)
 
-#recode *genold* to factor. Observation not fitting any of the levels automatically become NA
+#recode *genold* to factor. Observations not fitting the levels automatically become NA
 combineddata$genold %<>% factor(levels=c("G", "B"))
 
 #recode party
-combineddata$party %<>% factor(levels=c("1", "2", "3"))
-combineddata$party %<>% revalue(c("1"="D","2"="R","3"="I"))
+combineddata$party %<>% as.character()
+combineddata$party %<>% recode("1" = "D", "2" = "R", "3" = "I")
+combineddata$party %<>% factor(levels=c("D", "R", "I"))
 
 #recode rgroup and region
 combineddata$rgroup %<>% factor(levels=c("0", "1", "2", "3", "4"))
@@ -83,64 +89,78 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * print the table
 
 ```{r, message=FALSE, warning=FALSE}
-#Creating subsets for democrats and repub, and running the six regressions and saving coefficients and standard deviations. 
+options(width=80)
+#Creating subsets for democrats and repub, and running the six regressions and saving 
+#coefficients and standard deviations. 
+
 Demsubset <- combineddata %>% filter(party=="D")
 Repsubset <- combineddata %>% filter(party=="R")
 
 ###number of daughters, full congress
-#numchi works as a fixed effect since it is a factor variable, created before. Will be in all regressions on number of daughters. 
-reg1 <- lm(ngirls~genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, combineddata)
+#numchi works as a fixed effect since it is a factor variable, created before. Will be in 
+#all regressions on number of daughters. 
+reg1 <- lm(ngirls~genold + white + female + party + age + agesq + srvlng + srvlngsq + 
+             rgroup + region + numchi, combineddata)
 #save the beta1 from the reg1 list
-beta1_dau_con <- reg1[["coefficients"]][["genoldB"]]
-#save the summary list and enter it to find the link to the standard deviation since I did not find the standard deviation in the reg1 list. The SD of beta1 is the second number in the second column in the "genoldB"-row. 
+beta1_dau_con <- -reg1[["coefficients"]][["genoldB"]]
+#save the summary list and enter it to find the link to the standard deviation since I 
+#did not find the standard deviation in the reg1 list. The SD of beta1 is the second 
+#number in the second column in the "genoldB"-row. 
 sum_dau_con <- summary(reg1)
 SD_dau_con <- sum_dau_con[["coefficients"]][["genoldB",2]]
 
 ####number of children, full congress
-reg2 <- lm(totchi~genold + white + female + party + age + agesq + srvlng + srvlngsq + rgroup + region, combineddata)
+reg2 <- lm(totchi~genold + white + female + party + age + agesq + srvlng + srvlngsq + 
+             rgroup + region, combineddata)
 #save the beta1 from the reg2 list:
-beta1_chi_con <- reg2[["coefficients"]][["genoldB"]]
+beta1_chi_con <- -reg2[["coefficients"]][["genoldB"]]
 #save summary list to save SD, as before.
 sum_chi_con <- summary(reg2)
 SD_chi_con <- sum_chi_con[["coefficients"]][["genoldB",2]]
 
 ####number of daughters, democrats
-reg3 <- lm(ngirls~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, Demsubset)
+reg3 <- lm(ngirls~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + 
+             region + numchi, Demsubset)
 #save the beta1 from the reg3 list:
-beta1_dau_dem <- reg3[["coefficients"]][["genoldB"]]
+beta1_dau_dem <- -reg3[["coefficients"]][["genoldB"]]
 #save the summary list to save SD:
 sum_dau_dem <- summary(reg3)
 SD_dau_dem <- sum_dau_dem[["coefficients"]][["genoldB",2]]
 
 ####number of children, democrats
-reg4 <- lm(totchi~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region, Demsubset)
+reg4 <- lm(totchi~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + 
+             region, Demsubset)
 #save the beta1 from the reg4 list:
-beta1_chi_dem <- reg4[["coefficients"]][["genoldB"]]
+beta1_chi_dem <- -reg4[["coefficients"]][["genoldB"]]
 #save the summary list to save SD:
 sum_chi_dem <- summary(reg4)
 SD_chi_dem <- sum_chi_dem[["coefficients"]][["genoldB",2]]
 
 ####number of daughters, republicans
-reg5 <- lm(ngirls~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region + numchi, Repsubset)
+reg5 <- lm(ngirls~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + 
+             region + numchi, Repsubset)
 #save the beta1 from the reg5 list:
-beta1_dau_rep <- reg5[["coefficients"]][["genoldB"]]
+beta1_dau_rep <- -reg5[["coefficients"]][["genoldB"]]
 #save the summary list to save SD:
 sum_dau_rep <- summary(reg5)
 SD_dau_rep <- sum_dau_rep[["coefficients"]][["genoldB",2]]
 
 ####number of children, republicans
-reg6 <- lm(totchi~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + region, Repsubset)
+reg6 <- lm(totchi~genold + white + female + age + agesq + srvlng + srvlngsq + rgroup + 
+             region, Repsubset)
 #save the beta1 from the reg6 list:
-beta1_chi_rep <- reg6[["coefficients"]][["genoldB"]]
+beta1_chi_rep <- -reg6[["coefficients"]][["genoldB"]]
 #save the summary list to save SD:
 sum_chi_rep <- summary(reg6)
 SD_chi_rep <- sum_chi_rep[["coefficients"]][["genoldB",2]]
 
-#We can note that we have received the correct values on all coefficients and standard deviations, but with the opposite sign on all coefficients, since genold took B as 1, which is why it got the name genoldB in the regression outputs. 
+#Since the genold takes the value B as = 1, we attain the correct coefficients, but of 
+#the opposite sign. I solve this by setting a minus sign in front of the value when saving 
+#the coefficient. 
 
 ##Create and print table
-install.packages("stargazer")
-library(stargazer)
-stargazer(reg1 ,reg2,reg3,reg4,reg5,reg6,type='text', title="Regression Results", align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldB" )
+stargazer(reg1 ,reg2,reg3,reg4,reg5,reg6,type='text', title="Regression Results", 
+          align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), 
+          column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldB")
 
 ```
