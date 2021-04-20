@@ -161,7 +161,7 @@ beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2
 
 * print the table
 ```{r echo=TRUE, fig.width=10, warning=FALSE}
-# I use the stargazer package to print the necessery code for a LaTeX table.
+# I use the stargazer package to print the necessary code for a LaTeX table.
 # install.packages("knitr")
 library(knitr)
 # install.packages("stargazer")
@@ -170,8 +170,7 @@ stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,
           reg_totchi_R,reg_ngirls_R,type='text', title=
 "APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress", 
           align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), 
-          column.separate = c(2,2,2), digits=2,keep.stat="n", 
-          object.names = TRUE, keep = "genoldG", 
+          column.separate = c(2,2,2), digits=2,keep.stat="n", keep = "genoldG", 
 notes = c(
 "The sample includes the 227 of the 381 parent members of the 108th Congress,",
 "for whom gender of the first born could be established Number of children",
