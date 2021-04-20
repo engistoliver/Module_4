@@ -99,12 +99,14 @@ beta1_totchi_congress <- reg_totchi_congress[["coefficients"]][["genoldG"]]
 
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r}
-#I perform the regression on total child for two subsets of data: if democrat, if republican.
+#I perform the regression on total child for two subsets of data: if democrat, 
+# if republican.
 
 reg_totchi_D <- lm(totchi~ genold + age + age_sq +
         srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "D")
 reg_totchi_R <- lm(totchi~ genold + age + age_sq + 
-                     srvlng + srvlng_sq + rgroup + region + white, combined_dataset, party == "R")
+                     srvlng + srvlng_sq + rgroup + region + white,
+                   combined_dataset, party == "R")
 
 # I extract the beta coefficients for gender of 
 # oldest children from the two regressions.
@@ -112,7 +114,8 @@ reg_totchi_R <- lm(totchi~ genold + age + age_sq +
 beta1_totchi_D <- reg_totchi_D[["coefficients"]][["genoldG"]]
 beta1_totchi_R <- reg_totchi_R[["coefficients"]][["genoldG"]]
 
-# Analysis of Variance, I create a summary table where I can view the standard errors of the beta1 coefficients.
+# Analysis of Variance, I create a summary table where I can view the 
+# standard errors of the beta1 coefficients.
 
 anova_totchi_congress <- summary(reg_totchi_congress)
 anova_totchi_D <- summary(reg_totchi_D)
@@ -129,12 +132,16 @@ beta1_SE_totchi_congress <- anova_totchi_congress[["coefficients"]][["genoldG",2
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 ```{r}
-# I redo all of the regressions above, but with number of daughters as dependent variable instead, and extract all of the variables we are interested in.
+# I redo all of the regressions above, but with number of daughters as dependent
+# variable instead, and extract all of the variables we are interested in.
 
 reg_ngirls_congress <- lm(ngirls~ genold + age + age_sq + party + srvlng + 
-                            srvlng_sq + rgroup + region + white + n_children, combined_dataset)
-reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset, party == "D")
-reg_ngirls_R <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup + region + white + n_children, combined_dataset, party == "R")
+                            srvlng_sq + rgroup + region + white + n_children, 
+                          combined_dataset)
+reg_ngirls_D <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup +
+                     region + white + n_children, combined_dataset, party == "D")
+reg_ngirls_R <- lm(ngirls~ genold + age + age_sq + srvlng + srvlng_sq + rgroup +
+                     region + white + n_children, combined_dataset, party == "R")
 
 beta1_ngirls_congress <- reg_ngirls_congress[["coefficients"]][["genoldG"]]
 beta1_ngirls_D <- reg_ngirls_D[["coefficients"]][["genoldG"]]
@@ -159,7 +166,12 @@ beta1_SE_ngirls_congress <- anova_ngirls_congress[["coefficients"]][["genoldG",2
 library(knitr)
 # install.packages("stargazer")
 library(stargazer)
-stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,reg_totchi_R,reg_ngirls_R,type='text', title="APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress", align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), column.separate = c(2,2,2), digits=2,keep.stat="n", object.names = TRUE, keep = "genoldG", 
+stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,
+          reg_totchi_R,reg_ngirls_R,type='text', title=
+"APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress", 
+          align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), 
+          column.separate = c(2,2,2), digits=2,keep.stat="n", 
+          object.names = TRUE, keep = "genoldG", 
 notes = c(
 "The sample includes the 227 of the 381 parent members of the 108th Congress,",
 "for whom gender of the first born could be established Number of children",
