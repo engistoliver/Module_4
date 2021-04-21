@@ -73,7 +73,7 @@ lm.reg.congress.total <- lm(basic_genold_joined_clean$totchi ~ basic_genold_join
 congress_total_totchi_beta <- summary(lm.reg.congress.total)$coefficients[2,1]
 congress_total_totchi_sterr <- summary(lm.reg.congress.total)$coefficients[2,2]
 
-## Democrats
+# Democrats
 
 ## Filter democrats
 data_democrats <- filter(basic_genold_joined_clean,party=="D")
@@ -83,7 +83,7 @@ lm.reg.congress.dem <- lm(data_democrats$totchi ~ data_democrats$genold + data_d
 democrats_totchi_beta <- summary(lm.reg.congress.dem)$coefficients[2,1]
 democrats_totchi_sterr <- summary(lm.reg.congress.dem)$coefficients[2,2]
 
-## Republicans
+# Republicans
 
 ## Filter republicans
 data_republicans <- filter(basic_genold_joined_clean,party=="R")
@@ -99,14 +99,14 @@ lm.reg.congress.total2 <- lm(basic_genold_joined_clean$ngirls ~ basic_genold_joi
 congress_total_ngirls_beta <- summary(lm.reg.congress.total2)$coefficients[2,1]
 congress_total_ngirls_sterr <- summary(lm.reg.congress.total2)$coefficients[2,2]
 
-## Democrats
+# Democrats
 
 ## Regression analysis for democrats (dependent variable:number of girls)
 lm.reg.congress.dem2 <- lm(data_democrats$ngirls ~ data_democrats$genold + data_democrats$region + data_democrats$rgroup + data_democrats$age + data_democrats$age_2 + data_democrats$female + data_democrats$white)
 democrats_ngirls_beta <- summary(lm.reg.congress.dem2)$coefficients[2,1]
 democrats_ngirls_sterr <- summary(lm.reg.congress.dem2)$coefficients[2,2]
 
-## Republicans
+# Republicans
 
 ## Regression analysis for democrats (dependent variable:number of girls)
 lm.reg.congress.rep2 <- lm(data_republicans$ngirls ~ data_republicans$genold + data_republicans$region + data_republicans$rgroup + data_republicans$age + data_republicans$age_2 + data_republicans$female + data_republicans$white)
