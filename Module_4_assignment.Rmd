@@ -17,6 +17,7 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 library(rio)
 library(tidyverse)
+library(magrittr)
 setwd("C:/Users/aless/Documents/Masterstudium SSE/Assignment 4 7613")
 ```
 
@@ -37,19 +38,24 @@ basic_genold_joined <- left_join(Congress108,genold108,by="name")
 # From the control variables, I will drop the variable "service length" as well as its square since I think this has in the particular context of voting behavior regarding women's rights not a considerable influence as the other control variables which might clearly influence on the voting behavior as the other variables. Therefore, I consider it unnecessary.
 
 # Drop all other variables
-basic_genold_joined_clean <- basic_genold_joined[-c(1,2,6,13,14,17,20,29,30,31,32,33,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64)]
+basic_genold_joined_clean <- basic_genold_joined %>% select(name,ngirls,anygirls,genold,totchi,party,rgroup,region,age,female,white)
 
 # Recode genold such that gender is a factor variable and missing values are coded as NAs
-as.factor(genold108$genold)
-class(genold108$genold)
+basic_genold_joined_clean$genold <- as.factor(basic_genold_joined_clean$genold)
 
 # Recode party as a factor with 3 levels (D, R, I)
+basic_genold_joined_clean$party <- as.factor(basic_genold_joined_clean$party)
+basic_genold_joined_clean$party <- recode(basic_genold_joined_clean$party,"1"="D","2"="R","3"="I")
 
 # Recode rgroup and region as factors
+basic_genold_joined_clean$rgroup <- as.factor(basic_genold_joined_clean$rgroup)
 
 # Generate variables for age squared and service length squared
+basic_genold_joined_clean %<>% mutate(age_2=age^2)
 
 # Create an additional variable of the number of children as factor variable
+basic_genold_joined_clean %<>% mutate(totchi_variable=totchi)
+basic_genold_joined_clean$totchi_variable <- as.factor(basic_genold_joined_clean$totchi_variable)
 
 # Replicationg Table 1 from the Appendix
 
@@ -60,7 +66,74 @@ class(genold108$genold)
 # Save the main coefficient of interest ($\beta_1$)
 # Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of genold
 
+# Regression analysis (dependent variable:total children)
+#Total Congress
+lm.reg.congress.total <- lm(basic_genold_joined_clean$totchi ~ basic_genold_joined_clean$genold + basic_genold_joined_clean$region + basic_genold_joined_clean$rgroup + basic_genold_joined_clean$age + basic_genold_joined_clean$age_2 + basic_genold_joined_clean$female + basic_genold_joined_clean$white)
+congress_total_totchi_beta <- summary(lm.reg.congress.total)$coefficients[2,1]
+congress_total_totchi_sterr <- summary(lm.reg.congress.total)$coefficients[2,2]
+
+#Democrats
+
+# Filter democrats
+data_democrats <- filter(basic_genold_joined_clean,party=="D")
+
+# Regression analysis for democrats (dependent variable:total children)
+lm.reg.congress.dem <- lm(data_democrats$totchi ~ data_democrats$genold + data_democrats$region + data_democrats$rgroup + data_democrats$age + data_democrats$age_2 + data_democrats$female + data_democrats$white)
+democrats_totchi_beta <- summary(lm.reg.congress.dem)$coefficients[2,1]
+democrats_totchi_sterr <- summary(lm.reg.congress.dem)$coefficients[2,2]
+
+#Republicans
+
+# Filter republicans
+data_republicans <- filter(basic_genold_joined_clean,party=="R")
+
+# Regression analysis for democrats (dependent variable:total children)
+lm.reg.congress.rep <- lm(data_republicans$totchi ~ data_republicans$genold + data_republicans$region + data_republicans$rgroup + data_republicans$age + data_republicans$age_2 + data_republicans$female + data_republicans$white)
+republicans_totchi_beta <- summary(lm.reg.congress.rep)$coefficients[2,1]
+republicans_totchi_sterr <- summary(lm.reg.congress.rep)$coefficients[2,2]
+
+# Regression analysis (dependent variable:number of girls)
+#Total Congress
+lm.reg.congress.total2 <- lm(basic_genold_joined_clean$ngirls ~ basic_genold_joined_clean$genold + basic_genold_joined_clean$region + basic_genold_joined_clean$rgroup + basic_genold_joined_clean$age + basic_genold_joined_clean$age_2 + basic_genold_joined_clean$female + basic_genold_joined_clean$white)
+congress_total_ngirls_beta <- summary(lm.reg.congress.total2)$coefficients[2,1]
+congress_total_ngirls_sterr <- summary(lm.reg.congress.total2)$coefficients[2,2]
+
+#Democrats
+
+# Regression analysis for democrats (dependent variable:number of girls)
+lm.reg.congress.dem2 <- lm(data_democrats$ngirls ~ data_democrats$genold + data_democrats$region + data_democrats$rgroup + data_democrats$age + data_democrats$age_2 + data_democrats$female + data_democrats$white)
+democrats_ngirls_beta <- summary(lm.reg.congress.dem2)$coefficients[2,1]
+democrats_ngirls_sterr <- summary(lm.reg.congress.dem2)$coefficients[2,2]
+
+#Republicans
+
+# Regression analysis for democrats (dependent variable:number of girls)
+lm.reg.congress.rep2 <- lm(data_republicans$ngirls ~ data_republicans$genold + data_republicans$region + data_republicans$rgroup + data_republicans$age + data_republicans$age_2 + data_republicans$female + data_republicans$white)
+republicans_ngirls_beta <- summary(lm.reg.congress.rep2)$coefficients[2,1]
+republicans_ngirls_sterr <- summary(lm.reg.congress.rep2)$coefficients[2,2]
+
 # Collect all the genold coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+summary_coefficients_totchi <- tibble(congress_total_totchi_beta,congress_total_totchi_sterr,democrats_totchi_beta,democrats_totchi_sterr,republicans_totchi_beta,republicans_totchi_sterr)
+
+# Rename colums totchi
+colnames(summary_coefficients_totchi)[1]<- "beta congress"
+colnames(summary_coefficients_totchi)[2]<- "sterr congress"
+colnames(summary_coefficients_totchi)[3]<- "beta democrats"
+colnames(summary_coefficients_totchi)[4]<- "sterr democrats"
+colnames(summary_coefficients_totchi)[5]<- "beta republicans"
+colnames(summary_coefficients_totchi)[6]<- "sterr republicans"
+
+summary_coefficients_ngirls <- tibble(congress_total_ngirls_beta,congress_total_ngirls_sterr,democrats_ngirls_beta,democrats_ngirls_sterr,republicans_ngirls_beta,republicans_ngirls_sterr)
+
+# Rename colums ngirls
+colnames(summary_coefficients_ngirls)[1]<- "beta congress"
+colnames(summary_coefficients_ngirls)[2]<- "sterr congress"
+colnames(summary_coefficients_ngirls)[3]<- "beta democrats"
+colnames(summary_coefficients_ngirls)[4]<- "sterr democrats"
+colnames(summary_coefficients_ngirls)[5]<- "beta republicans"
+colnames(summary_coefficients_ngirls)[6]<- "sterr republicans"
+
+table <- rbind(summary_coefficients_totchi,summary_coefficients_ngirls)
 
 # Print the table
-print.table()
+print(table)
