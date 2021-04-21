@@ -3,6 +3,7 @@ title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "04/04/2021"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -15,7 +16,7 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(rio)
 library(tidyverse)
 setwd("C:/Users/Adam Json Lindh/Desktop/Module_4")
