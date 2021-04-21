@@ -20,8 +20,19 @@ library(tidyverse)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+basic<-import("basic.dta")
+genold108<-import("genold108.dta")
+```
 * create a subset of the 108th congress from the *basic* dataset
+```{r}
+basic108<-basic %>% 
+  filter(congress==108)
+```
 * join this subset with the *genold* dataset
+```{r}
+
+```
 
 # Data preparation
 
