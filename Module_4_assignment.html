@@ -1837,7 +1837,7 @@ library(stargazer)</code></pre>
 <pre><code>##  Hlavac, Marek (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables.</code></pre>
 <pre><code>##  R package version 5.2.2. https://CRAN.R-project.org/package=stargazer</code></pre>
 <pre class="r"><code>stargazer(reg_totchi_congress,reg_ngirls_congress,reg_totchi_D,reg_ngirls_D,
-          reg_totchi_R,reg_ngirls_R,type=&#39;text&#39;, title=
+          reg_totchi_R,reg_ngirls_R,type=&#39;html&#39;, title=
 &quot;APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress&quot;, 
           align=TRUE,column.labels = c(&quot;Congress&quot;,&quot;Democrats&quot;, &quot;Republicans&quot;), 
           column.separate = c(2,2,2), digits=2,keep.stat=&quot;n&quot;, keep = &quot;genoldG&quot;, 
@@ -1850,27 +1850,24 @@ notes = c(
 &quot;effects for total number of children Standard errors in parentheses&quot;),
 notes.align = &quot;l&quot;)</code></pre>
 <pre><code>## 
-## APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress
-## ==============================================================================================
-##                                             Dependent variable:                               
-##              ---------------------------------------------------------------------------------
-##                 totchi        ngirls        totchi        ngirls        totchi       ngirls   
-##                       Congress                    Democrats                 Republicans       
-##                   (1)           (2)           (3)           (4)          (5)          (6)     
-## ----------------------------------------------------------------------------------------------
-## genoldG          -0.08        1.36***        0.12         1.41***       -0.26       1.24***   
-##                 (0.15)        (0.08)        (0.18)        (0.11)        (0.23)       (0.11)   
-##                                                                                               
-## ----------------------------------------------------------------------------------------------
-## Observations      227           227           104           104          122          122     
-## ==============================================================================================
-## Note:        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01                                                      
-##              The sample includes the 227 of the 381 parent members of the 108th Congress,     
-##              for whom gender of the first born could be established Number of children        
-##              regressions include controls for legislator race, gender, party, age,            
-##              age squared, service length and its square, religion, and region Number of       
-##              daughters regressions include the preceding covariates, as well as fixed         
-##              effects for total number of children Standard errors in parentheses</code></pre>
+## &lt;table style=&quot;text-align:center&quot;&gt;&lt;caption&gt;&lt;strong&gt;APPENDIX TABLE 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress&lt;/strong&gt;&lt;/caption&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;7&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot;&gt;&lt;em&gt;Dependent variable:&lt;/em&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;totchi&lt;/td&gt;&lt;td&gt;ngirls&lt;/td&gt;&lt;td&gt;totchi&lt;/td&gt;&lt;td&gt;ngirls&lt;/td&gt;&lt;td&gt;totchi&lt;/td&gt;&lt;td&gt;ngirls&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;2&quot;&gt;Congress&lt;/td&gt;&lt;td colspan=&quot;2&quot;&gt;Democrats&lt;/td&gt;&lt;td colspan=&quot;2&quot;&gt;Republicans&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(1)&lt;/td&gt;&lt;td&gt;(2)&lt;/td&gt;&lt;td&gt;(3)&lt;/td&gt;&lt;td&gt;(4)&lt;/td&gt;&lt;td&gt;(5)&lt;/td&gt;&lt;td&gt;(6)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;7&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;genoldG&lt;/td&gt;&lt;td&gt;-0.08&lt;/td&gt;&lt;td&gt;1.36&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.12&lt;/td&gt;&lt;td&gt;1.41&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;-0.26&lt;/td&gt;&lt;td&gt;1.24&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(0.15)&lt;/td&gt;&lt;td&gt;(0.08)&lt;/td&gt;&lt;td&gt;(0.18)&lt;/td&gt;&lt;td&gt;(0.11)&lt;/td&gt;&lt;td&gt;(0.23)&lt;/td&gt;&lt;td&gt;(0.11)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;7&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Observations&lt;/td&gt;&lt;td&gt;227&lt;/td&gt;&lt;td&gt;227&lt;/td&gt;&lt;td&gt;104&lt;/td&gt;&lt;td&gt;104&lt;/td&gt;&lt;td&gt;122&lt;/td&gt;&lt;td&gt;122&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;7&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;&lt;sup&gt;*&lt;/sup&gt;p&lt;0.1; &lt;sup&gt;**&lt;/sup&gt;p&lt;0.05; &lt;sup&gt;***&lt;/sup&gt;p&lt;0.01&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;The sample includes the 227 of the 381 parent members of the 108th Congress,&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;for whom gender of the first born could be established Number of children&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;regressions include controls for legislator race, gender, party, age,&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;age squared, service length and its square, religion, and region Number of&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;daughters regressions include the preceding covariates, as well as fixed&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;6&quot; style=&quot;text-align:left&quot;&gt;effects for total number of children Standard errors in parentheses&lt;/td&gt;&lt;/tr&gt;
+## &lt;/table&gt;</code></pre>
 <blockquote>
 
 </blockquote>
