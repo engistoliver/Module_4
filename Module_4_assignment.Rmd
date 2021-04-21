@@ -17,16 +17,28 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 library(rio)
 library(tidyverse)
+setwd("C:/Users/aless/Documents/Masterstudium SSE/Assignment 4 7613")
 ```
 
-* import the data sets *basic.dta* and *genold108.dta*
-* create a subset of the 108th congress from the *basic* dataset
-* join this subset with the *genold* dataset
+# Import the data sets basic.dta and genold108.dta
+import("~/Masterstudium SSE/Assignment 4 7613/basic.dta")
+import("~/Masterstudium SSE/Assignment 4 7613/genold108.dta")
+
+# Create a subset of the 108th congress from the basic dataset
+Congress108 <- basic %>% filter(congress=="108")
+
+# Join this subset with the genold dataset
+basic_genold_joined <- left_join(Congress108,genold108,by="name")
 
 # Data preparation
 
-* check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
-* drop all other variables.
+# Check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
+
+# From the control variables, I will drop the variable "service length" as well as its square since I think this has in the particular context of voting behavior regarding women's rights not a considerable influence as the other control variables which might clearly influence on the voting behavior as the other variables. Therefore, I consider it unnecessary.
+
+# Drop all other variables
+basic_genold_joined_clean <- basic_genold_joined[-c(1,2,6,13,14,17,20,29,30,31,32,33,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64)]
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
