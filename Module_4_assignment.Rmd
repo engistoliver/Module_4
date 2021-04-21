@@ -14,9 +14,9 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
 library(rio)
 library(tidyverse)
+library(magrittr)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -31,17 +31,45 @@ basic108<-basic %>%
 ```
 * join this subset with the *genold* dataset
 ```{r}
-
+data<-left_join(genold108, basic108, by = c("name","district","statenam"))
 ```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
+
+> The variables of interest would be "genold", "party", "ngirls", "nboys", "totchi" and the controls the "region", the religion "rgroup", the race "white", the "age" and the service length "srvlng".
+
 * drop all other variables.
+```{r}
+data %<>% 
+  select("genold", "party", "ngirls", "nboys", "totchi" , "region", "rgroup", "white",  "age", "srvlng")
+```
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+data$genold %<>% 
+  na_if("") %<>%
+  as.factor()
+```
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+data$party %<>% 
+  factor(levels=c(1,2,3), labels =c("D","R", "I"))
+```
 * Recode *rgroup* and *region* as factors.
+```{r}
+data$rgroup %<>% 
+  as.factor()
+data$region %<>% 
+  as.factor()
+```
 * generate variables for age squared and service length squared
+```{r}
+data %<>% 
+  mutate(sq_age=age^2)
+data %<>% 
+  mutate(sq_srvlng=srvlng^2)
+```
 * create an additional variable of the number of children as factor variable
 
 # Replicationg Table 1 from the Appendix
