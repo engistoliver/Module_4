@@ -2,7 +2,8 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "04/04/2021"
-output: pdf_document
+output: html_document
+
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -14,24 +15,77 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
-library(rio)
-library(tidyverse)
+#setting working directory:
+setwd("/Users/Anushka/Desktop/Module_4")
+#loading required packages:
+library("rio")
+library("tidyverse")
+library("stargazer")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+
+```{r}
+#importing the datasets:
+basic <- import("basic.dta")
+genold <- import("genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+
+```{r}
+#fitering basic to 108th congress:
+cong108 <- basic %>% filter(congress == 108)
+```
+
 * join this subset with the *genold* dataset
+
+```{r}
+#combining the two datasets:
+comb <- left_join(genold, cong108, by = c("district", "statenam", "name"))
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+
+```{r}
+#creating a vector of variables we want to keep:
+vars <- c("district", "statenam", "name", "genold", "party", "ngirls", "totchi", "rgroup",
+          "region", "srvlng", "age", "female", "white")
+#making dataframe of required vriables:
+comb_sub <- comb[,vars]
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
+
+```{r}
+#recoding genold:
+comb_sub <- comb_sub %>% mutate(genold = ifelse(genold == "", NA, genold)) %>%
+  mutate(genold = as.factor(genold))
+#recoding party:
+comb_sub <- comb_sub %>% mutate(party = factor(party, levels = sort(unique(party)), 
+                                                labels = c("D", "R", "I")))
+#recoding religion:
+comb_sub <- comb_sub %>% mutate(rgroup = as.factor(rgroup))
+#recoding region:
+comb_sub <- comb_sub %>% mutate(region = as.factor(region))
+```
+
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+
+```{r}
+#creating age squared:
+comb_sub <- comb_sub %>% mutate(age_sq = (age)^2)
+#creating service length squared:
+comb_sub <- comb_sub %>% mutate(srvlng_sq = (srvlng)^2)
+#creating no. of children as factor variable:
+comb_sub <- comb_sub %>% mutate(no_child = as.factor(totchi))
+```
 
 # Replicationg Table 1 from the Appendix
 
@@ -42,3 +96,50 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
+
+```{r}
+#creating a vectors of control variables:
+cont_var_t <- c("totchi", "genold", "party", "rgroup","region", "srvlng", "srvlng_sq", "age", 
+              "age_sq", "female", "white")
+cont_var_g <- c("ngirls", "genold", "party", "rgroup","region", "srvlng", "srvlng_sq", "age", 
+              "age_sq", "female", "white", "no_child")
+comb_sub_rep <- comb_sub %>% filter(party == "R")
+
+#regression 1: total children, congress:
+reg1 <- lm(totchi ~ ., data = comb_sub[, cont_var_t])
+#assigning independent to Democrats
+#regression 2: girls, congress:
+reg2 <- lm(ngirls ~ ., data = comb_sub[, cont_var_g])
+#regression 3: total children, democrats:
+reg3 <- lm(totchi ~ .-party, data = subset(comb_sub[, cont_var_t], party =! "R"))
+#regression 4: girls, democrats:
+reg4 <- lm(ngirls ~ .-party, data = subset(comb_sub[, cont_var_g], party =! "R"))
+#regression 5: total children, republicans:
+reg5 <- lm(totchi ~ genold + rgroup + region + srvlng + srvlng_sq + age + age_sq + 
+             female + white, data = comb_sub_rep)
+#regression 6: girls, republicans:
+reg6 <- lm(ngirls ~ genold + rgroup + region + srvlng + srvlng_sq + age + age_sq + 
+             female + white, data = comb_sub_rep)
+#saving genold coeff:
+beta_1 <- c(summary(reg1)$coefficients[2], summary(reg2)$coefficients[2], summary(reg3)$coefficients[2], summary(reg4)$coefficients[2], summary(reg5)$coefficients[2], summary(reg6)$coefficients[2]) 
+
+#saving genold sd:
+sd <- c(summary(reg1)$coefficients[2,2], summary(reg2)$coefficients[2,2],
+        summary(reg3)$coefficients[2,2], summary(reg4)$coefficients[2,2],
+        summary(reg5)$coefficients[2,2],summary(reg2)$coefficients[2,2])
+
+n <- c(227,227,104,104,122,122)
+n <- as.integer(n)
+
+#saving results to table:
+
+table <- matrix(c(beta_1, sd, n), ncol=6,nrow=3, byrow=TRUE)
+
+colnames(table) <- c("Congress, no. of children", "Congress, no. of daughters", 
+              "Democrats, no. of children", "Democrats, no. of daughters",
+              "Republicans, no. of children", "Republicans, no. of daughters")
+rownames(table) <- c("First child female", "Std. Error", "N")
+
+#printing the table:
+print(table)
+```
