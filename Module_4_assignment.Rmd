@@ -2,7 +2,9 @@
 title: "Module 4 - Instructions"
 author: "Victoria Gruner"
 date: "14/04/2021"
-output: pdf_document
+output: html_document
+
+
 ---
 
 #In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -37,8 +39,8 @@ combined.data <- left_join(genold.data, basic108.data)
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
-#* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
-#* Recode *party* as a factor with 3 levels (D, R, I)
+----->#* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+------>#* Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
@@ -47,21 +49,16 @@ combined.data <- left_join(genold.data, basic108.data)
 
 congress.data <- combined.data %>% select(name, ngirls, anygirls, genold, totchi, party, rgroup,region, age, female, white, srvlng )
 
-congress.data$genold <- as.factor(congress.data$genold)
-is.na(congress.data$genold)
+congress.data$genold %<>% na_if("") %>% as.factor()
+
+#alternative approach:
+#congress.data$genold <- as.factor(congress.data$genold)
+#congress.data$genold[congress.data$genold != 'B'& congress.data$genold != 'G'] <- NA
 
 congress.data$party <- as.factor(congress.data$party)
 
-#congress.data$genold %<>% map(as.factor, na.rm=TRUE)
-#congress.data$genold[genold != 'B'| genold != G] <- 'NA'
-#i dont know how to set missing values to na
+congress.data$party <- recode(congress.data$party, "1"="D", "2"="R", "3"="I") 
 
-#congress.data$genold <- str_pad(congress.data$genold, 0, pad = "NA")
-
-congress.data <- congress.data %>% mutate(party2 = party)
-
-for (i in party2) { if(party2 == '1') { congress.data$party2 <- "D"} else if (congress.data$party2 == '2') {congress.data$party2 <- "R"} else {congress.data$party2 <- "I"}}
-#i do not get any sensible out put here, recoding the party 
 
 congress.data$region <- as.factor(congress.data$region)
 congress.data$rgroup <- as.factor(congress.data$rgroup)
@@ -82,53 +79,47 @@ congress.data <- congress.data %>% mutate(totchi_factor = as.factor(totchi))
 
 #total children
 lm.reg_tot <- lm(totchi ~ party + region + rgroup+age+age_sq+female+white+srvlng+srvlng_sq + genold, congress.data)
-lm.reg <- unlist(lm.reg)
 
-#* Save the main coefficient of interest ($\beta_1$)
-beta_1 <- lm.reg$coefficients.genoldG
-
-beta_1
-
+sd_1 <- summary(lm.reg_tot)$coefficients[22,2]
+beta_1 <- summary(lm.reg_tot)$coefficients[22,1]
 
 #number of girls
 lm.reg_g <- lm(ngirls ~ party + region + rgroup+age+age_sq+female+white+srvlng+srvlng_sq + genold, congress.data)
-lm.reg_g <- unlist(lm.reg_g)
 
-#* Save the main coefficient of interest ($\beta_1$)
-beta_1_g <- lm.reg_g$coefficients.genoldG
-
-beta_1_g
+sd_1_g <- summary(lm.reg_g)$coefficients[22,2]
+beta_1_g <- summary(lm.reg_g)$coefficients[22,1]
 
 
 
 #* Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 
-congress.rep <- filter(congress.data, party==2)
+congress.rep <- filter(congress.data, party=='R')
 
-lm.reg_rep <- lm(totchi ~ genold + region +rgroup+age+age_sq+female+white+srvlng+srvlng_sq , congress.rep)
-lm.reg_rep <- unlist(lm.reg_rep)
-beta_1_rep <- lm.reg_rep$coefficients.genoldG
-beta_1_rep
+lm.reg_rep <- lm(totchi ~ genold + region +rgroup+age+age_sq+female+white+srvlng+srvlng_sq, congress.rep)
+
+sd_1_rep <- summary(lm.reg_rep)$coefficients[2,2]
+beta_1_rep <- summary(lm.reg_rep)$coefficients[2,1]
+
+#sd_rep <- summary(lm.reg_rep)$coefficients[2,2]
 
 lm.reg_rep_g <- lm(ngirls ~ genold + region +rgroup+age+age_sq+female+white+srvlng+srvlng_sq , congress.rep)
-lm.reg_rep_g <- unlist(lm.reg_rep_g)
-beta_1_rep_g <- lm.reg_rep_g$coefficients.genoldG
-beta_1_rep_g
+sd_1_rep_g <- summary(lm.reg_rep_g)$coefficients[2,2]
+beta_1_rep_g <- summary(lm.reg_rep_g)$coefficients[2,1]
 
 
-congress.dem <- filter(congress.data, party==1 | party==3)
+
+congress.dem <- filter(congress.data, party=='D' | party=='I')
 
 lm.reg_dem <- lm(totchi ~ genold + region +rgroup+age+age_sq+female+white+srvlng+srvlng_sq , congress.dem)
-lm.reg_dem <- unlist(lm.reg_dem)
-beta_1_dem <- lm.reg_dem$coefficients.genoldG
-beta_1_dem
+sd_1_dem <- summary(lm.reg_dem)$coefficients[2,2]
+beta_1_dem <- summary(lm.reg_dem)$coefficients[2,1]
+
 
 lm.reg_dem_g <- lm(ngirls ~ genold + region +rgroup+age+age_sq+female+white+srvlng+srvlng_sq , congress.dem)
-lm.reg_dem_g <- unlist(lm.reg_dem_g)
-beta_1_dem_g <- lm.reg_dem_g$coefficients.genoldG
-beta_1_dem_g
+sd_1_dem_g <- summary(lm.reg_dem_g)$coefficients[2,2]
+beta_1_dem_g <- summary(lm.reg_dem_g)$coefficients[2,1]
 
-#Where can I find standard errors?
+
 
 #* Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 #* print the table
