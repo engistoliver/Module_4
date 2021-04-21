@@ -2,7 +2,7 @@
 title: "Module 4 - Instructions"
 author: "Victoria Gruner"
 date: "14/04/2021"
-output: html_document
+output: pdf_document
 
 
 ---
@@ -46,7 +46,6 @@ combined.data <- left_join(genold.data, basic108.data)
 * create an additional variable of the number of children as factor variable
 
 
-
 congress.data <- combined.data %>% select(name, ngirls, anygirls, genold, totchi, party, rgroup,region, age, female, white, srvlng )
 
 congress.data$genold %<>% na_if("") %>% as.factor()
@@ -75,7 +74,7 @@ congress.data <- congress.data %>% mutate(totchi_factor = as.factor(totchi))
 
 #* Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 
-#X <- matrix(c(congress.data$party, congress.data$region , congress.data$rgroup , congress.data$age, congress.data$female, congress.data$white, congress.data$srvlng, congress.data$age_sq, congress.data$srvlng_sq),nrow=435)
+
 
 #total children
 lm.reg_tot <- lm(totchi ~ party + region + rgroup+age+age_sq+female+white+srvlng+srvlng_sq + genold, congress.data)
@@ -124,8 +123,9 @@ beta_1_dem_g <- summary(lm.reg_dem_g)$coefficients[2,1]
 #* Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 #* print the table
 
-beta_vector <- matrix(c(beta_1, beta_1_g, beta_1_rep, beta_1_rep_g, beta_1_dem, beta_1_dem_g), nrow=1)
+beta_vector <- matrix(c(beta_1, beta_1_g, beta_1_rep, beta_1_rep_g, beta_1_dem, beta_1_dem_g, sd_1, sd_1_g, sd_1_rep, sd_1_rep_g, sd_1_dem,sd_1_dem_g), nrow=2, ncol= 6)
 colnames(beta_vector) <- c('Total Children', 'Girls','Total Children', 'Girls','Total Children', 'Girls')
+rownames(beta_vector) <- c('Beta', 'Standard Error')
 beta_vector <- as.table(beta_vector)
 beta_vector
 
