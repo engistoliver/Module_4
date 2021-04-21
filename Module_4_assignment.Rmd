@@ -39,7 +39,10 @@ basic_genold_joined <- left_join(Congress108,genold108,by="name")
 # Drop all other variables
 basic_genold_joined_clean <- basic_genold_joined[-c(1,2,6,13,14,17,20,29,30,31,32,33,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64)]
 
-* Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+# Recode genold such that gender is a factor variable and missing values are coded as NAs
+as.factor(genold108$genold)
+class(genold108$genold)
+
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
@@ -54,5 +57,3 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 * print the table
-
-cghfhkgkjfgnccgfhdh
