@@ -2,7 +2,7 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "04/04/2021"
-output: pdf_document
+output: html_document
 
 ---
 
@@ -142,9 +142,4 @@ rownames(table) <- c("First child female", "Std. Error", "N")
 
 #printing the table:
 print(table)
-```
-
-
-```{r}
-
 ```
