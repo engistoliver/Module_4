@@ -64,6 +64,7 @@ Joined_Data$genold %<>% na_if("") %>% as_factor()
 
 * Recode *party* as a factor with 3 levels (D, R, I)
 ```{r}
+# Recode party as a factor variable
 Joined_Data$party <- as.factor(Joined_Data$party)
 
 # Checking whether recoded correctly
@@ -94,8 +95,8 @@ Joined_Data %<>% mutate(srvlng_sq = srvlng^2)
 
 * create an additional variable of the number of children as factor variable
 ```{r}
-Joined_Data %<>% mutate(tochi_fact = totchi)
-Joined_Data$numberchildren_fact <- as.factor(Joined_Data$tochi_fact)
+Joined_Data %<>% mutate(totchi_factor = totchi)
+Joined_Data$totchi_factor <- as.factor(Joined_Data$totchi_factor)
 ```
 
 # Replicationg Table 1 from the Appendix
@@ -155,9 +156,9 @@ sd %<>% round(2)
 table <- matrix(c(beta_1, sd, N), ncol=6,nrow=3, byrow=TRUE)
 
 # Giving the columns and rows the right names 
-colnames(table) <- c("Congress, no. of children", "Congress, no. of daughters", 
-                      "Democrats, no. of children", "Democrats, no. of daughters",
-                      "Republicans, no. of children", "Republicans, no. of daughters")
+colnames(table) <- c("Full Congress, No. children", "Full Congress, No. daughters", 
+                      "Democrats, No. children", "Democrats, No. daughters",
+                      "Republicans, No. children", "Republicans, No. daughters")
 rownames(table) <- c("First child female", "Std. Error", "N")
 
 # Print the table 
