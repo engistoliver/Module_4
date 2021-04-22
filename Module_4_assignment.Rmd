@@ -159,8 +159,14 @@ SD_chi_rep <- sum_chi_rep[["coefficients"]][["genoldB",2]]
 #the coefficient. 
 
 ##Create and print table
-stargazer(reg1 ,reg2,reg3,reg4,reg5,reg6,type='text', title="Regression Results", 
+stargazer(reg1 ,reg2,reg3,reg4,reg5,reg6,type='text', title="Appendix Table 1: Evidence on Legislator Child Gender Mix Selection, 108th Congress", 
           align=TRUE,column.labels = c("Congress","Democrats", "Republicans"), 
-          column.separate = c(2,2,2), digits=2, object.names = TRUE, keep = "genoldB")
+          column.separate = c(2,2,2), digits=2, keep.stat="n",object.names = TRUE, keep = "genoldB", notes = c("The sample includes the 227 of the 381 parent members of the 108th Congress,",
+"for whom gender of the first born could be established Number of children",
+"regressions include controls for legislator race, gender, party, age, ",
+"age squared, service length and its square, religion, and region Number of",
+"daughters regressions include the preceding covariates, as well as fixed",
+"effects for total number of children Standard errors in parentheses"),
+notes.align = "l")
 
 ```
