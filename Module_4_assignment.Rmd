@@ -14,9 +14,12 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
+# Set working directory 
+setwd("/Users/eusje96/Documents/1. Educatie/1. Stockholm School of Economics/1. Year 1/2. Semester 2/Term 4/Introduction to data-analysis in R/Assignments")
 
-library(rio)
-library(tidyverse)
+library("rio")
+library("tidyverse")
+library("stargazer")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
