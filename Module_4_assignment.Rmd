@@ -15,26 +15,85 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 ```{r, message=FALSE}
 # Set working directory 
-setwd("/Users/eusje96/Documents/1. Educatie/1. Stockholm School of Economics/1. Year 1/2. Semester 2/Term 4/Introduction to data-analysis in R/Assignments")
+setwd("/Users/eusje96/Documents/1. Educatie/1. Stockholm School of Economics/1. Year 1/2. Semester 2/Term 4/Introduction to data-analysis in R/Assignments/Module_4")
 
 library("rio")
 library("tidyverse")
 library("stargazer")
+library("magrittr")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+# Import the data sets
+basic <- import("basic.dta")
+genold <- import("genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r}
+Basic_108 <- basic %>% filter(congress==108)
+```
+
 * join this subset with the *genold* dataset
+```{r}
+Joined_Data <- left_join(genold, Basic_108, by = c("name","district", "statenam"))
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+```{r}
+Joined_Data <- Joined_Data %>% select(name, ngirls, anygirls, genold, totchi, party, rgroup, region, age, female)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+# Recode "genold" such that gender is a factor variable 
+Joined_Data$genold <- as.factor(Joined_Data$genold)
+
+# Checking whether recoded correctly
+is.factor(Joined_Data$genold)
+
+# Coding missing values as NAs.  
+Joined_Data$genold %<>% na_if("") %>% as_factor()
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+Joined_Data$party <- as.factor(Joined_Data$party)
+
+# Checking whether recoded correctly
+is.factor(Joined_Data$party)
+
+# Generate 3 levels (D, R, I)
+ print(Joined_Data$party)
+ Joined_Data$party <- recode(Joined_Data$party, "1" = "D", "2" = "R", "3" = "I")
+
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r}
+# Recode *rgroup* and *region* as factors
+ Joined_Data$rgroup <- as.factor(Joined_Data$rgroup)
+ Joined_Data$region <- as.factor(Joined_Data$region)
+
+ # Check whether recoding was successful
+ is.factor(Joined_Data$rgroup)
+ is.factor(Joined_Data$region)
+```
+
 * generate variables for age squared and service length squared
+```{r}
+Joined_Data %<>% mutate(age_squared = age^2)
+```
+
 * create an additional variable of the number of children as factor variable
+```{r}
+Joined_Data %<>% mutate(numberchildren_fact = totchi)
+Joined_Data$numberchildren_fact <- as.factor(Joined_Data$numberchildren_fact)
+```
 
 # Replicationg Table 1 from the Appendix
 
