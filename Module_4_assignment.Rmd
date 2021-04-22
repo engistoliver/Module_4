@@ -17,6 +17,7 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 library(rio)
 library(tidyverse)
+library(magrittr)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -34,7 +35,7 @@ Basic108 <- Basic %>% filter(congress == 108)
 
 * join this subset with the *genold* dataset
 ```{r}
-Combined <- left_join(Basic108, Genold108, by="name")
+Combined <- left_join(Basic108, Genold108, by=c("name","statenam","district"))
 ```
 
 
@@ -42,11 +43,34 @@ Combined <- left_join(Basic108, Genold108, by="name")
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+```{r}
+Combined %<>% select(district, statenam, name, genold, party, ngirls, totchi, rgroup,
+                     region, srvlng, age, female, white)
+```
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+Combined$genold %<>% na_if("") %>% as_factor()
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+Combined$party %<>% factor(labels=c("D","R","I"))
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r}
+Combined$rgroup %<>% as_factor()
+Combined$region %<>% as_factor()
+```
+ 
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
+```{r}
+Combined %<>% mutate(age_squared = age^2)
+Combined %<>% mutate(srvlng_squared = srvlng^2)
+Combined %<>% mutate(totchi_factor = as_factor(totchi))
+```
+
 
 # Replicationg Table 1 from the Appendix
 
