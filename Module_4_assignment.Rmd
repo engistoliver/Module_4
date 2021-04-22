@@ -3,6 +3,7 @@ title: "Module 4"
 author: "Eugénie de Jong"
 date: "22/04/2021"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
