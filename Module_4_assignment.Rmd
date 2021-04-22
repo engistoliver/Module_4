@@ -11,17 +11,34 @@ In the next assignment we want to replicate some plots from the paper "Female So
 # Setup
 
 * Load the libraries "Rio" and "tidyverse"
-* Change the path of the working directory to your working directory.
+* Change the path of the working directory to your working directory
 
 ```{r, message=FALSE}
 
 library(rio)
+
 library(tidyverse)
+
+getwd()
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+#Importing the data
+##loading package for read_dta command
+library(haven)
+basic <- read_dta("basic.dta")
+genold108 <- read_dta("genold108.dta")
+
+```
+
+
 * create a subset of the 108th congress from the *basic* dataset
+```
+
 * join this subset with the *genold* dataset
+
 
 # Data preparation
 
