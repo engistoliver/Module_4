@@ -2,7 +2,9 @@
 title: "Module 4"
 author: "Eugénie de Jong"
 date: "22/04/2021"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -123,10 +125,10 @@ reg1 <- lm(totchi ~ ., data = Joined_Data[, control_totchi])
 reg2 <- lm(ngirls ~ ., data = Joined_Data[, control_ngirls])
 
 # Regression 3, dependent variable = total children, Democrat data
-reg3 <- lm(totchi ~ .-party, data = subset(Joined_Data[, control_totchi], party=! "R"))
+reg3 <- lm(totchi ~ .-party, data = subset(Joined_Data[, control_totchi], party= "D"))
 
 # Regression 4, dependent variable = ngirls, Democrat data
-reg4 <- lm(ngirls ~ .-party, data = subset(Joined_Data[, control_ngirls], party=! "R"))
+reg4 <- lm(ngirls ~ .-party, data = subset(Joined_Data[, control_ngirls], party= "D"))
 
 # Regression 5, dependent variable = total children, Republican data
 reg5 <- lm(totchi ~ .-party, data = subset(Joined_Data[, control_totchi], party= "R"))
@@ -144,13 +146,13 @@ sd <- c(summary(reg1)$coefficients[2,2], summary(reg2)$coefficients[2,2],
          summary(reg3)$coefficients[2,2], summary(reg4)$coefficients[2,2],
          summary(reg5)$coefficients[2,2],summary(reg2)$coefficients[2,2])
 
-# Creating variable N to be included in the table 
-N <- c(227,227,105,105,122,122)
-N <- as.integer(N)
-
 # Round variables
 beta_1 %<>% round(2)
 sd %<>% round(2)
+
+# Creating variable N to be included in the table 
+N <- c(227,227,105,105,122,122)
+N <- as.integer(N)
 
 # Creating a table 
 table <- matrix(c(beta_1, sd, N), ncol=6,nrow=3, byrow=TRUE)
@@ -163,7 +165,6 @@ rownames(table) <- c("First child female", "Std. Error", "N")
 
 # Print the table 
 print(table)
-
 ```
 
 
