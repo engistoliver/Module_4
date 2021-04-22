@@ -1,44 +1,176 @@
 ---
-title: "Module 4 - Instructions"
-author: "Oliver Engist"
-date: "04/04/2021"
+title: "Module 4 - answers"
+author: "Romain Angotti"
+date: "22/04/2021"
 output: pdf_document
 ---
 
-In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
-
-
 # Setup
 
-* Load the libraries "Rio" and "tidyverse"
-* Change the path of the working directory to your working directory.
-
 ```{r, message=FALSE}
-
 library(rio)
 library(tidyverse)
+library(magrittr)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r}
+# I use the import function to extract data from the files
+basic<-import("basic.dta")
+genold108<-import("genold108.dta")
+```
 * create a subset of the 108th congress from the *basic* dataset
+```{r}
+# I filter the basic data in the basic108 df with the filter function.
+basic108<-basic %>% 
+  filter(congress==108)
+```
 * join this subset with the *genold* dataset
+```{r}
+# I join the two datasets with any join as the data has the same rows, here I join with name, district and statenam.
+data<-left_join(genold108, basic108, by = c("name","district","statenam"))
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
+
+> According to the footnote, the variables of interest would be "genold", "party", "ngirls", "nboys", "totchi" and the controls the "region", the religion "rgroup", the race "white", the "age", the gender "female" and the service length "srvlng".
+
 * drop all other variables.
+```{r}
+# I drop the unused variables (51) by seclecting the variables of interest.
+data %<>% 
+  select("genold", "party", "ngirls", "nboys", "totchi" , "region", "rgroup", "white",  "age", "srvlng", "female")
+```
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r}
+# I recode the empty values into NAs and change the whole variable into a factor.
+data$genold %<>% 
+  na_if("") %<>%
+  as.factor()
+```
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r}
+# I use the factor and specify the intending levels acoording to the former ones.
+data$party %<>% 
+  factor(levels=c(1,2,3), labels =c("D","R", "I"))
+```
 * Recode *rgroup* and *region* as factors.
+```{r}
+# I use as.factor for both of them.
+data$rgroup %<>% 
+  as.factor()
+data$region %<>% 
+  as.factor()
+```
 * generate variables for age squared and service length squared
+```{r}
+# I add a variable that takes the square of the age and service length with mutate .
+data %<>% 
+  mutate(sq_age=age^2)
+data %<>% 
+  mutate(sq_srvlng=srvlng^2)
+```
 * create an additional variable of the number of children as factor variable
+```{r}
+# I add a variable similar to totchi.
+data %<>% 
+  mutate(nbchi=totchi)
+
+# I transform this value into a factor.
+data$nbchi %<>% 
+  as.factor()
+```
 
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+```{r}
+# I select the subsets of variables that interest me for the regression. I do this for the number of daughters and the number of children as in the paper.
+rg_tot<-data %>%
+  select("genold","party", "totchi" , "region", "rgroup", "white",  "age", "srvlng","sq_age", "sq_srvlng","female")
+rg_girls<-data %>%
+  select("genold","party", "ngirls" , "region", "rgroup", "white",  "age", "srvlng","sq_age", "sq_srvlng", "nbchi","female")
+
+# I run the regression that I store in the same variable again which is now a list. I regress the dependant variable on all the others (.)
+rg_tot=lm(totchi ~ ., rg_tot)
+rg_girls=lm(ngirls ~ ., rg_girls)
+```
 * Save the main coefficient of interest ($\beta_1$)
+```{r}
+# Here I extract the coefficients corresponding to the beta_1 and rename the vector cells to make the sorting easier.
+beta1_tot<-c(coefficients(rg_girls)[2],coefficients(rg_tot)[2])
+names(beta1_tot)=c("Number of daughters","Number of children")
+
+# I use the same process with the se but they require to use the summary function because they aren't present in the initial list.
+se1_tot<-c(coef(summary(rg_girls))[2, "Std. Error"],coef(summary(rg_tot))[2, "Std. Error"])
+names(se1_tot)=c("Number of daughters","Number of children")
+```
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r}
+# We create two datasets for each party to make the regressions more easily. We count the independants as Democrats (as they are two there's not much difference). 
+data_dem <- data %>%
+  filter(party=="I"|party=="D")
+data_rep <-data %>%
+  filter(party=='R')
+
+# As before, we select the variables of interest, run the regression and store the values in a vector. We repeat the whole process for both parties.
+
+# DEMOCRATS
+rg_tot<-data_dem %>%
+  select("genold","totchi" , "region", "rgroup", "white",  "age", "srvlng","sq_age", "sq_srvlng", "female")
+rg_girls<-data_dem %>%
+  select("genold","ngirls" , "region", "rgroup", "white",  "age", "srvlng","sq_age", "sq_srvlng", "nbchi", "female")
+
+rg_tot=lm(totchi ~ ., rg_tot)
+rg_girls=lm(ngirls ~ ., rg_girls)
+
+beta1_dem<-c(coefficients(rg_girls)[2],coefficients(rg_tot)[2])
+se1_dem<-c(coef(summary(rg_girls))[2, "Std. Error"],coef(summary(rg_tot))[2, "Std. Error"])
+names(beta1_dem)=c("Number of daughters","Number of children")
+names(se1_dem)=c("Number of daughters","Number of children")
+
+# REPUBLICANS
+rg_tot<-data_rep %>%
+  select("genold","totchi" , "region", "rgroup", "white",  "age", "srvlng","sq_age", "sq_srvlng", "female")
+rg_girls<-data_rep %>%
+  select("genold","ngirls" , "region", "rgroup", "white",  "age", "srvlng","sq_age", "sq_srvlng", "nbchi", "female")
+
+rg_tot=lm(totchi ~ ., rg_tot)
+rg_girls=lm(ngirls ~ ., rg_girls)
+
+beta1_rep<-c(coefficients(rg_girls)[2],coefficients(rg_tot)[2])
+se1_rep<-c(coef(summary(rg_girls))[2, "Std. Error"],coef(summary(rg_tot))[2, "Std. Error"])
+names(beta1_rep)=c("Number of daughters","Number of children")
+names(se1_rep)=c("Number of daughters","Number of children")
+```
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r}
+# We bind the se and the corresponding coefficients.
+beta1_tot<-rbind(beta1_tot,se1_tot)
+beta1_dem<-rbind(beta1_dem,se1_dem)
+beta1_rep<-rbind(beta1_rep,se1_rep)
+
+# We bind all the values in the same order as in the paper and rename the colomns and rows. Here for a matter of place I wrote the expressions in a shorter way (Full Congress = FC).
+coefs<-cbind(beta1_tot,beta1_dem, beta1_rep)
+row.names(coefs) = c("First child female", "")
+colnames(coefs) = c("FC Number of dgt", "FC Number of chld",
+                     "Dem Number of dgt", "Dem Number of chld",
+                     "Rep Number of dgt", "Rep Number of chld")
+```
 * print the table
+```{r}
+# We display the results
+coefs
+```
+end
+
+
+
+
+
+
+
