@@ -4,7 +4,7 @@ author: "Olle Törnquist"
 date: "22/04/2021"
 output:
   html_document:
-    df_print: paged
+    df_print: kable
   pdf_document:
     df_print: kable
 ---
