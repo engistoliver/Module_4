@@ -105,6 +105,42 @@ Std_genold_rep <- coef(summary(Regression_republican))["genoldG","Std. Error"]
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r collect number of children for the N row and then repeat above steps for the number of daughters regression}
+n.children_tot <- nobs(Regression_totchi)
+n.children_dem <- nobs(Regression_dem)
+n.children_rep <- nobs(Regression_republican)
 
+Regression_ngirls <- lm(ngirls ~ white + female + party + age + age_sqrd + srvlng + srvlng_sqrd + rgroup + region + genold, data = appendix_var)
+
+Regression_dem_girls <- lm(ngirls ~ white + female + age + age_sqrd + srvlng + srvlng_sqrd + rgroup + region + genold, data = appendix_var, party=="D")
+
+Regression_republican_girls <- lm(ngirls ~ white + female + age + age_sqrd + srvlng + srvlng_sqrd + rgroup + region + genold, data = appendix_var, party=="R")
+
+Beta_genold_dem_girls <- coef(summary(Regression_dem_girls))["genoldG","Estimate"]
+
+Beta_genold_ngirls <- coef(summary(Regression_ngirls))["genoldG","Estimate"]
+
+Beta_genold_rep_girls <- coef(summary(Regression_republican_girls))["genoldG","Estimate"]
+
+Std_genold_dem_girls <- coef(summary(Regression_dem_girls))["genoldG","Std. Error"]
+
+Std_genold_rep_girls <- coef(summary(Regression_republican_girls))["genoldG","Std. Error"]
+
+Std_genold_ngirls <- coef(summary(Regression_ngirls))["genoldG","Std. Error"]
+
+n.daughter_ngirls <- nobs(Regression_ngirls)
+n.daughter_dem <- nobs(Regression_dem_girls)
+n.daughter_rep <- nobs(Regression_republican_girls)
+```
+
+```{r make table}
+Appendix_1_table <- matrix(c(Beta_genold_ngirls,Beta_genold_totchi,Beta_genold_dem_girls,Beta_genold_dem,Beta_genold_rep_girls,Beta_genold_rep,Std_genold_ngirls,Std_genold_totchi,Std_genold_dem_girls,Std_genold_dem,Std_genold_rep_girls,Std_genold_rep,n.daughter_ngirls,n.children_tot,n.daughter_dem,n.children_dem,n.daughter_rep,n.children_rep),ncol=6, byrow = TRUE)
+
+row.names(Appendix_1_table) <- c("First Child","Female", "Number")
+colnames(Appendix_1_table) <- c("Full Congress - Daughters", "Full Congress - Total Children", "Democrats - Daughters", "Democrats - Total Children", "Republicans - Daughters", "Republicans - Total Children")
+
+view(Appendix_1_table)
+print(Appendix_1_table)
+```
 
 * print the table
