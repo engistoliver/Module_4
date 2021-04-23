@@ -2,7 +2,9 @@
 title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "04/04/2021"
-output: pdf_document
+output:
+  word_document: default
+  pdf_document: default
 ---
 
 In the next assignment we want to replicate some plots from the paper "Female Socialization: How Daughters Affect Their Legislator Fathers' Voting on Women's Issues" (Washington, 2008). The paper explores whether having a daughter makes politicians more sensitive to women's rights issues and how this is reflected in their voting behavior. The main identifying assumption is that after controlling for the number of children, the gender composition is random. This might be violated if families that have a preference for girls keep having children until they have a girl. In this assignment we will prepare a dataset that allows us to test whether families engage in such a "female child stopping rule".
@@ -13,32 +15,118 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
 
-```{r, message=FALSE}
+```{r message=FALSE}
 
 library(rio)
 library(tidyverse)
+library(magrittr)
+# Working directory is set in project settings
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r message=FALSE}
+basicData <- import("./basic.dta")
+genoldData <- import("./genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r message=FALSE}
+basicData %<>% filter(congress == "108")
+```
+
 * join this subset with the *genold* dataset
+```{r message=FALSE}
+# common id is name
+combinedData <- left_join(basicData, genoldData, by="name")
+```
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+```{r message=FALSE, results='hide'}
+glimpse(combinedData)   #get overview of variables
+DataSelection <- select(combinedData, name,genold,ngirls,totchi,party,white,female,age,srvlng,rgroup,region )
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r message=FALSE}
+DataSelection$genold %<>% factor()
+DataSelection$genold %<>% na_if("")
+```
+
 * Recode *party* as a factor with 3 levels (D, R, I)
+```{r message=FALSE}
+DataSelection$party %<>% factor()
+DataSelection$party %<>% recode("1"="D","2"="R","3"="I")
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r message=FALSE}
+DataSelection$rgroup %<>% factor()
+DataSelection$region %<>% factor()
+```
+
 * generate variables for age squared and service length squared
+```{r message=FALSE}
+DataSelection %<>% mutate(age_sq=age^2)
+DataSelection %<>% mutate(srvlng_sq=srvlng^2)
+```
 * create an additional variable of the number of children as factor variable
+```{r message=FALSE}
+DataSelection %<>% mutate(nchildren=totchi)
+DataSelection$nchildren %<>% factor()
+```
 
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+
+```{r  message=FALSE, results='hide'}
+regTot <- lm(totchi ~ genold + white+ female+ party+ age+ age_sq+ srvlng+ srvlng_sq+ rgroup+ region, DataSelection)
+regDau <- lm(ngirls ~ genold + white+ female+ party+ age+ age_sq+ srvlng+ srvlng_sq+ rgroup+ region, DataSelection)
+```
+
 * Save the main coefficient of interest ($\beta_1$)
+```{r  message=FALSE}
+Coef <- c(coefficients(regDau)[2], coefficients(regTot)[2])
+names(Coef) = c("Number of Daugthers", "Number of Children")
+Coef
+```
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+```{r  message=FALSE}
+DataDem <- DataSelection
+DataDem %<>% filter(party=="D" | party=="I")
+regTot_D <- lm(totchi ~ genold + white+ female+ age+ age_sq+ srvlng+ srvlng_sq+ rgroup+ region, DataDem)
+regDau_D <- lm(ngirls ~ genold + white+ female+ age+ age_sq+ srvlng+ srvlng_sq+ rgroup+ region, DataDem)
+
+DataRep <- DataSelection
+DataRep %<>% filter(party=="R")
+regTot_R <- lm(totchi ~ genold + white+ female+ age+ age_sq+ srvlng+ srvlng_sq+ rgroup+ region, DataRep)
+regDau_R <- lm(ngirls ~ genold + white+ female+ age+ age_sq+ srvlng+ srvlng_sq+ rgroup+ region, DataRep)
+
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+```{r message=FALSE}
+Coef <- c(coefficients(regDau)[2], coefficients(regTot)[2], coefficients(regDau_D)[2], coefficients(regTot_D)[2], coefficients(regDau_R)[2], coefficients(regTot_R)[2])
+
+se <- c(summary(regDau)$coef[[2,2]], summary(regTot)$coef[[2,2]], summary(regDau_D)$coef[[2,2]], summary(regTot_D)$coef[[2,2]], summary(regDau_R)$coef[[2,2]], summary(regTot_R)$coef[[2,2]])
+
+finalTable <- data.frame(Coef, se)
+finalTable %<>% t()
+
+a <- "NoDaugthers"
+b <- "NoChildren"
+colnames(finalTable) = c(paste("all",a), paste("all",b), paste("D",a), paste("D",b), paste("R",a), paste("R",b))
+```
+
+
 * print the table
+```{r}
+finalTable
+```
+
