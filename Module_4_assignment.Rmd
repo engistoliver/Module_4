@@ -15,8 +15,7 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
 
-```{r message=FALSE}
-
+```{r message=FALSE, results='hide'}
 library(rio)
 library(tidyverse)
 library(magrittr)
