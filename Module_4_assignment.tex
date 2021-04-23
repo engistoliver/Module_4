@@ -1,0 +1,441 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Module 4 - Instructions},
+  pdfauthor={Oliver Engist},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Module 4 - Instructions}
+\author{Oliver Engist}
+\date{04/04/2021}
+
+\begin{document}
+\maketitle
+
+In the next assignment we want to replicate some plots from the paper
+``Female Socialization: How Daughters Affect Their Legislator Fathers'
+Voting on Women's Issues'' (Washington, 2008). The paper explores
+whether having a daughter makes politicians more sensitive to women's
+rights issues and how this is reflected in their voting behavior. The
+main identifying assumption is that after controlling for the number of
+children, the gender composition is random. This might be violated if
+families that have a preference for girls keep having children until
+they have a girl. In this assignment we will prepare a dataset that
+allows us to test whether families engage in such a ``female child
+stopping rule''.
+
+\hypertarget{setup}{%
+\section{Setup}\label{setup}}
+
+\begin{itemize}
+\tightlist
+\item
+  Load the libraries ``Rio'' and ``tidyverse''
+\item
+  Change the path of the working directory to your working directory.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(rio)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'rio' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'tidyverse' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tibble' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tidyr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'readr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'purrr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'dplyr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'stringr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'forcats' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(magrittr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'magrittr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Working directory is set in project settings}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  import the data sets \emph{basic.dta} and \emph{genold108.dta}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{basicData }\OtherTok{\textless{}{-}} \FunctionTok{import}\NormalTok{(}\StringTok{"./basic.dta"}\NormalTok{)}
+\NormalTok{genoldData }\OtherTok{\textless{}{-}} \FunctionTok{import}\NormalTok{(}\StringTok{"./genold108.dta"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  create a subset of the 108th congress from the \emph{basic} dataset
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{basicData }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{filter}\NormalTok{(congress }\SpecialCharTok{==} \StringTok{"108"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  join this subset with the \emph{genold} dataset
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# common id is name}
+\NormalTok{combinedData }\OtherTok{\textless{}{-}} \FunctionTok{left\_join}\NormalTok{(basicData, genoldData, }\AttributeTok{by=}\StringTok{"name"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-preparation}{%
+\section{Data preparation}\label{data-preparation}}
+
+\begin{itemize}
+\tightlist
+\item
+  check table 1 in the appendix of the paper and decide which variables
+  are necessary for the analysis (check the footnote for control
+  variables)
+\item
+  drop all other variables.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{glimpse}\NormalTok{(combinedData)   }\CommentTok{\#get overview of variables}
+\NormalTok{DataSelection }\OtherTok{\textless{}{-}} \FunctionTok{select}\NormalTok{(combinedData, name,genold,ngirls,totchi,party,white,female,age,srvlng,rgroup,region )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Recode \emph{genold} such that gender is a factor variable and missing
+  values are coded as NAs.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{genold }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{genold }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{na\_if}\NormalTok{(}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Recode \emph{party} as a factor with 3 levels (D, R, I)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{party }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{party }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{recode}\NormalTok{(}\StringTok{"1"}\OtherTok{=}\StringTok{"D"}\NormalTok{,}\StringTok{"2"}\OtherTok{=}\StringTok{"R"}\NormalTok{,}\StringTok{"3"}\OtherTok{=}\StringTok{"I"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Recode \emph{rgroup} and \emph{region} as factors.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{rgroup }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{region }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  generate variables for age squared and service length squared
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{age\_sq=}\NormalTok{age}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{DataSelection }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{srvlng\_sq=}\NormalTok{srvlng}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  create an additional variable of the number of children as factor
+  variable
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{nchildren=}\NormalTok{totchi)}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{nchildren }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{replicationg-table-1-from-the-appendix}{%
+\section{Replicationg Table 1 from the
+Appendix}\label{replicationg-table-1-from-the-appendix}}
+
+We haven't covered regressions in R yet. Use the function \emph{lm()}.
+The function takes the regression model (formula) and the data as an
+input. The model is written as \(y \sim x\), where \(x\) stands for any
+linear combination of regressors (e.g.~\(y \sim x_1 + x_2 + female\)).
+Use the help file to understand the function.
+
+\begin{itemize}
+\tightlist
+\item
+  Run the regression
+  \(total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X\) where
+  \(\gamma\) stands for a vector of coefficients and \(X\) is a matrix
+  that contains all columns that are control
+  variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{regTot }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(totchi }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ party}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataSelection)}
+\NormalTok{regDau }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(ngirls }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ party}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataSelection)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Save the main coefficient of interest (\(\beta_1\))
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Coef }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{coefficients}\NormalTok{(regDau)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot)[}\DecValTok{2}\NormalTok{])}
+\FunctionTok{names}\NormalTok{(Coef) }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"Number of Daugthers"}\NormalTok{, }\StringTok{"Number of Children"}\NormalTok{)}
+\NormalTok{Coef}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Number of Daugthers  Number of Children 
+##          1.35753057         -0.08388331
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Run the same regression separately for Democrats and Republicans
+  (assign the independent to one of the parties). Save the coefficient
+  and standard error of \emph{genold}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataDem }\OtherTok{\textless{}{-}}\NormalTok{ DataSelection}
+\NormalTok{DataDem }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{filter}\NormalTok{(party}\SpecialCharTok{==}\StringTok{"D"} \SpecialCharTok{|}\NormalTok{ party}\SpecialCharTok{==}\StringTok{"I"}\NormalTok{)}
+\NormalTok{regTot\_D }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(totchi }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataDem)}
+\NormalTok{regDau\_D }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(ngirls }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataDem)}
+
+\NormalTok{DataRep }\OtherTok{\textless{}{-}}\NormalTok{ DataSelection}
+\NormalTok{DataRep }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{filter}\NormalTok{(party}\SpecialCharTok{==}\StringTok{"R"}\NormalTok{)}
+\NormalTok{regTot\_R }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(totchi }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataRep)}
+\NormalTok{regDau\_R }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(ngirls }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataRep)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Collect all the \emph{genold} coefficients from the six regressions,
+  including their standard errors and arrange them in a table as in the
+  paper.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Coef }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{coefficients}\NormalTok{(regDau)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regDau\_D)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot\_D)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regDau\_R)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot\_R)[}\DecValTok{2}\NormalTok{])}
+
+\NormalTok{se }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{summary}\NormalTok{(regDau)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regTot)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regDau\_D)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regTot\_D)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regDau\_R)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regTot\_R)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]])}
+
+\NormalTok{finalTable }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(Coef, se)}
+\NormalTok{finalTable }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{t}\NormalTok{()}
+
+\NormalTok{a }\OtherTok{\textless{}{-}} \StringTok{"NoDaugthers"}
+\NormalTok{b }\OtherTok{\textless{}{-}} \StringTok{"NoChildren"}
+\FunctionTok{colnames}\NormalTok{(finalTable) }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"all"}\NormalTok{,a), }\FunctionTok{paste}\NormalTok{(}\StringTok{"all"}\NormalTok{,b), }\FunctionTok{paste}\NormalTok{(}\StringTok{"D"}\NormalTok{,a), }\FunctionTok{paste}\NormalTok{(}\StringTok{"D"}\NormalTok{,b), }\FunctionTok{paste}\NormalTok{(}\StringTok{"R"}\NormalTok{,a), }\FunctionTok{paste}\NormalTok{(}\StringTok{"R"}\NormalTok{,b))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  print the table
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{finalTable}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      all NoDaugthers all NoChildren D NoDaugthers D NoChildren R NoDaugthers
+## Coef       1.3575306    -0.08388331     1.4580041   0.07291434     1.1860812
+## se         0.1275869     0.14911332     0.1757588   0.18089377     0.1889604
+##      R NoChildren
+## Coef   -0.2823933
+## se      0.2334645
+\end{verbatim}
+
+\end{document}
