@@ -16,8 +16,6 @@ In the next assignment we want to replicate some plots from the paper "Female So
 
 library("tidyverse") 
 library("rio") 
-
-
 ```
 
 
@@ -63,7 +61,6 @@ The following variables are necessary for the analysis. All the others are autom
 
 variables <- c("white", "female", "party", "age", "srvlng", "rgroup",
                "region", "totchi", "genold", "ngirls")
-
 Data108 <- Data108[variables]
 ```
 
@@ -72,7 +69,6 @@ Data108 <- Data108[variables]
 ```{r, message=FALSE}
 
 Data108$genold <- as.factor(Data108$genold)
-
 Data108$genold[Data108$genold == ""] <- NA
 ```
 
@@ -88,7 +84,6 @@ Data108$party <- factor(Data108$party, levels=c(1,2,3), labels=c("D", "R", "I"))
 ```{r, message=FALSE}
 
 Data108$rgroup <- as.factor(Data108$rgroup)
-
 Data108$region <- as.factor(Data108$region)
 
 ```
@@ -98,7 +93,6 @@ Data108$region <- as.factor(Data108$region)
 ```{r, message=FALSE}
 
 Data108$agesq <- Data108$age*Data108$age
-
 Data108$srvlngsq <- Data108$srvlng*Data108$srvlng
 
 ```
