@@ -11,12 +11,21 @@ In the next assignment we want to replicate some plots from the paper "Female So
 # Setup
 
 * Load the libraries "Rio" and "tidyverse"
+
+```{r, message=FALSE}
+
+library("tidyverse") 
+library("rio") 
+
+
+```
+
+
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
 
-library(rio)
-library(tidyverse)
+setwd("~/Documents/SSE/A4/Module_4")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
