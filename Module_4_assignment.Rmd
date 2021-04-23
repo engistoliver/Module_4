@@ -14,7 +14,7 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r, message=FALSE}
-
+library(stargazer)
 library(rio)
 library(tidyverse)
 ```
@@ -39,7 +39,7 @@ joined = left_join(sub_basic,genold, by = c("name" = "name"))
 # legislator race, gender, party, age, age squared, service length, service length squared, religion, region
 * drop all other variables.
 ```{r, message=FALSE}
-table_1 = joined[,c("white","female","party","age","srvlng","rgroup","region","genold","totchi")]
+table_1 = joined[,c("white","female","party","age","srvlng","rgroup","region","genold","ngirls","totchi")]
 ```
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
 ```{r, message=FALSE}
@@ -71,22 +71,45 @@ We haven't covered regressions in R yet. Use the function *lm()*. The function t
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
 ```{r, message=FALSE}
-Output = numeric(0)
-model1 = lm(totchi ~ Visits, data = table_1)
+model1 = lm(ngirls ~ ., data = table_1)
+sum1 = summary(model1)
+Full_girl = c(sum1$coefficients[20,1],sum1$coefficients[20,2],length(sum1$residuals))
+
+model2 = lm(totchi ~ ., data = table_1)
+sum2 = summary(model2)
+Full_child = c(sum2$coefficients[20,1],sum2$coefficients[20,2],length(sum2$residuals))
 ```
 * Save the main coefficient of interest ($\beta_1$)
-```{r, message=FALSE}
-x =
-```
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
 ```{r, message=FALSE}
-x =
+table_2 = table_1[table_1$party=="D",]
+table_2$party = NULL
+model3 = lm(ngirls ~ ., data = table_2)
+sum3 = summary(model3)
+Dem_girl = c(sum3$coefficients[18,1],sum3$coefficients[18,2],length(sum3$residuals))
+
+model4 = lm(totchi ~ ., data = table_2)
+sum4 = summary(model4)
+Dem_child = c(sum4$coefficients[18,1],sum4$coefficients[18,2],length(sum4$residuals))
+
+
+table_3 = table_1[table_1$party=="R",]
+table_3$party = NULL
+model5 = lm(ngirls ~ ., data = table_3)
+sum5 = summary(model5)
+Rep_girl = c(sum5$coefficients[17,1],sum5$coefficients[17,2],length(sum5$residuals))
+
+model6 = lm(totchi ~ ., data = table_3)
+sum6 = summary(model6)
+Rep_child = c(sum6$coefficients[18,1],sum6$coefficients[18,2],length(sum6$residuals))
 ```
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
 ```{r, message=FALSE}
-x =
+Output = data.frame(Full_girl,Full_child,Dem_girl,Dem_child,Rep_girl,Rep_child)
+Output = round(Output,5)
 ```
 * print the table
-```{r, message=FALSE}
+```{r}
 Output
 ```
