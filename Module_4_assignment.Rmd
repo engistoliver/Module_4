@@ -75,7 +75,8 @@ model1 = lm(ngirls ~ ., data = table_1)
 sum1 = summary(model1)
 Full_girl = c(sum1$coefficients[20,1],sum1$coefficients[20,2],length(sum1$residuals))
 
-model2 = lm(totchi ~ ., data = table_1)
+table_11 = subset(table_1,select = -c(fac_child,ngirls))
+model2 = lm(totchi ~ ., data = table_11)
 sum2 = summary(model2)
 Full_child = c(sum2$coefficients[20,1],sum2$coefficients[20,2],length(sum2$residuals))
 ```
@@ -89,7 +90,8 @@ model3 = lm(ngirls ~ ., data = table_2)
 sum3 = summary(model3)
 Dem_girl = c(sum3$coefficients[18,1],sum3$coefficients[18,2],length(sum3$residuals))
 
-model4 = lm(totchi ~ ., data = table_2)
+table_21 = subset(table_2,select = -c(fac_child,ngirls))
+model4 = lm(totchi ~ ., data = table_21)
 sum4 = summary(model4)
 Dem_child = c(sum4$coefficients[18,1],sum4$coefficients[18,2],length(sum4$residuals))
 
@@ -100,7 +102,8 @@ model5 = lm(ngirls ~ ., data = table_3)
 sum5 = summary(model5)
 Rep_girl = c(sum5$coefficients[17,1],sum5$coefficients[17,2],length(sum5$residuals))
 
-model6 = lm(totchi ~ ., data = table_3)
+table_31 = subset(table_3,select = -c(fac_child,ngirls))
+model6 = lm(totchi ~ ., data = table_31)
 sum6 = summary(model6)
 Rep_child = c(sum6$coefficients[18,1],sum6$coefficients[18,2],length(sum6$residuals))
 ```
@@ -108,6 +111,7 @@ Rep_child = c(sum6$coefficients[18,1],sum6$coefficients[18,2],length(sum6$residu
 ```{r, message=FALSE}
 Output = data.frame(Full_girl,Full_child,Dem_girl,Dem_child,Rep_girl,Rep_child)
 Output = round(Output,5)
+rownames(Output) = c("First child female","","N")
 ```
 * print the table
 ```{r}
