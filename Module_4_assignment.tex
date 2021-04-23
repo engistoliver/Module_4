@@ -255,98 +255,76 @@ stopping rule''.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{glimpse}\NormalTok{(combinedData)   }\CommentTok{\#get overview of variables}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Rows: 435
-## Columns: 64
-## $ year        <chr> "2003-2004", "2003-2004", "2003-2004", "2003-2004", "2003-~
-## $ congress    <dbl> 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108~
-## $ party       <dbl> 1, 1, 2, 2, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1~
-## $ district.x  <dbl> 1, 5, 4, 2, 5, 1, 1, 43, 6, 3, 6, 1, 2, 10, 3, 6, 6, 2, 7,~
-## $ statenam.x  <chr> "HAWAII", "NEW YOR", "ALABAMA", "MISSOUR", "LOUISIA", "MAI~
-## $ name        <chr> "ABERCROMBIE, NEIL", "ACKERMAN, GARY L.", "ADERHOLT, ROBER~
-## $ ngirls      <dbl> 0, 1, 1, 2, 2, 2, 2, 2, 2, 0, 1, 2, 0, 3, 1, 4, 2, 1, 1, 3~
-## $ nboys       <dbl> 0, 2, 0, 4, 1, 0, 0, 2, 3, 0, 1, 1, 0, 0, 2, 6, 1, 1, 3, 0~
-## $ totchi      <dbl> 0, 3, 1, 6, 3, 2, 2, 4, 5, 0, 2, 3, 0, 3, 3, 10, 3, 2, 4, ~
-## $ anygirls    <dbl> 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1~
-## $ propgirls   <dbl> 0.0000000, 0.3333333, 1.0000000, 0.3333333, 0.6666667, 1.0~
-## $ rgroup      <dbl> 0, 4, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 2~
-## $ statabb     <chr> "HI", "NY", "AL", "MO", "LA", "ME", "NJ", "CA", "AL", "WA"~
-## $ statalph    <dbl> 12, 33, 1, 26, 19, 20, 31, 5, 1, 48, 19, 34, 50, 34, 41, 2~
-## $ region      <chr> "9", "2", "6", "4", "7", "1", "2", "9", "6", "9", "7", "5"~
-## $ repub       <dbl> 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0~
-## $ srvlng      <dbl> 13, 21, 7, 3, 1, 7, 13, 3, 11, 5, 17, 1, 5, 17, 1, 11, 19,~
-## $ female      <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0~
-## $ white       <dbl> 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0~
-## $ bday        <date> 1938-06-26, 1942-11-19, 1965-07-22, 1947-07-05, 1946-12-0~
-## $ age         <dbl> 64, 60, 37, 55, 56, 57, 45, 55, 55, 46, 54, 60, 40, 76, 41~
-## $ demvote     <dbl> 0.5868644, 0.6938987, 0.3812436, 0.4038657, 0.4113402, 0.5~
-## $ medinc      <dbl> 25760, 27182, 20281, 30791, 18067, 22869, 27082, 20440, 27~
-## $ perf        <dbl> 0.5049943, 0.5236615, 0.5204279, 0.5212265, 0.5253278, 0.5~
-## $ perw        <dbl> 0.1858624, 0.5555022, 0.9159334, 0.9415647, 0.6401148, 0.9~
-## $ perhs       <dbl> 0.8410435, 0.7785859, 0.6886524, 0.9081411, 0.7054539, 0.8~
-## $ percol      <dbl> 0.28942156, 0.33563232, 0.11316687, 0.38301486, 0.15533009~
-## $ perur       <dbl> 0.9930021, 1.0000000, 0.2654395, 0.9164996, 0.5291659, 0.4~
-## $ alabort     <dbl> NA, 0.5688074, 0.2970711, 0.4362416, 0.1869919, NA, 0.5555~
-## $ moreserv    <dbl> NA, 0.4726477, 0.5000000, 0.2671756, 0.3972603, NA, 0.3771~
-## $ moredef     <dbl> NA, 0.1709234, 0.3140097, 0.2344828, 0.5051546, NA, 0.1647~
-## $ morecrimesp <dbl> NA, 0.5885510, 0.5483871, 0.6092715, 0.7244095, NA, 0.5729~
-## $ protgay     <dbl> NA, 0.7051282, 0.5343512, 0.6463414, 0.4936709, NA, 0.7071~
-## $ dr1per      <dbl> NA, 0.30, 0.69, 0.56, 0.52, 0.58, 0.31, 0.33, 0.69, 0.39, ~
-## $ dr2per      <dbl> NA, 0.38, 0.13, 0.19, 0.28, 0.24, 0.37, 0.32, 0.13, 0.20, ~
-## $ dr3per      <dbl> NA, 0.00, 0.02, 0.02, 0.00, 0.02, 0.02, 0.02, 0.02, 0.04, ~
-## $ dr4per      <dbl> NA, 0.12, 0.04, 0.02, 0.03, 0.03, 0.09, 0.08, 0.04, 0.05, ~
-## $ dr5per      <dbl> NA, 0.19, 0.12, 0.21, 0.15, 0.20, 0.20, 0.25, 0.12, 0.31, ~
-## $ aauw        <dbl> 88, 75, 0, 0, 50, 88, 100, 100, 0, 100, 0, 88, 100, 0, 0, ~
-## $ rtl         <dbl> 0, 0, 100, 91, 100, 0, 0, 0, 100, 0, 100, 0, 0, 100, 91, 1~
-## $ nowtot      <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now1        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now2        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now3        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now4        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now5        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now6        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now7        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now8        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now9        <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now10       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now11       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now12       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now13       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now14       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now15       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now16       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now17       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now18       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now19       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ now20       <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
-## $ district.y  <dbl> 1, 5, 4, 2, 5, 1, 1, 43, 6, 3, 6, 1, 2, 10, 3, 6, 6, 2, 7,~
-## $ statenam.y  <chr> "HAWAII", "NEW YOR", "ALABAMA", "MISSOUR", "LOUISIA", "MAI~
-## $ genold      <chr> "", "", "G", "B", "", "G", "G", "", "", "", "", "", "", "G~
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{DataSelection }\OtherTok{\textless{}{-}} \FunctionTok{select}\NormalTok{(combinedData, name,genold,ngirls,totchi,party,white,female,age,srvlng,rgroup,region )}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{itemize}
+\tightlist
 \item
   Recode \emph{genold} such that gender is a factor variable and missing
   values are coded as NAs.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{genold }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{genold }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{na\_if}\NormalTok{(}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   Recode \emph{party} as a factor with 3 levels (D, R, I)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{party }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{party }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{recode}\NormalTok{(}\StringTok{"1"}\OtherTok{=}\StringTok{"D"}\NormalTok{,}\StringTok{"2"}\OtherTok{=}\StringTok{"R"}\NormalTok{,}\StringTok{"3"}\OtherTok{=}\StringTok{"I"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   Recode \emph{rgroup} and \emph{region} as factors.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{rgroup }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{region }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   generate variables for age squared and service length squared
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{age\_sq=}\NormalTok{age}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{DataSelection }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{srvlng\_sq=}\NormalTok{srvlng}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   create an additional variable of the number of children as factor
   variable
 \end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataSelection }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{nchildren=}\NormalTok{totchi)}
+\NormalTok{DataSelection}\SpecialCharTok{$}\NormalTok{nchildren }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{factor}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{replicationg-table-1-from-the-appendix}{%
 \section{Replicationg Table 1 from the
@@ -366,18 +344,98 @@ Use the help file to understand the function.
   \(\gamma\) stands for a vector of coefficients and \(X\) is a matrix
   that contains all columns that are control
   variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{regTot }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(totchi }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ party}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataSelection)}
+\NormalTok{regDau }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(ngirls }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ party}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataSelection)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   Save the main coefficient of interest (\(\beta_1\))
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Coef }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{coefficients}\NormalTok{(regDau)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot)[}\DecValTok{2}\NormalTok{])}
+\FunctionTok{names}\NormalTok{(Coef) }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"Number of Daugthers"}\NormalTok{, }\StringTok{"Number of Children"}\NormalTok{)}
+\NormalTok{Coef}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Number of Daugthers  Number of Children 
+##          1.35753057         -0.08388331
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
 \item
   Run the same regression separately for Democrats and Republicans
   (assign the independent to one of the parties). Save the coefficient
   and standard error of \emph{genold}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DataDem }\OtherTok{\textless{}{-}}\NormalTok{ DataSelection}
+\NormalTok{DataDem }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{filter}\NormalTok{(party}\SpecialCharTok{==}\StringTok{"D"} \SpecialCharTok{|}\NormalTok{ party}\SpecialCharTok{==}\StringTok{"I"}\NormalTok{)}
+\NormalTok{regTot\_D }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(totchi }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataDem)}
+\NormalTok{regDau\_D }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(ngirls }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataDem)}
+
+\NormalTok{DataRep }\OtherTok{\textless{}{-}}\NormalTok{ DataSelection}
+\NormalTok{DataRep }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{filter}\NormalTok{(party}\SpecialCharTok{==}\StringTok{"R"}\NormalTok{)}
+\NormalTok{regTot\_R }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(totchi }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataRep)}
+\NormalTok{regDau\_R }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(ngirls }\SpecialCharTok{\textasciitilde{}}\NormalTok{ genold }\SpecialCharTok{+}\NormalTok{ white}\SpecialCharTok{+}\NormalTok{ female}\SpecialCharTok{+}\NormalTok{ age}\SpecialCharTok{+}\NormalTok{ age\_sq}\SpecialCharTok{+}\NormalTok{ srvlng}\SpecialCharTok{+}\NormalTok{ srvlng\_sq}\SpecialCharTok{+}\NormalTok{ rgroup}\SpecialCharTok{+}\NormalTok{ region, DataRep)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   Collect all the \emph{genold} coefficients from the six regressions,
   including their standard errors and arrange them in a table as in the
   paper.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Coef }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{coefficients}\NormalTok{(regDau)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regDau\_D)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot\_D)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regDau\_R)[}\DecValTok{2}\NormalTok{], }\FunctionTok{coefficients}\NormalTok{(regTot\_R)[}\DecValTok{2}\NormalTok{])}
+
+\NormalTok{se }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FunctionTok{summary}\NormalTok{(regDau)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regTot)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regDau\_D)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regTot\_D)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regDau\_R)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]], }\FunctionTok{summary}\NormalTok{(regTot\_R)}\SpecialCharTok{$}\NormalTok{coef[[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]])}
+
+\NormalTok{finalTable }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(Coef, se)}
+\NormalTok{finalTable }\SpecialCharTok{\%\textless{}\textgreater{}\%} \FunctionTok{t}\NormalTok{()}
+
+\NormalTok{a }\OtherTok{\textless{}{-}} \StringTok{"NoDaugthers"}
+\NormalTok{b }\OtherTok{\textless{}{-}} \StringTok{"NoChildren"}
+\FunctionTok{colnames}\NormalTok{(finalTable) }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"all"}\NormalTok{,a), }\FunctionTok{paste}\NormalTok{(}\StringTok{"all"}\NormalTok{,b), }\FunctionTok{paste}\NormalTok{(}\StringTok{"D"}\NormalTok{,a), }\FunctionTok{paste}\NormalTok{(}\StringTok{"D"}\NormalTok{,b), }\FunctionTok{paste}\NormalTok{(}\StringTok{"R"}\NormalTok{,a), }\FunctionTok{paste}\NormalTok{(}\StringTok{"R"}\NormalTok{,b))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   print the table
 \end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{finalTable}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      all NoDaugthers all NoChildren D NoDaugthers D NoChildren R NoDaugthers
+## Coef       1.3575306    -0.08388331     1.4580041   0.07291434     1.1860812
+## se         0.1275869     0.14911332     0.1757588   0.18089377     0.1889604
+##      R NoChildren
+## Coef   -0.2823933
+## se      0.2334645
+\end{verbatim}
 
 \end{document}
