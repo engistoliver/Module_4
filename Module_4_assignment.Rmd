@@ -29,6 +29,14 @@ setwd("~/Documents/SSE/A4/Module_4")
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+
+```{r, message=FALSE}
+
+Basic <- import("basic.dta")
+Genold108 <- import("basic.dta")
+
+```
+
 * create a subset of the 108th congress from the *basic* dataset
 * join this subset with the *genold* dataset
 
