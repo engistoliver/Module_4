@@ -13,15 +13,31 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Load the libraries "Rio" and "tidyverse"
 * Change the path of the working directory to your working directory.
 
-```{r, message=FALSE}
+```{r Load Libraries, message=FALSE}
 
 library(rio)
 library(tidyverse)
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
+```{r Import_Data, message=FALSE}
+basic_data <- import("basic.dta")
+genold_108 <- import("genold108.dta")
+```
+
 * create a subset of the 108th congress from the *basic* dataset
+```{r Subset Creation, message=FALSE}
+
+sub_108_data <- subset(basic_data, congress=="108")
+
+```
+
 * join this subset with the *genold* dataset
+```{r Join Data, message=FALSE}
+genold_data <- left_join(x=sub_108_data, y=genold_108, by=c("name","statenam"))
+
+```
+
 
 # Data preparation
 
