@@ -49,7 +49,7 @@ Basic108 <- filter(Basic, Basic$congress=="108")
 
 ```{r, message=FALSE}
 
-Data108 <- merge(x = Genold108, y = Basic108, by = "name", all=FALSE)
+Data108 <- merge(x = Genold108, y = Basic108, by = c("name","district","statenam"), all=FALSE)
 ```
 
 
@@ -57,6 +57,16 @@ Data108 <- merge(x = Genold108, y = Basic108, by = "name", all=FALSE)
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
 * drop all other variables.
+
+The following variables are necessary for the analysis. All the others are automatically dropped.
+```{r, message=FALSE}
+
+variables <- c("white", "female", "party", "age", "srvlng", "rgroup",
+               "region", "totchi", "genold", "ngirls")
+
+Data108 <- Data108[variables]
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
