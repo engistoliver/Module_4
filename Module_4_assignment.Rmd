@@ -38,6 +38,13 @@ Genold108 <- import("basic.dta")
 ```
 
 * create a subset of the 108th congress from the *basic* dataset
+
+```{r, message=FALSE}
+
+Basic108 <- filter(Basic, Basic$congress=="108")
+
+```
+
 * join this subset with the *genold* dataset
 
 # Data preparation
