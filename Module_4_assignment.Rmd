@@ -99,6 +99,13 @@ Data108$srvlngsq <- Data108$srvlng*Data108$srvlng
 
 * create an additional variable of the number of children as factor variable
 
+```{r, message=FALSE}
+
+Data108$totchiFactor <- as.factor(Data108$totchi)
+
+```
+
+
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
