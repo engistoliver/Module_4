@@ -3,6 +3,7 @@ title: "Module 4 - Instructions"
 author: "Oliver Engist"
 date: "04/04/2021"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -134,7 +135,7 @@ colnames(output_table) <- c("Girls (all)","Kids (all)","Girls(D)","Kids(D)",
 * print the table
 ```{r, message=FALSE}
 
-knitr::kable(output_table,"pipe", digits=2, caption = "Evidence on Legilator 
+knitr::kable(output_table,"pipe", digits=2, caption = "Evidence on Legislator 
              Child Gender Mix Selection")
 
 ```
