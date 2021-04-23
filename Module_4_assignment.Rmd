@@ -33,7 +33,7 @@ setwd("~/Documents/SSE/A4/Module_4")
 ```{r, message=FALSE}
 
 Basic <- import("basic.dta")
-Genold108 <- import("basic.dta")
+Genold108 <- import("genold108.dta")
 
 ```
 
@@ -46,6 +46,12 @@ Basic108 <- filter(Basic, Basic$congress=="108")
 ```
 
 * join this subset with the *genold* dataset
+
+```{r, message=FALSE}
+
+Data108 <- merge(x = Genold108, y = Basic108, by = "name", all=FALSE)
+```
+
 
 # Data preparation
 
