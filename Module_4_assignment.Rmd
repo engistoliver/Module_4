@@ -27,23 +27,29 @@ genold_108 <- import("genold108.dta")
 
 * create a subset of the 108th congress from the *basic* dataset
 ```{r Subset Creation, message=FALSE}
-
 sub_108_data <- subset(basic_data, congress=="108")
-
 ```
 
 * join this subset with the *genold* dataset
 ```{r Join Data, message=FALSE}
 genold_data <- left_join(x=sub_108_data, y=genold_108, by=c("name","statenam"))
-
 ```
 
 
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
+# Control Variables are legislator race, gender, party, age, age squared, service length, service length square, religion, region, total number of children. Additionally include number of daughters, Party.
+
 * drop all other variables.
+```{r Slected relevant variable, message=FALSE}
+appendix_var <- select(genold_data, white, female, party, age, srvlng, repub, rgroup, region, totchi, ngirls, anygirls, demvote, genold)
+```
+
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+```{r genold factors, message=FALSE}
+appendix_var$genold <- appendix_var %>% as.factor(genold)
+
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
