@@ -14,7 +14,6 @@ In the next assignment we want to replicate some plots from the paper "Female So
 * Change the path of the working directory to your working directory.
 
 ```{r Load Libraries, message=FALSE}
-
 library(rio)
 library(tidyverse)
 ```
@@ -35,7 +34,6 @@ sub_108_data <- subset(basic_data, congress=="108")
 genold_data <- left_join(x=sub_108_data, y=genold_108, by=c("name","statenam"))
 ```
 
-
 # Data preparation
 
 * check table 1 in the appendix of the paper and decide which variables are necessary for the analysis (check the footnote for control variables)
@@ -43,24 +41,70 @@ genold_data <- left_join(x=sub_108_data, y=genold_108, by=c("name","statenam"))
 
 * drop all other variables.
 ```{r Slected relevant variable, message=FALSE}
-appendix_var <- select(genold_data, white, female, party, age, srvlng, repub, rgroup, region, totchi, ngirls, anygirls, demvote, genold)
+appendix_var <- select(genold_data, white, female, party, age, srvlng, rgroup, region, totchi, ngirls, anygirls, demvote, genold)
 ```
 
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+#while col was a character, I changed all blanks to NA. Then set to factor.
 ```{r genold factors, message=FALSE}
-appendix_var$genold <- appendix_var %>% as.factor(genold)
+appendix_var$genold[appendix_var$genold==""] <- NA
+appendix_var$genold <- factor(appendix_var$genold)
+```
 
 * Recode *party* as a factor with 3 levels (D, R, I)
+I think var 2 is republican - checked against another column. I've assigned I to democrats as we're asked to do this at the end.
+```{r party with 3 variable, message=FALSE}
+appendix_var$party <- factor(appendix_var$party, levels = c(1,2,3), labels = c("D","R","D"))
+```
+
 * Recode *rgroup* and *region* as factors.
+```{r recode factors}
+appendix_var$rgoup <- factor(appendix_var$rgroup)
+appendix_var$region <- factor(appendix_var$region)
+```
+
 * generate variables for age squared and service length squared
+```{r - add variables with mutuate function}
+appendix_var <- appendix_var %>% mutate(age_sqrd=age^2)
+appendix_var <- appendix_var %>% mutate(srvlng_sqrd=srvlng^2)
+```
+
 * create an additional variable of the number of children as factor variable
+
+```{r - number of children as factor varialbe}
+appendix_var <- appendix_var %>% mutate(numchildren_fct=as_factor(totchi))
+```
 
 # Replicationg Table 1 from the Appendix
 
 We haven't covered regressions in R yet. Use the function *lm()*. The function takes the regression model (formula) and the data as an input. The model is written as $y \sim x$, where $x$ stands for any linear combination of regressors (e.g. $y \sim x_1 + x_2 + female$). Use the help file to understand the function.
 
 * Run the regression $total.children = \beta_0 + \beta_1 gender.oldest + \gamma'X$ where $\gamma$ stands for a vector of coefficients and $X$ is a matrix that contains all columns that are control variables.\footnote{This is just a short notation instead of writing the full model with all control variables $totchi = \beta_0 + \beta_1 genold + \gamma_1 age + \gamma_2 age^2 + \gamma_3 Democrat + ... + \epsilon$ which quickly gets out of hand for large models.}
+```{r Run regression for total children}
+Regression_totchi <- lm(totchi ~ white + female + party + age + age_sqrd + srvlng + srvlng_sqrd + rgroup + region + genold, data = appendix_var)
+```
+
 * Save the main coefficient of interest ($\beta_1$)
+```{r save coefficient}
+Beta_genold_totchi <- coef(summary(Regression_totchi))["genoldG","Estimate"]
+Std_genold_totchi <- coef(summary(Regression_totchi))["genoldG","Std. Error"]
+```
+
 * Run the same regression separately for Democrats and Republicans (assign the independent to one of the parties). Save the coefficient and standard error of *genold*
+
+```{r Running regression of democrat, republican and standard errors}
+Regression_dem <- lm(totchi ~ white + female + age + age_sqrd + srvlng + srvlng_sqrd + rgroup + region + genold, data = appendix_var, party=="D")
+
+Regression_republican <- lm(totchi ~ white + female + age + age_sqrd + srvlng + srvlng_sqrd + rgroup + region + genold, data = appendix_var, party=="R")
+
+Beta_genold_dem <- coef(summary(Regression_dem))["genoldG","Estimate"]
+Beta_genold_rep <- coef(summary(Regression_republican))["genoldG","Estimate"]
+
+Std_genold_dem <- coef(summary(Regression_dem))["genoldG","Std. Error"]
+Std_genold_rep <- coef(summary(Regression_republican))["genoldG","Std. Error"]
+```
+
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+
+
 * print the table
