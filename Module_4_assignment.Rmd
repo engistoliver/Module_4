@@ -18,7 +18,7 @@ In the next assignment we want to replicate some plots from the paper "Female So
 library(rio)
 library(tidyverse)
 library(magrittr)
-library(knitr)
+
 ```
 
 * import the data sets *basic.dta* and *genold108.dta*
@@ -123,18 +123,17 @@ se_beta_1 <- c(summary(reg1)$coefficients[2,2],summary(reg2)$coefficients[2,2],
 obs <- c(nobs(reg1),nobs(reg2),nobs(reg3),nobs(reg4),nobs(reg5),nobs(reg6))
 
 # construct table
-output_table <- data.frame(beta_1,se_beta_1,obs) %>% t()
+output_table <- matrix(c(beta_1,se_beta_1,obs),nrow=3,byrow=TRUE)
 rownames(output_table) <- c("First child female","Standard error","N")
-colnames(output_table) <- c("Number of daughters (All)","Number of children
-                            (All)","Number of daughters (Dem)","Number of 
-                            children (Dem)","Number of daughters (Rep)","Number 
-                            of children (Rep)")
+colnames(output_table) <- c("Girls (all)","Kids (all)","Girls(D)","Kids(D)",
+                            "Girls(R)","Kids(R)")
 ```
 
 * print the table
-```{r, results='asis'}
+```{r}
 
-knitr::kable(output_table)
+knitr::kable(output_table,"pipe", digits=2, caption = "Evidence on Legilator 
+             Child Gender Mix Selection")
 
 ```
 
