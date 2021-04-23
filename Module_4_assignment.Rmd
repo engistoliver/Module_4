@@ -94,6 +94,15 @@ Data108$region <- as.factor(Data108$region)
 ```
 
 * generate variables for age squared and service length squared
+
+```{r, message=FALSE}
+
+Data108$agesq <- Data108$age*Data108$age
+
+Data108$srvlngsq <- Data108$srvlng*Data108$srvlng
+
+```
+
 * create an additional variable of the number of children as factor variable
 
 # Replicationg Table 1 from the Appendix
