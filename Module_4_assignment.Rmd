@@ -84,6 +84,15 @@ Data108$party <- factor(Data108$party, levels=c(1,2,3), labels=c("D", "R", "I"))
 ```
 
 * Recode *rgroup* and *region* as factors.
+
+```{r, message=FALSE}
+
+Data108$rgroup <- as.factor(Data108$rgroup)
+
+Data108$region <- as.factor(Data108$region)
+
+```
+
 * generate variables for age squared and service length squared
 * create an additional variable of the number of children as factor variable
 
