@@ -145,9 +145,31 @@ summary(regREP)
 ```
 
 * Collect all the *genold* coefficients from the six regressions, including their standard errors and arrange them in a table as in the paper.
+
+```{r, message=FALSE}
+Beta1 <- round(Beta1, digits=2)
+Beta1str <- round(summary(reg)$coefficients[2,2], digits=2)
+BetaDEM <- round(summary(regDEM)$coefficients[2,1], digits=2)
+BetaDEMstr <- round(summary(regDEM)$coefficients[2,2], digits=2)
+BetaREP <- round(summary(regREP)$coefficients[2,1], digits=2)
+BetaREPstr <- round(summary(regREP)$coefficients[2,2], digits=2)
+NumAll <- toString(round(nobs(reg), digits=0))
+NumDEM <- toString(round(nobs(regDEM), digits=0))
+NumREP <- toString(round(nobs(regREP), digits=0))
+
+All <- c(Beta1, Beta1str, NumAll)
+Dem <- c(BetaDEM, BetaDEMstr, NumDEM)
+Rep <- c(BetaREP, BetaREPstr, NumREP)
+tab <- data.frame(All, Dem, Rep)
+row.names(tab)<- c("genold Coeff", "Standard error", "Observations")
+
+
+```
+
 * print the table
-
-
+```{r, message=FALSE}
+tab
+```
 
 
 
