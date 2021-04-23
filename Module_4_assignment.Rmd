@@ -68,6 +68,13 @@ Data108 <- Data108[variables]
 ```
 
 * Recode *genold* such that gender is a factor variable and missing values are coded as NAs.
+
+```{r, message=FALSE}
+
+Data108$genold <- as.factor(Data108$genold)
+
+Data108$genold[Data108$genold == ""] <- NA
+```
 * Recode *party* as a factor with 3 levels (D, R, I)
 * Recode *rgroup* and *region* as factors.
 * generate variables for age squared and service length squared
