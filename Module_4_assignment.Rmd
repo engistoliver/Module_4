@@ -89,23 +89,30 @@ Combined_Rep <- Combined %>% filter(party!="D")
 
 
 # Regressions (all parties)
-reg1 <- lm(ngirls~ genold + white + female + party + age + age_squared + srvlng + srvlng_squared + rgroup + region + totchi,Combined)
+reg1 <- lm(ngirls~ genold + white + female + party + age + age_squared + srvlng
+           + srvlng_squared + rgroup + region + totchi,Combined)
 
-reg2 <- lm(totchi~ genold + white + female + party + age + age_squared + srvlng + srvlng_squared + rgroup + region,Combined)
+reg2 <- lm(totchi~ genold + white + female + party + age + age_squared + srvlng
+           + srvlng_squared + rgroup + region,Combined)
 
 
 # Regressions Democrat
-reg3 <- lm(ngirls~ genold + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region + totchi,Combined_Dem)
+reg3 <- lm(ngirls~ genold + white + female + age + age_squared + srvlng +
+             srvlng_squared + rgroup + region + totchi,Combined_Dem)
 
-reg4 <- lm(totchi~ genold + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region,Combined_Dem)
+reg4 <- lm(totchi~ genold + white + female + age + age_squared + srvlng +
+             srvlng_squared + rgroup + region,Combined_Dem)
 
 # Regressions Republican
-reg5 <- lm(ngirls~ genold + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region + totchi,Combined_Rep)
+reg5 <- lm(ngirls~ genold + white + female + age + age_squared + srvlng +
+             srvlng_squared + rgroup + region + totchi,Combined_Rep)
 
-reg6 <- lm(totchi~ genold + white + female + age + age_squared + srvlng + srvlng_squared + rgroup + region,Combined_Rep)
+reg6 <- lm(totchi~ genold + white + female + age + age_squared + srvlng +
+             srvlng_squared + rgroup + region,Combined_Rep)
 
 # collect beta_1 coefficients
-beta_1 <- c(reg1$coefficients[2],reg2$coefficients[2],reg3$coefficients[2],reg4$coefficients[2],reg5$coefficients[2],reg6$coefficients[2])
+beta_1 <- c(reg1$coefficients[2],reg2$coefficients[2],reg3$coefficients[2],
+            reg4$coefficients[2],reg5$coefficients[2],reg6$coefficients[2])
 
 # collect standard errors of beta_1 coefficients
 se_beta_1 <- c(summary(reg1)$coefficients[2,2],summary(reg2)$coefficients[2,2],
@@ -116,8 +123,18 @@ se_beta_1 <- c(summary(reg1)$coefficients[2,2],summary(reg2)$coefficients[2,2],
 obs <- c(nobs(reg1),nobs(reg2),nobs(reg3),nobs(reg4),nobs(reg5),nobs(reg6))
 
 # construct table
-output_table <- matrix(c(beta_1,se_beta_1,obs),nrow=3,byrow=TRUE)
-
+output_table <- data.frame(beta_1,se_beta_1,obs) %>% t()
+rownames(output_table) <- c("First child female","Standard error","N")
+colnames(output_table) <- c("Number of daughters (All)","Number of children
+                            (All)","Number of daughters (Dem)","Number of 
+                            children (Dem)","Number of daughters (Rep)","Number 
+                            of children (Rep)")
 ```
 
 * print the table
+```{r, results='asis'}
+
+knitr::kable(output_table)
+
+```
+
